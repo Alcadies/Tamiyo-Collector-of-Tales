@@ -162,7 +162,7 @@ function role(message, messageAuthor) {
 }
 
 function oko(message, messageAuthor) {
-    if (lowmessage.length == 33 && message.guild.roles.has(elkRole) && !messageAuthor.roles.has(elkRole)) {
+    if (lowmessage.length == process.env.elk && message.guild.roles.has(elkRole) && !messageAuthor.roles.has(elkRole)) {
         messageAuthor.addRole(message.guild.roles.get(elkRole));
     }
 }
