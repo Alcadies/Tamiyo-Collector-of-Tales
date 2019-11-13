@@ -214,4 +214,4 @@ bot.on("messageReactionRemove", function(messageReaction, user) {
     }
 })
 
-bot.login("NjMxMDE0ODM0MDU3NjQxOTk0.XZwuAw.U_FtTT8zrEKr9bIxw4nORlE7-54")
+bot.login(process.env.token)
