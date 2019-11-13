@@ -207,7 +207,7 @@ bot.on("messageReactionAdd", function(messageReaction, user) {
 
 bot.on("messageReactionRemove", function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
-        messageReaction.message.channel.send("You have reacted to this with ```" + messageReaction.emoji.name + "```");
+        messageReaction.message.channel.send("You have un-reacted to this with ```" + messageReaction.emoji.name + "```");
         if (messageReaction.emoji.name == "🙉") { messageReaction.message.channel.send("No evil shall be heard."); }
     }
 })
