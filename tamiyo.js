@@ -182,8 +182,6 @@ bot.on("message", async function(message) {
     await ban(message, messageAuthor);
 
     await role(message, messageAuthor);
-
-    //if (lowmessage == ",initialize" && message.author.id == "135999597947387904") { bot.channels.get(logChannel).send("Muted members and unmute times:"); }
 })
 
 bot.on("messageUpdate", async function(oldMessage, newMessage) {
