@@ -11,12 +11,16 @@ logger.add(logger.transports.Console, {
 logger.level = "debug"
 // Initialize Discord Bot
 var bot = new Discord.Client({ disableEveryone: true })
-var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/"];
+var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg"];
 var lowmessage = "";
 var logChannel = "633429050089799687" /*"531433553225842700"*/;
 var modRole = "407400920746426368" /*"606659573159428169"*/;
 var muteRole = "280463986531631104" /*"586432252901195777"*/;
-var guildID = "162586705524686848"
+var guildID = "162586705524686848";
+var leakRole = "638981519116861442";
+var roleMessageID = "639173241679904771";
+var roleChannelID = "407401913253101601";
+var elkRole = "640599175326728203";
 var logMessage = "";
 
 bot.on("ready", async function() {
@@ -47,19 +51,20 @@ bot.on("ready", async function() {
             logMessage.edit(newLog);
         }
     }
+    bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
 })
 
-function badWordsReporter(message, isEdit) {
+async function badWordsReporter(message, messageAuthor, isEdit) {
     var badWordsLog = "";
     for (let i = 0; i < badWords.length; i++) {
         lowmessage = lowmessage.replace(/:gwomogay:/g, "");
         if (lowmessage.includes(badWords[i]) && !message.author.bot && message.guild != null && badWordsLog == "") {
-            badWordsLog += message.member.displayName;
+            badWordsLog += messageAuthor.displayName;
             badWordsLog += " (id ";
-            badWordsLog += message.member.id;
+            badWordsLog += messageAuthor.id;
             badWordsLog += ")";
-            if (isEdit) { badWordsLog += " edited a message to say"; }
-            else { badWordsLog += " said"; }
+            if (isEdit) { badWordsLog += await " edited a message to say"; }
+            else { badWordsLog += await " said"; }
             badWordsLog += " the following here <";
             badWordsLog += message.url;
             badWordsLog += ">: ```";
@@ -67,12 +72,12 @@ function badWordsReporter(message, isEdit) {
             badWordsLog += "```"
         }
     }
-    if (badWordsLog != "") {bot.channels.get(logChannel).send(badWordsLog);}
+    if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
 }
 
-function mute(message) {
+function mute(message, messageAuthor) {
     if (lowmessage.indexOf(",mute") == 0) {
-        if (message.member.roles.has(modRole)) {
+        if (messageAuthor.roles.has(modRole)) {
             if (message.mentions.members.length != 0) {
                 if (!isNaN(lowmessage.split(" ")[1])) {
                     setTimeout(function () {
@@ -103,9 +108,9 @@ function unmute(member) {
     bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
 }
 
-function kick(message) {
+function kick(message, messageAuthor) {
     if (lowmessage.indexOf(",kick") == 0) {
-        if (message.member.roles.has(modRole)) {
+        if (messageAuthor.roles.has(modRole)) {
             if (message.mentions.members.first().roles.has(modRole)) {
                 message.channel.send("I'm sorry, I won't kick another mod or admin.")
             }
@@ -122,10 +127,10 @@ function kick(message) {
     }
 }
 
-function ban(message) {
+function ban(message, messageAuthor) {
     if (lowmessage.indexOf(",ban") == 0) {
-        if (message.member.roles.has(modRole)) {
-            if (message.mentions.members.first().has(modRole)) {
+        if (messageAuthor.roles.has(modRole)) {
+            if (message.mentions.members.first().roles.has(modRole)) {
                 message.channel.send("I'm sorry, I won't ban another mod or admin.")
             }
             else {
@@ -141,25 +146,72 @@ function ban(message) {
     }
 }
 
-bot.on("message", function(message) {
+function role(message, messageAuthor) {
+    if (lowmessage.indexOf(",role") == 0 || lowmessage.indexOf(",leak") == 0) {
+        if (lowmessage.includes("leak")) {
+            if (messageAuthor.roles.has(leakRole)) {
+                messageAuthor.removeRole(message.guild.roles.get(leakRole));
+                message.channel.send("Leaks role removed!")
+            }
+            else {
+                messageAuthor.addRole(message.guild.roles.get(leakRole));
+                message.channel.send("Leaks role added!")
+            }
+        }
+    }
+}
+
+function oko(message, messageAuthor) {
+    if (lowmessage.length == 33 && message.guild.roles.has(elkRole) && !messageAuthor.roles.has(elkRole)) {
+        messageAuthor.addRole(message.guild.roles.get(elkRole));
+    }
+}
+
+bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
-    badWordsReporter(message, false);
+    if (message.guild == null || message.guild.id != guildID) {return;}
+    var messageAuthor = await message.guild.fetchMember(message.author);
+    await oko(message, messageAuthor);
 
-    mute(message);
+    await badWordsReporter(message, messageAuthor, false);
 
-    kick(message);
+    await mute(message, messageAuthor);
 
-    ban(message);
+    await kick(message, messageAuthor);
+
+    await ban(message, messageAuthor);
+
+    await role(message, messageAuthor);
 
     //if (lowmessage == ",initialize" && message.author.id == "135999597947387904") { bot.channels.get(logChannel).send("Muted members and unmute times:"); }
 })
 
-bot.on("messageUpdate", function(oldMessage, newMessage) {
-    badWordsReporter(newMessage, true);
+bot.on("messageUpdate", async function(oldMessage, newMessage) {
+    lowmessage = newMessage.content.toLowerCase();
+    var messageAuthor = await newMessage.guild.fetchMember(newMessage.author);
+    await badWordsReporter(newMessage, messageAuthor, true);
 })
 
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); } 
 })
 
-bot.login(process.env.token)
+bot.on("guildMemberUpdate", function(oldMember, newMember) {
+    if (newMember.roles.has(muteRole) && newMember.roles.has(leakRole)) { newMember.removeRole(leakRole); }
+})
+
+bot.on("messageReactionAdd", function(messageReaction, user) {
+    if (messageReaction.message.id == roleMessageID) {
+        messageReaction.message.channel.send("You have reacted to this with ```" + messageReaction.emoji.name + "```");
+        if (messageReaction.emoji.name == "🙉") { messageReaction.message.channel.send("No evil shall be heard."); }
+    }
+})
+
+bot.on("messageReactionRemove", function(messageReaction, user) {
+    if (messageReaction.message.id == roleMessageID) {
+        messageReaction.message.channel.send("You have reacted to this with ```" + messageReaction.emoji.name + "```");
+        if (messageReaction.emoji.name == "🙉") { messageReaction.message.channel.send("No evil shall be heard."); }
+    }
+})
+
+bot.login("NjMxMDE0ODM0MDU3NjQxOTk0.XZwuAw.U_FtTT8zrEKr9bIxw4nORlE7-54")
