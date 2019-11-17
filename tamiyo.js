@@ -31,7 +31,8 @@ bot.on("ready", async function() {
     var str = logMessage.content;
     while (str.includes("\n")) {
         str = str.slice(str.indexOf("\n"));
-        var mutedOne = await bot.guilds.get(guildID).fetchMember(str.split(" ")[0])
+        bot.channels.get("531433553225842700").send(str.split(" ")[0]);
+        var mutedOne = await bot.guilds.get(guildID).fetchMember(str.split(" ")[0]);
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
