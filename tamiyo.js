@@ -34,8 +34,8 @@ bot.on("ready", async function() {
         var mutedOne = await bot.guilds.get(guildID).fetchMember(str.split(" ")[0])
         var d = new Date();
         var timer = 0;
-        if (str.includes("\n")) { timer = str.substring(str.indexOf(" ") + 1, str.indexOf("\n")).parseInt(); }
-        else { timer = str.substring(str.indexOf(" ")).parseInt(); }
+        if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
+        else { timer = parseInt(str.substring(str.indexOf(" "))); }
         timer -= d.getTime();
         if (mutedOne != null) {
             if (timer <= 0) { unmute(mutedOne); }
