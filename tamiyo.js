@@ -183,6 +183,10 @@ bot.on("message", async function(message) {
     await ban(message, messageAuthor);
 
     await role(message, messageAuthor);
+
+    if (messageAuthor.roles.has(modRole) && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
+        unmute(message.mentions.members.first());
+    }
 })
 
 bot.on("messageUpdate", async function(oldMessage, newMessage) {
