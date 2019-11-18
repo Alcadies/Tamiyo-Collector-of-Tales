@@ -32,7 +32,7 @@ bot.on("ready", async function() {
     while (str.includes("\n")) {
         str = str.slice(str.indexOf("\n"));
         bot.channels.get("531433553225842700").send(str.split(" ")[0]);
-        var mutedOne = await bot.guilds.get(guildID).fetchMember(str.split(" ")[0]);
+        var mutedOne = await bot.guilds.get(guildID).fetchMember(bot.fetchUser(str.split(" ")[0]));
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
@@ -105,7 +105,7 @@ function unmute(member) {
         bot.channels.get(logChannel).send("Member " + member.user.username + " (id " + member.user.id + ") has left before scheduled unban time.");
         return;
     }
-    member.removeRole(message.guild.roles.get(muteRole));
+    member.removeRole(member.guild.roles.get(muteRole));
     bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
 }
 
@@ -170,8 +170,11 @@ function oko(message, messageAuthor) {
 
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
+
     if (message.guild == null || message.guild.id != guildID) {return;}
+
     var messageAuthor = await message.guild.fetchMember(message.author);
+
     await oko(message, messageAuthor);
 
     await badWordsReporter(message, messageAuthor, false);
