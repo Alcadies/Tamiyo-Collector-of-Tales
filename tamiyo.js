@@ -36,7 +36,7 @@ bot.on("ready", async function() {
             var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
             bot.channels.get("531433553225842700").send(test);
         }
-        var mutedOne = await bot.guilds.get(guildID).member(bot.fetchUser(str.split(" ")[0]));
+        var mutedOne = await bot.guilds.get(guildID).fetchMember(bot.fetchUser(str.split(" ")[0]));
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
