@@ -31,7 +31,9 @@ bot.on("ready", async function() {
     var str = logMessage.content;
     while (str.includes("\n")) {
         str = str.slice(str.indexOf("\n"));
-        bot.channels.get("531433553225842700").send(str.split(" ")[0]);
+        var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
+        if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
+        else { bot.channels.get("531433553225842700").send(test); }
         var mutedOne = await bot.guilds.get(guildID).fetchMember(bot.fetchUser(str.split(" ")[0]));
         var d = new Date();
         var timer = 0;
@@ -102,7 +104,7 @@ function unmute(member) {
     var newLog = logs.slice(0, logs.indexOf(member.user.id.toString()) - 2) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
     logMessage.edit(newLog);
     if (member.deleted) {
-        bot.channels.get(logChannel).send("Member " + member.user.username + " (id " + member.user.id + ") has left before scheduled unban time.");
+        bot.channels.get(logChannel).send("Member " + member.user.username + " (id " + member.user.id + ") has left before scheduled unmute time.");
         return;
     }
     member.removeRole(member.guild.roles.get(muteRole));
