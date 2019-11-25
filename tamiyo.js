@@ -29,9 +29,9 @@ bot.on("ready", async function() {
     logger.info(bot.user.username + " - (" + bot.user.id + ")")
     logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
     var str = logMessage.content;
-    while (str.includes("\n")) {
+    while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
-        bot.channels.get("531433553225842700").send("```" + str + " is the string.```");
+        bot.channels.get("531433553225842700").send("```" + str.indexOf(" ") + " is the string.```");
         /*if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
         else { 
             var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
@@ -175,6 +175,8 @@ function oko(message, messageAuthor) {
 
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
+
+    if (lowmessage == ",fix" && message.channel.id == "531433553225842700") { logMessage.edit(logMessage.content + "\n"); }
 
     if (message.guild == null || message.guild.id != guildID) {return;}
 
