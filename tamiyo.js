@@ -31,7 +31,14 @@ bot.on("ready", async function() {
     var str = logMessage.content;
     while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
-        bot.channels.get("531433553225842700").send("```" + str + " is the string with index " + str.indexOf("\n") + ".```");
+        var timeIn = 0;
+        if (str.includes("\n")) {
+            timeIn = str.split(" ")[1];
+        }
+        else {
+            timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
+        }
+        bot.channels.get("531433553225842700").send("```" + str + " is the string with timeIn " + timeIn + " and ID " + str.split(" ")[0] + ".```");
         /*if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
         else { 
             var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
