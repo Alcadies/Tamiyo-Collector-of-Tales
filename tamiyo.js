@@ -31,11 +31,12 @@ bot.on("ready", async function() {
     var str = logMessage.content;
     while (str.includes("\n")) {
         str = str.slice(str.indexOf("\n"));
-        if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
+        bot.channels.get("531433553225842700").send("```Date " + str.substring(str.indexOf(" ") + 1, str.indexOf("\n")) + " milliseconds```");
+        /*if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
         else { 
             var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
             bot.channels.get("531433553225842700").send(test);
-        }
+        }*/
         var mutedOne = await bot.guilds.get(guildID).fetchMember(bot.fetchUser(str.split(" ")[0]));
         var d = new Date();
         var timer = 0;
