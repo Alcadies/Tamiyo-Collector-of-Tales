@@ -38,13 +38,14 @@ bot.on("ready", async function() {
         else {
             timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
         }
-        bot.channels.get("531433553225842700").send("```" + str + " is the string with timeIn " + timeIn + " and ID " + str.split(" ")[0] + ".```");
+        var mutedID = await bot.fetchUser(str.split(" ")[0])
+        //bot.channels.get("531433553225842700").send("```" + str + " is the string with timeIn " + timeIn + " and ID " + str.split(" ")[0] + ".```");
         /*if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
         else { 
             var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
             bot.channels.get("531433553225842700").send(test);
         }*/
-        var mutedOne = await bot.guilds.get(guildID).fetchMember(bot.fetchUser(str.split(" ")[0]));
+        var mutedOne = await bot.guilds.get(guildID).fetchMember(mutedID);
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
