@@ -32,7 +32,7 @@ bot.on("ready", async function() {
     while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
         var timeIn = 0;
-        if (str.includes("\n")) {
+        if (!str.includes("\n")) {
             timeIn = str.split(" ")[1];
         }
         else {
