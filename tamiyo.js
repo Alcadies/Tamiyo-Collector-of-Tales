@@ -30,8 +30,8 @@ bot.on("ready", async function() {
     logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
     var str = logMessage.content;
     while (str.includes("\n")) {
-        str = str.slice(str.indexOf("\n") + 2);
-        bot.channels.get("531433553225842700").send("```Date " + str.substring(str.indexOf(" ") + 1, str.indexOf("\n")) + " milliseconds```");
+        str = str.slice(str.indexOf("\n") + 1);
+        bot.channels.get("531433553225842700").send("```" + str + " is the string.```");
         /*if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
         else { 
             var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
