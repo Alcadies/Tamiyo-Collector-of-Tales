@@ -38,13 +38,7 @@ bot.on("ready", async function() {
         else {
             timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
         }
-        var mutedID = await bot.fetchUser(str.split(" ")[0])
-        //bot.channels.get("531433553225842700").send("```" + str + " is the string with timeIn " + timeIn + " and ID " + str.split(" ")[0] + ".```");
-        /*if (isNaN(str.substring(str.indexOf(" ") + 1, str.indexOf("\n")))) { bot.channels.get("531433553225842700").send("Not a valid date"); }
-        else { 
-            var test = new Date(parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))));
-            bot.channels.get("531433553225842700").send(test);
-        }*/
+        var mutedID = await bot.fetchUser(str.split(" ")[0]);
         var mutedOne = await bot.guilds.get(guildID).fetchMember(mutedID);
         var d = new Date();
         var timer = 0;
@@ -97,6 +91,11 @@ function mute(message, messageAuthor) {
                     setTimeout(function () {
                         unmute(message.mentions.members.first());
                     }, lowmessage.split(" ")[1] * 3600000)
+                    if (logMessage.content.includes(message.mentions.members.first().id)) {
+                        var logs = logMessage.content;
+                        var newLog = logs.slice(0, logs.indexOf(member.user.id.toString()) - 2) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
+                        logMessage.edit(newLog);
+                    }
                     d = new Date();
                     unmuteTime = lowmessage.split(" ")[1] * 3600000 + d.getTime();
                     logMessage.edit(logMessage.content + "\n" + message.mentions.members.first().id + " " + unmuteTime);
@@ -183,8 +182,6 @@ function oko(message, messageAuthor) {
 
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
-
-    //if (lowmessage == ",fix" && message.channel.id == "531433553225842700") { logMessage.edit(logMessage.content + "\n"); }
 
     if (message.guild == null || message.guild.id != guildID) {return;}
 
