@@ -93,7 +93,7 @@ function mute(message, messageAuthor) {
                     }, lowmessage.split(" ")[1] * 3600000)
                     if (logMessage.content.includes(message.mentions.members.first().id)) {
                         var logs = logMessage.content;
-                        var newLog = logs.slice(0, logs.indexOf(member.user.id.toString()) - 2) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
+                        var newLog = logs.slice(0, logs.indexOf(message.mentions.members.first().id.toString()) - 2) + logs.slice(logs.indexOf(message.mentions.members.first().id.toString()) + message.mentions.members.first().id.toString().length + 14);
                         logMessage.edit(newLog);
                     }
                     d = new Date();
