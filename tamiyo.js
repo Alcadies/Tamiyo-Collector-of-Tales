@@ -45,7 +45,7 @@ bot.on("ready", async function() {
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
         else { timer = parseInt(str.substring(str.indexOf(" "))); }
         timer -= d.getTime();
-        if (mutedOne != null) {
+        if (mutedOne != null && str.indexOf(mutedID) == str.lastIndexOf(mutedID)) {
             if (timer <= 0) { unmute(mutedOne); }
             else {
                 setTimeout(function () {
@@ -55,7 +55,7 @@ bot.on("ready", async function() {
         }
         else {
             var logs = logMessage.content;
-            var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 2) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
+            var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
             logMessage.edit(newLog);
         }
     }
@@ -93,7 +93,7 @@ function mute(message, messageAuthor) {
                     }, lowmessage.split(" ")[1] * 3600000)
                     if (logMessage.content.includes(message.mentions.members.first().id)) {
                         var logs = logMessage.content;
-                        var newLog = logs.slice(0, logs.indexOf(message.mentions.members.first().id.toString()) - 2) + logs.slice(logs.indexOf(message.mentions.members.first().id.toString()) + message.mentions.members.first().id.toString().length + 14);
+                        var newLog = logs.slice(0, logs.indexOf(message.mentions.members.first().id.toString()) - 1) + logs.slice(logs.indexOf(message.mentions.members.first().id.toString()) + message.mentions.members.first().id.toString().length + 14);
                         logMessage.edit(newLog);
                     }
                     d = new Date();
@@ -111,7 +111,7 @@ function mute(message, messageAuthor) {
 
 function unmute(member) {
     var logs = logMessage.content;
-    var newLog = logs.slice(0, logs.indexOf(member.user.id.toString()) - 2) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
+    var newLog = logs.slice(0, logs.indexOf(member.user.id.toString()) - 1) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
     logMessage.edit(newLog);
     if (member.deleted) {
         bot.channels.get(logChannel).send("Member " + member.user.username + " (id " + member.user.id + ") has left before scheduled unmute time.");
