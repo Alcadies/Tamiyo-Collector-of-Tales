@@ -63,6 +63,7 @@ bot.on("ready", async function() {
 })
 
 async function badWordsReporter(message, messageAuthor, isEdit) {
+    if (message.channel.id == "407401913253101601") { return; }
     var badWordsLog = "";
     for (let i = 0; i < badWords.length; i++) {
         lowmessage = lowmessage.replace(/:gwomogay:/g, "");
