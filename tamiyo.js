@@ -60,8 +60,25 @@ bot.on("ready", async function() {
         }
     }
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
-    bot.user.setActivity("Always Watching in Shadows Over Innistrad limited");
+    playingMessage();
 })
+
+function playingMessage() {
+    let formatNum = Math.floor(Math.random() * 7)
+    switch (formatNum) {
+        case 0: format = "Shadows Over Innistrad limited"; break;
+        case 1: format = "Eldritch Moon limited"; break;
+        case 2: format = "Pioneer"; break;
+        case 3: format = "Modern"; break;
+        case 4: format = "Legacy"; break;
+        case 5: format = "Vintage"; break;
+        case 6: format = "Cube"; break;
+    }
+    bot.user.setActivity("Always Watching in " + format);
+    setTimeout(function() {
+        playingMessage();
+    }, 720000)
+}
 
 async function badWordsReporter(message, messageAuthor, isEdit) {
     if (message.channel.id == "407401913253101601") { return; }
