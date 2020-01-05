@@ -60,6 +60,7 @@ bot.on("ready", async function() {
         }
     }
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
+    bot.user.setActivity("Always Watching in Shadows Over Innistrad limited");
 })
 
 async function badWordsReporter(message, messageAuthor, isEdit) {
@@ -175,10 +176,11 @@ function role(message, messageAuthor) {
     }
 }
 
-function oko(message, messageAuthor) {
-    if (lowmessage.length == process.env.elk && message.guild.roles.has(elkRole) && !messageAuthor.roles.has(elkRole)) {
-        messageAuthor.addRole(message.guild.roles.get(elkRole));
-    }
+function links(message, messageAuthor) {
+    if (lowmessage.indexOf(",unstable") == 0) { message.channel.send("Unstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06"); }
+    if (lowmessage.indexOf(",unhinged") == 0) { message.channel.send("Unhinged FAQTIWDAWCC: http://www.wizards.com/default.asp?x=magic%2Ffaq%2Funhinged"); }
+    if (lowmessage.indexOf(",unglued") == 0) { message.channel.send("Unglued QAS (archive): http://archive.is/20121210142816/www.vic.com/~dbd/NFd/faqs/Unglued.QAS"); }
+    if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash.")}
 }
 
 bot.on("message", async function(message) {
@@ -188,7 +190,7 @@ bot.on("message", async function(message) {
 
     var messageAuthor = await message.guild.fetchMember(message.author);
 
-    await oko(message, messageAuthor);
+    await links(message, messageAuthor);
 
     await badWordsReporter(message, messageAuthor, false);
 
