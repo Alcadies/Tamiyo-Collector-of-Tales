@@ -64,7 +64,7 @@ bot.on("ready", async function() {
 })
 
 function playingMessage() {
-    let formatNum = Math.floor(Math.random() * 7)
+    let formatNum = Math.floor(Math.random() * 9)
     switch (formatNum) {
         case 0: format = "Shadows Over Innistrad limited"; break;
         case 1: format = "Eldritch Moon limited"; break;
@@ -73,6 +73,8 @@ function playingMessage() {
         case 4: format = "Legacy"; break;
         case 5: format = "Vintage"; break;
         case 6: format = "Cube"; break;
+        case 7: format = "Commander"; break;
+        case 8: format = "Canadian Highlander"; break;
     }
     bot.user.setActivity("Always Watching in " + format);
     setTimeout(function() {
@@ -200,6 +202,16 @@ function links(message, messageAuthor) {
     if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash.")}
 }
 
+function raidBan(message, messageAuthor) {
+    if (message.mentions.users.size > 20) {
+        messageAuthor.ban({
+            days: 1,
+            reason: "Mention spam"
+        });
+        bot.channels.get(logChannel).send(messageAuthor.displayName + " (id " + messageAuthor.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
+    }
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -218,6 +230,8 @@ bot.on("message", async function(message) {
     await ban(message, messageAuthor);
 
     await role(message, messageAuthor);
+
+    await raidBan(message, messageAuthor);
 
     if (messageAuthor.roles.has(modRole) && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
         unmute(message.mentions.members.first());
