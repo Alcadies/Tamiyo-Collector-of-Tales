@@ -203,7 +203,7 @@ function links(message, messageAuthor) {
 }
 
 function raidBan(message, messageAuthor) {
-    if (message.mentions.users.size > 20) {
+    if (messageAuthor.roles.size == 1 && message.mentions.users.size > 20) {
         messageAuthor.ban({
             days: 1,
             reason: "Mention spam"
