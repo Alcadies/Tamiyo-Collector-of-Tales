@@ -60,7 +60,7 @@ bot.on("ready", async function() {
         }
     }
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
-    playingMessage();
+    watchingMessage();
 })
 
 function playingMessage() {
@@ -78,7 +78,61 @@ function playingMessage() {
     }
     bot.user.setActivity("Always Watching in " + format);
     setTimeout(function() {
-        playingMessage();
+        watchingMessage();
+    }, 720000)
+}
+
+function watchingMessage() {
+    let watchingType = Math.floor(Math.random() * 44)
+    switch (watchingType) {
+        case 0: observing = "Everything"; break;
+        case 1: observing = "Innistrad"; break;
+        case 2: observing = "Ravnica"; break;
+        case 3: observing = "Dominaria"; break;
+        case 4: observing = "Mirrodin"; break;
+        case 5: observing = "Kamigawa"; break;
+        case 6: observing = "Ixalan"; break;
+        case 7: observing = "Alara"; break;
+        case 8: observing = "Lorwyn"; break;
+        case 9: observing = "Zendikar"; break;
+        case 10: observing = "Mercadia"; break;
+        case 11: observing = "Rath"; break;
+        case 12: observing = "Theros"; break;
+        case 13: observing = "Ikoria"; break;
+        case 14: observing = "Kaladesh"; break;
+        case 15: observing = "Regatha"; break;
+        case 16: observing = "Bant"; break;
+        case 17: observing = "Naya"; break;
+        case 18: observing = "Esper"; break;
+        case 19: observing = "Jund"; break;
+        case 20: observing = "Grixis"; break;
+        case 21: observing = "Equilor"; break;
+        case 22: observing = "Shandalar"; break;
+        case 23: observing = "Eldraine"; break;
+        case 24: observing = "Amonkhet"; break;
+        case 25: observing = "Magic & Chill"; break;
+        case 26: observing = "You"; break;
+        case 27: observing = "The Multiverse"; break;
+        case 28: observing = "a Magic: the Gathering tournament"; break;
+        case 29: observing = "Vryn"; break;
+        case 30: observing = "Phyrexia"; break;
+        case 31: observing = "New Phyrexia"; break;
+        case 32: observing = "Rabiah"; break;
+        case 33: observing = "Segovia"; break;
+        case 34: observing = "Serra's Realm"; break;
+        case 35: observing = "Ulgrotha"; break;
+        case 36: observing = "Meditation Plane"; break;
+        case 37: observing = "Shadowmoor"; break;
+        case 38: observing = "Fiora"; break;
+        case 39: observing = "Kaldheim"; break;
+        case 40: observing = "Kylem"; break;
+        case 41: observing = "Bablovia"; break;
+        case 42: observing = "Skalla"; break;
+        case 43: playingMessage(); return;
+    }
+    bot.user.setActivity(observing, { type: 'WATCHING'});
+    setTimeout(function() {
+        watchingMessage();
     }, 720000)
 }
 
