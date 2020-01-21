@@ -65,6 +65,7 @@ bot.on("ready", async function() {
 
 function playingMessage() {
     let formatNum = Math.floor(Math.random() * 9)
+    let duration = Math.floor(Math.random() * 1080000)
     switch (formatNum) {
         case 0: format = "Shadows Over Innistrad limited"; break;
         case 1: format = "Eldritch Moon limited"; break;
@@ -79,11 +80,12 @@ function playingMessage() {
     bot.user.setActivity("Always Watching in " + format);
     setTimeout(function() {
         watchingMessage();
-    }, 720000)
+    }, duration)
 }
 
 function watchingMessage() {
     let watchingType = Math.floor(Math.random() * 44)
+    let duration = Math.floor(Math.random() * 900000)
     switch (watchingType) {
         case 0: observing = "Everything"; break;
         case 1: observing = "Innistrad"; break;
@@ -133,7 +135,7 @@ function watchingMessage() {
     bot.user.setActivity(observing, { type: 'WATCHING'});
     setTimeout(function() {
         watchingMessage();
-    }, 720000)
+    }, duration)
 }
 
 async function badWordsReporter(message, messageAuthor, isEdit) {
