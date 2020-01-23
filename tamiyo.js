@@ -85,7 +85,7 @@ function playingMessage() {
 
 function watchingMessage() {
     let watchingType = Math.floor(Math.random() * 44)
-    let duration = Math.floor(Math.random() * 900000)
+    let duration = Math.floor(Math.random() * 600000)
     switch (watchingType) {
         case 0: observing = "Everything"; break;
         case 1: observing = "Innistrad"; break;
@@ -160,25 +160,34 @@ async function badWordsReporter(message, messageAuthor, isEdit) {
     if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
 }
 
-function mute(message, messageAuthor) {
+async function mute(message, messageAuthor) {
     if (lowmessage.indexOf(",mute") == 0) {
         if (messageAuthor.roles.has(modRole)) {
-            if (message.mentions.members.length != 0) {
-                if (!isNaN(lowmessage.split(" ")[1])) {
-                    setTimeout(function () {
-                        unmute(message.mentions.members.first());
-                    }, lowmessage.split(" ")[1] * 3600000)
-                    if (logMessage.content.includes(message.mentions.members.first().id)) {
-                        var logs = logMessage.content;
-                        var newLog = logs.slice(0, logs.indexOf(message.mentions.members.first().id.toString()) - 1) + logs.slice(logs.indexOf(message.mentions.members.first().id.toString()) + message.mentions.members.first().id.toString().length + 14);
-                        logMessage.edit(newLog);
+            if (message.mentions.users.size != 0) {
+                message.mentions.users.forEach(function(value, key) {
+                    var muteMember = message.guild.fetchMember(value)
+                    if (!isNaN(lowmessage.split(" ")[1])) {
+                        setTimeout(function () {
+                            unmute(muteMember);
+                        }, lowmessage.split(" ")[1] * 3600000)
+                        if (logMessage.content.includes(key)) {
+                            var logs = logMessage.content;
+                            var newLog = logs.slice(0, logs.indexOf(key) - 1) + logs.slice(logs.indexOf(key) + key.length + 14);
+                            logMessage.edit(newLog);
+                        }
+                        d = new Date();
+                        unmuteTime = lowmessage.split(" ")[1] * 3600000 + d.getTime();
+                        logMessage.edit(logMessage.content + "\n" + key + " " + unmuteTime);
                     }
-                    d = new Date();
-                    unmuteTime = lowmessage.split(" ")[1] * 3600000 + d.getTime();
-                    logMessage.edit(logMessage.content + "\n" + message.mentions.members.first().id + " " + unmuteTime);
+                    value.addRole(message.guild.roles.get(muteRole));
+                    message.channel.send("Member " + value.displayName + " (id " + key + ") muted for " + lowmessage.split(" ")[1] + " hours.");
+                    var muteMessage = "You have been muted for " + lowmessage.split(" ")[1] + " hours";
+                    if (message.content.includes("Reason: ")) { muteMessage += " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
+                    else if (message.content.includes("reason: ")) { muteMessage += " with reason \"" + message.content.split("reason: ")[1] + "\""; }
+                    else if (message.content.includes("REASON: ")) { muteMessage += " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
+                    else { muteMessage += "."; }
+                    value.send(muteMessage);
                 }
-                message.mentions.members.first().addRole(message.guild.roles.get(muteRole));
-                message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") muted for " + lowmessage.split(" ")[1] + " hours.");
             }
             else { message.channel.send("Please include a mention for the person you would like to mute."); }
         }
@@ -268,10 +277,83 @@ function raidBan(message, messageAuthor) {
     }
 }
 
+function dmReporter(message) {
+    var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
+    if (messageMember.roles.has(muteRole)) {
+        bot.channels.get(logChannel).send("Muted member " + messageMember.displayName + " (id " + messageMember.id + ") said this in DM: ```" + message.cleanContent + "```");
+    }
+}
+
+async function deleteReporter(message) {
+    if (message.guild === null) {return;}
+    if (!message.guild.available) {return;}
+    if (message.guild.id != guildID) {return;}
+    var channelToNotify = logChannel;
+    if (message.channel.id == logsChannel && message.author.id == "657605267709493265") {
+        await message.channel.send("One of my logs was deleted from here.");
+        return;
+    }
+    const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first())
+    let user = ""
+    var botDeleterNotFound = false;
+    if (entry.extra.channel.id === message.channel.id
+      && (entry.target.id === message.author.id)
+      && (entry.createdTimestamp > (Date.now() - 5000))
+      && (entry.extra.count >= 1)) {
+        user = entry.executor.username;
+    } else {
+        user = message.author.username;
+        botDeleterNotFound = true;
+    }
+    var deleteLog = ""
+    if (message.cleanContent != "") {
+        deleteLog += "The following";
+    } else {
+        deleteLog += "A textless";
+    }
+    deleteLog += " message by ";
+    deleteLog += message.author.username;
+    deleteLog += " (id ";
+    deleteLog += message.author.id;
+    deleteLog += ")";
+    var attachmessage = "";
+    var attaches = message.attachments.array();
+    var attachnames = "";
+    for (i = 0; i < attaches.length; i++) {
+        if (i == attaches.length -1 && i != 0) {attachnames += "and ";}
+        attachnames += attaches[i].proxyURL
+        if (i != attaches.length -1 && attaches.length != 2) {attachnames += ", ";}
+        if (i != attaches.length -1 && attaches.length == 2) {attachnames += " ";}
+    }
+    if (attaches.length > 1) {attachmessage = " with attachments " + attachnames;}
+    if (attaches.length == 1) {attachmessage = " with an attachment " + attachnames;}
+    deleteLog += attachmessage;
+    deleteLog += " was deleted from <#";
+    deleteLog += message.channel.id;
+    if (message.author.bot && botDeleterNotFound) {
+        deleteLog += ">"
+    } else {
+        deleteLog += "> by ";
+        deleteLog += user;
+    }
+    if (message.cleanContent != "") {
+        deleteLog += ": ```";
+        deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
+        deleteLog += "```";
+    }
+    bot.channels.get(channelToNotify).send(deleteLog);
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
-    if (message.guild == null || message.guild.id != guildID) {return;}
+    if (message.guild == null) {
+        await dmReporter(message);
+
+        return;
+    }
+
+    if (message.guild.id != guildID) {return;}
 
     var messageAuthor = await message.guild.fetchMember(message.author);
 
@@ -320,6 +402,16 @@ bot.on("messageReactionRemove", function(messageReaction, user) {
         messageReaction.message.channel.send("You have un-reacted to this with ```" + messageReaction.emoji.name + "```");
         if (messageReaction.emoji.name == "🙉") { messageReaction.message.channel.send("No evil shall be heard."); }
     }
+})
+
+bot.on("messageDelete", async function(message) {
+    deleteReporter(message);
+})
+
+bot.on("messageDeleteBulk", async function(messages) {
+    messages.forEach(async function(value, key) {
+        await deleteReporter(value);
+    });
 })
 
 bot.login(process.env.token)
