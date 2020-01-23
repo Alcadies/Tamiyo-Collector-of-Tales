@@ -187,7 +187,7 @@ async function mute(message, messageAuthor) {
                     else if (message.content.includes("REASON: ")) { muteMessage += " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
                     else { muteMessage += "."; }
                     value.send(muteMessage);
-                }
+                })
             }
             else { message.channel.send("Please include a mention for the person you would like to mute."); }
         }
@@ -288,6 +288,7 @@ async function deleteReporter(message) {
     if (message.guild === null) {return;}
     if (!message.guild.available) {return;}
     if (message.guild.id != guildID) {return;}
+    if (message.author.bot) {return;}
     var channelToNotify = logChannel;
     if (message.channel.id == logsChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
