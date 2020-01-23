@@ -277,7 +277,7 @@ function raidBan(message, messageAuthor) {
     }
 }
 
-function dmReporter(message) {
+async function dmReporter(message) {
     var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
     if (messageMember.roles.has(muteRole)) {
         bot.channels.get(logChannel).send("Muted member " + messageMember.displayName + " (id " + messageMember.id + ") said this in DM: ```" + message.cleanContent + "```");
@@ -290,7 +290,7 @@ async function deleteReporter(message) {
     if (message.guild.id != guildID) {return;}
     if (message.author.bot) {return;}
     var channelToNotify = logChannel;
-    if (message.channel.id == logsChannel && message.author.id == "657605267709493265") {
+    if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
         return;
     }
