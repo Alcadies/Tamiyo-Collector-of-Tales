@@ -197,7 +197,7 @@ async function mute(message, messageAuthor) {
 
 function unmute(member) {
     var logs = logMessage.content;
-    var newLog = logs.slice(0, logs.indexOf(member.user.id.toString()) - 1) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
+    var newLog = logs.slice(0, logs.indexOf(member.user.id.toString())) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
     logMessage.edit(newLog);
     if (member.deleted) {
         bot.channels.get(logChannel).send("Member " + member.user.username + " (id " + member.user.id + ") has left before scheduled unmute time.");
@@ -205,6 +205,12 @@ function unmute(member) {
     }
     member.removeRole(member.guild.roles.get(muteRole));
     bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
+}
+
+function manualReset(messageAuthor) {
+    if (lowmessage.indexOf(",resetLog") == 0 && (messageAuthor.id == "135999597947387904" || messageAuthor.roles.has(modRole))) {
+        logMessage.edit("Muted members and unmute times:");
+    }
 }
 
 function kick(message, messageAuthor) {
@@ -289,6 +295,7 @@ async function deleteReporter(message) {
     if (!message.guild.available) {return;}
     if (message.guild.id != guildID) {return;}
     if (message.author.bot) {return;}
+    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card")) {return;}
     var channelToNotify = logChannel;
     if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
@@ -296,7 +303,6 @@ async function deleteReporter(message) {
     }
     const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first())
     let user = ""
-    var botDeleterNotFound = false;
     if (entry.extra.channel.id === message.channel.id
       && (entry.target.id === message.author.id)
       && (entry.createdTimestamp > (Date.now() - 5000))
@@ -304,7 +310,6 @@ async function deleteReporter(message) {
         user = entry.executor.username;
     } else {
         user = message.author.username;
-        botDeleterNotFound = true;
     }
     var deleteLog = ""
     if (message.cleanContent != "") {
@@ -331,12 +336,8 @@ async function deleteReporter(message) {
     deleteLog += attachmessage;
     deleteLog += " was deleted from <#";
     deleteLog += message.channel.id;
-    if (message.author.bot && botDeleterNotFound) {
-        deleteLog += ">"
-    } else {
-        deleteLog += "> by ";
-        deleteLog += user;
-    }
+    deleteLog += "> by ";
+    deleteLog += user;
     if (message.cleanContent != "") {
         deleteLog += ": ```";
         deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
@@ -372,8 +373,10 @@ bot.on("message", async function(message) {
 
     await raidBan(message, messageAuthor);
 
+    await manualReset(messageAuthor);
+
     if (messageAuthor.roles.has(modRole) && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
-        unmute(message.mentions.members.first());
+        await unmute(message.mentions.members.first());
     }
 })
 
@@ -387,9 +390,9 @@ bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); } 
 })
 
-bot.on("guildMemberUpdate", function(oldMember, newMember) {
+/*bot.on("guildMemberUpdate", function(oldMember, newMember) {
     if (newMember.roles.has(muteRole) && newMember.roles.has(leakRole)) { newMember.removeRole(leakRole); }
-})
+})*/
 
 bot.on("messageReactionAdd", function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
