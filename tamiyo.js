@@ -61,6 +61,7 @@ bot.on("ready", async function() {
     }
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
+    bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
 })
 
 function playingMessage() {
@@ -348,11 +349,29 @@ async function deleteReporter(message) {
 }
 
 async function offlineChecker(channel) {
-    var judgebot = await bots.fetchUser("240537940378386442");
-    var scryfall = await bots.fetchUser("268547439714238465");
+    var judgebot = await bot.fetchUser("240537940378386442");
+    var scryfall = await bot.fetchUser("268547439714238465");
     if (judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help"))) {
         if (scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].");
+        }
+        else {
+            channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.");
+            return;
+        }
+    }
+    if (judgebot.presence.status == "offline" && lowmessage.includes("!legality")) {
+        if (scryfall.presence.status != "offline") {
+            channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[#`CARDNAME`]].");
+        }
+        else {
+            channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.");
+            return;
+        }
+    }
+    if (judgebot.presence.status == "offline" && lowmessage.includes("!price")) {
+        if (scryfall.presence.status != "offline") {
+            channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[$`CARDNAME`]] or [[$`CARDNAME`|`SET`]].");
         }
         else {
             channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.");
