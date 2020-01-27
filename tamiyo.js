@@ -347,6 +347,28 @@ async function deleteReporter(message) {
     bot.channels.get(channelToNotify).send(deleteLog);
 }
 
+async function offlineChecker(channel) {
+    var judgebot = await bots.fetchUser("240537940378386442");
+    var scryfall = await bots.fetchUser("268547439714238465");
+    if (judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help"))) {
+        if (scryfall.presence.status != "offline") {
+            channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].");
+        }
+        else {
+            channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.");
+            return;
+        }
+    }
+    if (scryfall.presence.status == "offline" && lowmessage.includes("[[") && lowmessage.includes("]]")) {
+        if (judgebot.presence.status != "offline") {
+            channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !card `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.")
+        }
+        else {
+            channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.")
+        }
+    }
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -375,6 +397,8 @@ bot.on("message", async function(message) {
     await raidBan(message, messageAuthor);
 
     await manualReset(messageAuthor);
+
+    await offlineChecker(message.channel);
 
     if (messageAuthor.roles.has(modRole) && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
         await unmute(message.mentions.members.first());
