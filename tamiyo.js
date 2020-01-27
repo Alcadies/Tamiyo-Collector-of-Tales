@@ -295,7 +295,8 @@ async function deleteReporter(message) {
     if (!message.guild.available) {return;}
     if (message.guild.id != guildID) {return;}
     if (message.author.bot) {return;}
-    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card")) {return;}
+    if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
+    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg")) {return;}
     var channelToNotify = logChannel;
     if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
