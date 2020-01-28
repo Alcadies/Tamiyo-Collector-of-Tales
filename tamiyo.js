@@ -404,6 +404,7 @@ function help(channel, messageAuthor) {
 }
 
 bot.on("message", async function(message) {
+    if (message.author.bot) {return;}
     lowmessage = message.content.toLowerCase();
 
     if (message.guild == null) {
