@@ -11,7 +11,7 @@ logger.add(logger.transports.Console, {
 logger.level = "debug"
 // Initialize Discord Bot
 var bot = new Discord.Client({ disableEveryone: true })
-var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg"];
+var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg", "💣"];
 var lowmessage = "";
 var logChannel = "633429050089799687" /*"531433553225842700"*/;
 var modRole = "407400920746426368" /*"606659573159428169"*/;
@@ -21,6 +21,7 @@ var leakRole = "638981519116861442";
 var roleMessageID = "639173241679904771";
 var roleChannelID = "407401913253101601";
 var elkRole = "640599175326728203";
+var modChannel = "407401913253101601";
 var logMessage = "";
 
 bot.on("ready", async function() {
@@ -140,7 +141,7 @@ function watchingMessage() {
 }
 
 async function badWordsReporter(message, messageAuthor, isEdit) {
-    if (message.channel.id == "407401913253101601") { return; }
+    if (message.channel.id == modChannel) { return; }
     var badWordsLog = "";
     for (let i = 0; i < badWords.length; i++) {
         lowmessage = lowmessage.replace(/:gwomogay:/g, "");
@@ -353,7 +354,7 @@ async function offlineChecker(channel) {
     var scryfall = await bot.fetchUser("268547439714238465");
     if (judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help"))) {
         if (scryfall.presence.status != "offline") {
-            channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].");
+            channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].  You can also do [[!`CARDNAME`]] or [[!`CARDNAME`|`SET`]] for just the image.");
         }
         else {
             channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.");
@@ -388,6 +389,20 @@ async function offlineChecker(channel) {
     }
 }
 
+function help(channel, messageAuthor) {
+    if (lowmessage.indexOf(",help") == 0)
+        var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, or `,unstable`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI will give or remove the leak role with `,leak`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.");
+        if (messageAuthor.roles.has(modRole) && (channel.id == modChannel || lowmessage.includes("full")) {
+            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me the reason \"Imprisoning Emrakul\".\nBan or unmute: Just send `,ban @MENTION` or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them." + helpMessage;
+        }
+        else {
+            helpMessage += "\nI assist the moderators with various things.";
+        }
+        helpMessage += "\n\nAll commands are case insensitive. If you have suggestions for new or improved commands, please @ Ash K. with them."
+        channel.send(helpMessage);
+    }
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -419,6 +434,8 @@ bot.on("message", async function(message) {
 
     await offlineChecker(message.channel);
 
+    await help(message.channel, messageAuthor);
+
     if (messageAuthor.roles.has(modRole) && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
         await unmute(message.mentions.members.first());
     }
@@ -432,6 +449,14 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); } 
+})
+
+bot.on("guildMemberRemove", function(member) {
+    if (member.roles.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
+        var d = new Date();
+        var unmuteTime = d.getTime() + 604800000;
+        logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
+    }
 })
 
 /*bot.on("guildMemberUpdate", function(oldMember, newMember) {
