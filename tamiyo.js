@@ -162,9 +162,9 @@ async function badWordsReporter(message, messageAuthor, isEdit) {
     if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
 }
 
-async function mute(message, messageAuthor) {
+async function mute(message, isMod) {
     if (lowmessage.indexOf(",mute") == 0) {
-        if (messageAuthor.roles.has(modRole)) {
+        if (isMod) {
             if (message.mentions.users.size != 0) {
                 message.mentions.users.forEach(function(value, key) {
                     var muteMember = message.guild.fetchMember(value)
@@ -181,7 +181,7 @@ async function mute(message, messageAuthor) {
                         unmuteTime = lowmessage.split(" ")[1] * 3600000 + d.getTime();
                         logMessage.edit(logMessage.content + "\n" + key + " " + unmuteTime);
                     }
-                    value.addRole(message.guild.roles.get(muteRole));
+                    muteMember.addRole(message.guild.roles.get(muteRole));
                     message.channel.send("Member " + value.displayName + " (id " + key + ") muted for " + lowmessage.split(" ")[1] + " hours.");
                     var muteMessage = "You have been muted for " + lowmessage.split(" ")[1] + " hours";
                     if (message.content.includes("Reason: ")) { muteMessage += " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
@@ -209,15 +209,15 @@ function unmute(member) {
     bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
 }
 
-function manualReset(messageAuthor) {
-    if (lowmessage.indexOf(",resetLog") == 0 && (messageAuthor.id == "135999597947387904" || messageAuthor.roles.has(modRole))) {
+function manualReset(isMod) {
+    if (lowmessage.indexOf(",resetLog") == 0 && isMod) {
         logMessage.edit("Muted members and unmute times:");
     }
 }
 
-function kick(message, messageAuthor) {
+function kick(message, isMod) {
     if (lowmessage.indexOf(",kick") == 0) {
-        if (messageAuthor.roles.has(modRole)) {
+        if (isMod) {
             if (message.mentions.members.first().roles.has(modRole)) {
                 message.channel.send("I'm sorry, I won't kick another mod or admin.")
             }
@@ -234,9 +234,9 @@ function kick(message, messageAuthor) {
     }
 }
 
-function ban(message, messageAuthor) {
+function ban(message, isMod) {
     if (lowmessage.indexOf(",ban") == 0) {
-        if (messageAuthor.roles.has(modRole)) {
+        if (isMod) {
             if (message.mentions.members.first().roles.has(modRole)) {
                 message.channel.send("I'm sorry, I won't ban another mod or admin.")
             }
@@ -268,7 +268,7 @@ function role(message, messageAuthor) {
     }
 }
 
-function links(message, messageAuthor) {
+function links(message) {
     if (lowmessage.indexOf(",unstable") == 0) { message.channel.send("Unstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06"); }
     if (lowmessage.indexOf(",unhinged") == 0) { message.channel.send("Unhinged FAQTIWDAWCC: http://www.wizards.com/default.asp?x=magic%2Ffaq%2Funhinged"); }
     if (lowmessage.indexOf(",unglued") == 0) { message.channel.send("Unglued QAS (archive): http://archive.is/20121210142816/www.vic.com/~dbd/NFd/faqs/Unglued.QAS"); }
@@ -361,7 +361,7 @@ async function offlineChecker(channel) {
             return;
         }
     }
-    if (judgebot.presence.status == "offline" && lowmessage.includes("!legality")) {
+    if (judgebot.presence.status == "offline" && lowmessage.includes("!legal")) {
         if (scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[#`CARDNAME`]].");
         }
@@ -379,6 +379,15 @@ async function offlineChecker(channel) {
             return;
         }
     }
+    if (judgebot.presence.status == "offline" && lowmessage.includes("!rul")) {
+        if (scryfall.presence.status != "offline") {
+            channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[?`CARDNAME`]].");
+        }
+        else {
+            channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.");
+            return;
+        }
+    }
     if (scryfall.presence.status == "offline" && lowmessage.includes("[[") && lowmessage.includes("]]")) {
         if (judgebot.presence.status != "offline") {
             channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !card `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.")
@@ -389,11 +398,11 @@ async function offlineChecker(channel) {
     }
 }
 
-function help(channel, messageAuthor) {
+function help(channel, isMod) {
     if (lowmessage.indexOf(",help") == 0) {
         var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, or `,unstable`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI will give or remove the leak role with `,leak`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
-        if (messageAuthor.roles.has(modRole) && (channel.id == modChannel || lowmessage.includes("full"))) {
-            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me the reason \"Imprisoning Emrakul\".\nBan or unmute: Just send `,ban @MENTION` or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\n\n" + helpMessage;
+        if (isMod && channel.id == modChannel) {
+            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me the reason \"Imprisoning Emrakul\".\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\n\n" + helpMessage;
         }
         else {
             helpMessage += "\nI assist the moderators with various things.";
@@ -413,31 +422,31 @@ bot.on("message", async function(message) {
         return;
     }
 
-    if (message.guild.id != guildID) {return;}
+    var isMod = false;
+    var messageAuthor = await bot.guilds.get(guildID).fetchMember(message.author);
+    if (messageAuthor.roles.has(modRole)) { isMod = true; }
 
-    var messageAuthor = await message.guild.fetchMember(message.author);
-
-    await links(message, messageAuthor);
+    await links(message);
 
     await badWordsReporter(message, messageAuthor, false);
 
-    await mute(message, messageAuthor);
+    await mute(message, isMod);
 
-    await kick(message, messageAuthor);
+    await kick(message, isMod);
 
-    await ban(message, messageAuthor);
+    await ban(message, isMod);
 
     await role(message, messageAuthor);
 
     await raidBan(message, messageAuthor);
 
-    await manualReset(messageAuthor);
+    await manualReset(isMod);
 
     await offlineChecker(message.channel);
 
-    await help(message.channel, messageAuthor);
+    await help(message.channel, isMod);
 
-    if (messageAuthor.roles.has(modRole) && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
+    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
         await unmute(message.mentions.members.first());
     }
 })
@@ -457,6 +466,7 @@ bot.on("guildMemberRemove", function(member) {
         var d = new Date();
         var unmuteTime = d.getTime() + 604800000;
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
+        bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
 })
 
