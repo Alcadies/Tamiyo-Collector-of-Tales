@@ -210,7 +210,7 @@ function unmute(member) {
 }
 
 function manualReset(isMod) {
-    if (lowmessage.indexOf(",resetLog") == 0 && isMod) {
+    if (lowmessage.indexOf(",resetlog") == 0 && isMod) {
         logMessage.edit("Muted members and unmute times:");
     }
 }
