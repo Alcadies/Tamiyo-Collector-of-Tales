@@ -184,9 +184,9 @@ async function mute(message, isMod) {
                     await muteMember.addRole(message.guild.roles.get(muteRole));
                     await message.channel.send("Member " + value.displayName + " (id " + key + ") muted for " + lowmessage.split(" ")[1] + " hours.");
                     var muteMessage = await "You have been muted for " + lowmessage.split(" ")[1] + " hours";
-                    if (message.content.includes("Reason: ")) { muteMessage += " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
-                    else if (message.content.includes("reason: ")) { await muteMessage += " with reason \"" + message.content.split("reason: ")[1] + "\""; }
-                    else if (message.content.includes("REASON: ")) { await muteMessage += " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
+                    if (message.content.includes("Reason: ")) { muteMessage += await " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
+                    else if (message.content.includes("reason: ")) { muteMessage += await " with reason \"" + message.content.split("reason: ")[1] + "\""; }
+                    else if (message.content.includes("REASON: ")) { muteMessage += await " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
                     else { await muteMessage += "."; }
                     await value.send(muteMessage);
                 })
