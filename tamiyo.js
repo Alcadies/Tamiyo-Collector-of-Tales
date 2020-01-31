@@ -167,7 +167,7 @@ async function mute(message, isMod) {
         if (isMod) {
             if (message.mentions.users.size != 0) {
                 message.mentions.users.forEach(function(value, key) {
-                    var muteMember = message.guild.fetchMember(value)
+                    var muteMember = await message.guild.fetchMember(value)
                     if (!isNaN(lowmessage.split(" ")[1])) {
                         setTimeout(function () {
                             unmute(muteMember);
@@ -181,14 +181,14 @@ async function mute(message, isMod) {
                         unmuteTime = lowmessage.split(" ")[1] * 3600000 + d.getTime();
                         logMessage.edit(logMessage.content + "\n" + key + " " + unmuteTime);
                     }
-                    muteMember.addRole(message.guild.roles.get(muteRole));
-                    message.channel.send("Member " + value.displayName + " (id " + key + ") muted for " + lowmessage.split(" ")[1] + " hours.");
-                    var muteMessage = "You have been muted for " + lowmessage.split(" ")[1] + " hours";
+                    await muteMember.addRole(message.guild.roles.get(muteRole));
+                    await message.channel.send("Member " + value.displayName + " (id " + key + ") muted for " + lowmessage.split(" ")[1] + " hours.");
+                    var muteMessage = await "You have been muted for " + lowmessage.split(" ")[1] + " hours";
                     if (message.content.includes("Reason: ")) { muteMessage += " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
-                    else if (message.content.includes("reason: ")) { muteMessage += " with reason \"" + message.content.split("reason: ")[1] + "\""; }
-                    else if (message.content.includes("REASON: ")) { muteMessage += " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
-                    else { muteMessage += "."; }
-                    value.send(muteMessage);
+                    else if (message.content.includes("reason: ")) { await muteMessage += " with reason \"" + message.content.split("reason: ")[1] + "\""; }
+                    else if (message.content.includes("REASON: ")) { await muteMessage += " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
+                    else { await muteMessage += "."; }
+                    await value.send(muteMessage);
                 })
             }
             else { message.channel.send("Please include a mention for the person you would like to mute."); }
@@ -272,7 +272,8 @@ function links(message) {
     if (lowmessage.indexOf(",unstable") == 0) { message.channel.send("Unstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06"); }
     if (lowmessage.indexOf(",unhinged") == 0) { message.channel.send("Unhinged FAQTIWDAWCC: http://www.wizards.com/default.asp?x=magic%2Ffaq%2Funhinged"); }
     if (lowmessage.indexOf(",unglued") == 0) { message.channel.send("Unglued QAS (archive): http://archive.is/20121210142816/www.vic.com/~dbd/NFd/faqs/Unglued.QAS"); }
-    if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash.")}
+    if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash."); }
+    if (lowmessage.indexOf(",pioneer") == 0) { message.channel.send("Return to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death"); }
 }
 
 function raidBan(message, messageAuthor) {
