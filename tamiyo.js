@@ -187,7 +187,7 @@ async function mute(message, isMod) {
                     if (message.content.includes("Reason: ")) { muteMessage += await " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
                     else if (message.content.includes("reason: ")) { muteMessage += await " with reason \"" + message.content.split("reason: ")[1] + "\""; }
                     else if (message.content.includes("REASON: ")) { muteMessage += await " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
-                    else { await muteMessage += "."; }
+                    else { muteMessage += await "."; }
                     await value.send(muteMessage);
                 })
             }
