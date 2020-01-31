@@ -166,7 +166,7 @@ async function mute(message, isMod) {
     if (lowmessage.indexOf(",mute") == 0) {
         if (isMod) {
             if (message.mentions.users.size != 0) {
-                message.mentions.users.forEach(function(value, key) {
+                message.mentions.users.forEach(async function(value, key) {
                     var muteMember = await message.guild.fetchMember(value)
                     if (!isNaN(lowmessage.split(" ")[1])) {
                         setTimeout(function () {
