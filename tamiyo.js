@@ -166,24 +166,25 @@ async function mute(message, isMod) {
     if (lowmessage.indexOf(",mute") == 0) {
         if (isMod) {
             if (message.mentions.users.size != 0) {
+                var muteHours = lowmessage.split(" ")[1];
                 message.mentions.users.forEach(async function(value, key) {
                     var muteMember = await message.guild.fetchMember(value)
-                    if (!isNaN(lowmessage.split(" ")[1])) {
+                    if (!isNaN(muteHours)) {
                         setTimeout(function () {
                             unmute(muteMember);
-                        }, lowmessage.split(" ")[1] * 3600000)
+                        }, muteHours * 3600000)
                         if (logMessage.content.includes(key)) {
                             var logs = logMessage.content;
                             var newLog = logs.slice(0, logs.indexOf(key) - 1) + logs.slice(logs.indexOf(key) + key.length + 14);
                             logMessage.edit(newLog);
                         }
                         d = new Date();
-                        unmuteTime = lowmessage.split(" ")[1] * 3600000 + d.getTime();
+                        unmuteTime = muteHours * 3600000 + d.getTime();
                         logMessage.edit(logMessage.content + "\n" + key + " " + unmuteTime);
                     }
                     await muteMember.addRole(message.guild.roles.get(muteRole));
-                    await message.channel.send("Member " + value.displayName + " (id " + key + ") muted for " + lowmessage.split(" ")[1] + " hours.");
-                    var muteMessage = await "You have been muted for " + lowmessage.split(" ")[1] + " hours";
+                    await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted for " + muteHours + " hours.");
+                    var muteMessage = await "You have been muted for " + muteHours + " hours";
                     if (message.content.includes("Reason: ")) { muteMessage += await " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
                     else if (message.content.includes("reason: ")) { muteMessage += await " with reason \"" + message.content.split("reason: ")[1] + "\""; }
                     else if (message.content.includes("REASON: ")) { muteMessage += await " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
@@ -193,7 +194,7 @@ async function mute(message, isMod) {
             }
             else { message.channel.send("Please include a mention for the person you would like to mute."); }
         }
-        else { message.channel.send("You must be a mod or admin to use this function.")}
+        else { message.channel.send("You must be a mod or admin to use this function."); }
     }
 }
 
