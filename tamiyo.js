@@ -29,7 +29,10 @@ bot.on("ready", async function() {
     logger.info("Logged in as: ")
     logger.info(bot.user.username + " - (" + bot.user.id + ")")
     logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
-    var str = logMessage.content;
+    if (logMessage.content.includes("\n\n")) {
+        await logMessage.edit(logMessage.content.replace(/\n\n/g, "\n"));
+    }
+    var str = await logMessage.content;
     while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
         var timeIn = 0;
@@ -144,7 +147,7 @@ async function badWordsReporter(message, messageAuthor, isEdit) {
     if (message.channel.id == modChannel) { return; }
     var badWordsLog = "";
     for (let i = 0; i < badWords.length; i++) {
-        lowmessage = lowmessage.replace(/:gwomogay:/g, "");
+        lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfAgytghja/g, "");
         if (lowmessage.includes(badWords[i]) && !message.author.bot && message.guild != null && badWordsLog == "") {
             badWordsLog += messageAuthor.displayName;
             badWordsLog += " (id ";
