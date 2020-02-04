@@ -40,26 +40,23 @@ bot.on("ready", async function() {
         else {
             timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
         }
-        var mutedID = await bot.fetchUser(str.split(" ")[0]);
-        var mutedOne = await bot.guilds.get(guildID).fetchMember(mutedID);
+        var mutedID = str.split(" ")[0];
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
         else { timer = parseInt(str.substring(str.indexOf(" "))); }
         timer -= d.getTime();
-        if (mutedOne != null && str.indexOf(mutedID) == str.lastIndexOf(mutedID)) {
-            if (timer <= 0) { unmute(mutedOne); }
-            else {
-                setTimeout(function () {
-                    unmute(mutedOne);
-                }, timer)
-            }
-        }
+        if (timer <= 0) { unmute(mutedID); }
         else {
-            var logs = logMessage.content;
-            var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
-            logMessage.edit(newLog);
+            setTimeout(function () {
+                unmute(mutedID);
+            }, timer)
         }
+    }
+    else {
+        var logs = logMessage.content;
+        var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
+        logMessage.edit(newLog);
     }
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
@@ -199,14 +196,15 @@ async function mute(message, isMod) {
     }
 }
 
-function unmute(member) {
+async function unmute(id) {
+    if (!bot.guilds.get(guildID).members.has(id)) {
+        bot.channels.get(logChannel).send("Member <@" + id + "> has left before scheduled unmute time.");
+        return;
+    }
+    member = await bot.guilds.get(guildID).fetchMember(id);
     var logs = logMessage.content;
     var newLog = logs.slice(0, logs.indexOf(member.user.id.toString())) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
     logMessage.edit(newLog);
-    if (member.deleted) {
-        bot.channels.get(logChannel).send("Member " + member.user.username + " (id " + member.user.id + ") has left before scheduled unmute time.");
-        return;
-    }
     member.removeRole(member.guild.roles.get(muteRole));
     bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
 }
@@ -449,8 +447,8 @@ bot.on("message", async function(message) {
 
     await help(message.channel, isMod);
 
-    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.members.length != 0) {
-        await unmute(message.mentions.members.first());
+    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.length != 0) {
+        await unmute(message.mentions.users.first().id);
     }
 })
 
