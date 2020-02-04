@@ -29,9 +29,7 @@ bot.on("ready", async function() {
     logger.info("Logged in as: ")
     logger.info(bot.user.username + " - (" + bot.user.id + ")")
     logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
-    if (logMessage.content.includes("\n\n")) {
-        await logMessage.edit(logMessage.content.replace(/\n\n/g, "\n"));
-    }
+    await logMessage.edit(logMessage.content.replace(/\n\n/g, "\n").replace(/\r\n\r\n/g, "\r\n").replace(/\r\r/g, "\r").replace(/\n\r\n\r/g, "\n\r"));
     var str = await logMessage.content;
     while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
