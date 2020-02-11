@@ -138,15 +138,15 @@ function watchingMessage() {
     }, duration)
 }
 
-async function badWordsReporter(message, messageAuthor, isEdit) {
+async function badWordsReporter(message, messageMember, isEdit) {
     if (message.channel.id == modChannel) { return; }
     var badWordsLog = "";
     for (let i = 0; i < badWords.length; i++) {
         lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfAgytghja/g, "");
         if (lowmessage.includes(badWords[i]) && !message.author.bot && message.guild != null && badWordsLog == "") {
-            badWordsLog += messageAuthor.displayName;
+            badWordsLog += messageMember.displayName;
             badWordsLog += " (id ";
-            badWordsLog += messageAuthor.id;
+            badWordsLog += messageMember.id;
             badWordsLog += ")";
             if (isEdit) { badWordsLog += await " edited a message to say"; }
             else { badWordsLog += await " said"; }
@@ -199,14 +199,15 @@ async function mute(message, isMod) {
 async function unmute(id) {
     if (!bot.guilds.get(guildID).members.has(id)) {
         bot.channels.get(logChannel).send("Member <@" + id + "> has left before scheduled unmute time.");
-        return;
     }
-    member = await bot.guilds.get(guildID).fetchMember(id);
+    else {
+        member = await bot.guilds.get(guildID).fetchMember(id);
+        member.removeRole(member.guild.roles.get(muteRole));
+        bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
+    }
     var logs = logMessage.content;
-    var newLog = logs.slice(0, logs.indexOf(member.user.id.toString())) + logs.slice(logs.indexOf(member.user.id.toString()) + member.user.id.toString().length + 14);
+    var newLog = logs.slice(0, logs.indexOf(id.toString())) + logs.slice(logs.indexOf(id.toString()) + id.toString().length + 14);
     logMessage.edit(newLog);
-    member.removeRole(member.guild.roles.get(muteRole));
-    bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
 }
 
 function manualReset(isMod) {
@@ -253,15 +254,15 @@ function ban(message, isMod) {
     }
 }
 
-function role(message, messageAuthor) {
+function role(message, messageMember) {
     if (lowmessage.indexOf(",role") == 0 || lowmessage.indexOf(",leak") == 0) {
         if (lowmessage.includes("leak")) {
-            if (messageAuthor.roles.has(leakRole)) {
-                messageAuthor.removeRole(message.guild.roles.get(leakRole));
+            if (messageMember.roles.has(leakRole)) {
+                messageMember.removeRole(message.guild.roles.get(leakRole));
                 message.channel.send("Leaks role removed!")
             }
             else {
-                messageAuthor.addRole(message.guild.roles.get(leakRole));
+                messageMember.addRole(message.guild.roles.get(leakRole));
                 message.channel.send("Leaks role added!")
             }
         }
@@ -277,13 +278,13 @@ function links(message) {
     if (lowmessage.indexOf(",literal") == 0) { message.channel.send("Reading the card explains the card"); }
 }
 
-function raidBan(message, messageAuthor) {
-    if (messageAuthor.roles.size == 1 && message.mentions.users.size > 20) {
-        messageAuthor.ban({
+function raidBan(message, messageMember) {
+    if (messageMember.roles.size == 1 && message.mentions.users.size > 20) {
+        messageMember.ban({
             days: 1,
             reason: "Mention spam"
         });
-        bot.channels.get(logChannel).send(messageAuthor.displayName + " (id " + messageAuthor.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
+        bot.channels.get(logChannel).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
     }
 }
 
@@ -436,12 +437,12 @@ bot.on("message", async function(message) {
     }
 
     var isMod = false;
-    var messageAuthor = await bot.guilds.get(guildID).fetchMember(message.author);
-    if (messageAuthor.roles.has(modRole)) { isMod = true; }
+    var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
+    if (messageMember.roles.has(modRole)) { isMod = true; }
 
     await links(message);
 
-    await badWordsReporter(message, messageAuthor, false);
+    await badWordsReporter(message, messageMember, false);
 
     await mute(message, isMod);
 
@@ -449,23 +450,23 @@ bot.on("message", async function(message) {
 
     await ban(message, isMod);
 
-    await role(message, messageAuthor);
+    await role(message, messageMember);
 
-    await raidBan(message, messageAuthor);
+    await raidBan(message, messageMember);
 
     await offlineChecker(message.channel);
 
     await help(message.channel);
 
-    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.length != 0) {
+    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         await unmute(message.mentions.users.first().id);
     }
 })
 
 bot.on("messageUpdate", async function(oldMessage, newMessage) {
     lowmessage = newMessage.content.toLowerCase();
-    var messageAuthor = await newMessage.guild.fetchMember(newMessage.author);
-    await badWordsReporter(newMessage, messageAuthor, true);
+    var messageMember = await newMessage.guild.fetchMember(newMessage.author);
+    await badWordsReporter(newMessage, messageMember, true);
 })
 
 bot.on("guildMemberAdd", function(member) {
