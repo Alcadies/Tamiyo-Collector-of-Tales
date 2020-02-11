@@ -190,7 +190,7 @@ async function mute(message, isMod) {
                     await value.send(muteMessage);
                 })
             }
-            else { message.channel.send("Please include a mention for the person you would like to mute."); }
+            else { message.channel.send("Please include a mention for the person you would like to mute. If they do not have access to this channel, that can be done with <@ID>."); }
         }
         else { message.channel.send("You must be a mod or admin to use this function."); }
     }
@@ -274,6 +274,7 @@ function links(message) {
     if (lowmessage.indexOf(",unglued") == 0) { message.channel.send("Unglued QAS (archive): http://archive.is/20121210142816/www.vic.com/~dbd/NFd/faqs/Unglued.QAS"); }
     if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash.\nBlack is now allowed to cause opponents to sacrifice enchantments."); }
     if (lowmessage.indexOf(",pioneer") == 0) { message.channel.send("Return to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death"); }
+    if (lowmessage.indexOf(",literal") == 0) { message.channel.send("Reading the card explains the card"); }
 }
 
 function raidBan(message, messageAuthor) {
@@ -299,7 +300,7 @@ async function deleteReporter(message) {
     if (message.guild.id != guildID) {return;}
     if (message.author.bot) {return;}
     if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
-    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg")) {return;}
+    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help")) {return;}
     var channelToNotify = logChannel;
     if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
@@ -391,7 +392,18 @@ async function offlineChecker(channel) {
     }
     if (scryfall.presence.status == "offline" && lowmessage.includes("[[") && lowmessage.includes("]]")) {
         if (judgebot.presence.status != "offline") {
-            channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !card `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.")
+            if (lowmessage.includes("[[$")) {
+                channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !price `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.");
+            }
+            else if (lowmessage.includes("[[?")) {
+                channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !rulings `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.");
+            }
+            else if (lowmessage.includes("[[#")) {
+                channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !legality `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.");
+            }
+            else {
+                channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !card `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.");
+            }
         }
         else {
             channel.send("Both our bots seem to be offline at the moment.  Please try again later or use a browser to find the card online and post the link or image.")
@@ -399,10 +411,10 @@ async function offlineChecker(channel) {
     }
 }
 
-function help(channel, isMod) {
+function help(channel) {
     if (lowmessage.indexOf(",help") == 0) {
-        var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, or `,unstable`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI will give or remove the leak role with `,leak`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
-        if (isMod && channel.id == modChannel) {
+        var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, or `,unstable`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer`.\nI will give or remove the leak role with `,leak`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
+        if (channel.id == modChannel) {
             helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me the reason \"Imprisoning Emrakul\".\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\n\n" + helpMessage;
         }
         else {
@@ -441,11 +453,9 @@ bot.on("message", async function(message) {
 
     await raidBan(message, messageAuthor);
 
-    await manualReset(isMod);
-
     await offlineChecker(message.channel);
 
-    await help(message.channel, isMod);
+    await help(message.channel);
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.length != 0) {
         await unmute(message.mentions.users.first().id);
