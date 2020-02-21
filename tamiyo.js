@@ -139,23 +139,28 @@ function watchingMessage() {
 }
 
 async function badWordsReporter(message, messageMember, isEdit) {
-    if (message.channel.id == modChannel) { return; }
+    if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildID)) { return; }
     var badWordsLog = "";
+    lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfAgytghja/g, "");
+    var reporting = false;
     for (let i = 0; i < badWords.length; i++) {
-        lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfAgytghja/g, "");
-        if (lowmessage.includes(badWords[i]) && !message.author.bot && message.guild != null && badWordsLog == "") {
-            badWordsLog += messageMember.displayName;
-            badWordsLog += " (id ";
-            badWordsLog += messageMember.id;
-            badWordsLog += ")";
-            if (isEdit) { badWordsLog += await " edited a message to say"; }
-            else { badWordsLog += await " said"; }
-            badWordsLog += " the following here <";
-            badWordsLog += message.url;
-            badWordsLog += ">: ```";
-            badWordsLog += message.cleanContent;
-            badWordsLog += "```"
+        if (lowmessage.indexOf(badWords[i]) != -1) {
+            reporting = true;
+            break;
         }
+    }
+    if (reporting) {
+        badWordsLog += messageMember.displayName;
+        badWordsLog += " (id ";
+        badWordsLog += messageMember.id;
+        badWordsLog += ")";
+        if (isEdit) { badWordsLog += await " edited a message to say"; }
+        else { badWordsLog += await " said"; }
+        badWordsLog += " the following here <";
+        badWordsLog += message.url;
+        badWordsLog += ">: ```";
+        badWordsLog += message.cleanContent;
+        badWordsLog += "```"
     }
     if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
 }
@@ -244,6 +249,7 @@ function ban(message, isMod) {
             else {
                 if (!message.mentions.members.first().bannable) { return; }
                 if (message.mentions.members.length != 0) {
+                    message.mentions.members.first().send("You've been banned from *Magic & Chill* for the following reason: " + message.content.split("> ")[1]);
                     message.mentions.members.first().ban(message.content.split("> ")[1]);
                     message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") banned.");
                 }
@@ -412,11 +418,11 @@ async function offlineChecker(channel) {
     }
 }
 
-function help(channel) {
+function help(channel, isMod) {
     if (lowmessage.indexOf(",help") == 0) {
         var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, or `,unstable`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
-        if (channel.id == modChannel) {
-            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me the reason \"Imprisoning Emrakul\".\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\n\n" + helpMessage;
+        if ((isMod && channel.guild == null) || channel.id == modChannel) {
+            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\n\n" + helpMessage;
         }
         else {
             helpMessage += "\nI assist the moderators with various things.";
@@ -430,19 +436,11 @@ bot.on("message", async function(message) {
     if (message.author.bot) {return;}
     lowmessage = message.content.toLowerCase();
 
-    if (message.guild == null) {
-        await dmReporter(message);
-
-        return;
-    }
-
     var isMod = false;
     var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
     if (messageMember.roles.has(modRole)) { isMod = true; }
 
     await links(message);
-
-    await badWordsReporter(message, messageMember, false);
 
     await mute(message, isMod);
 
@@ -450,17 +448,27 @@ bot.on("message", async function(message) {
 
     await ban(message, isMod);
 
+    await offlineChecker(message.channel);
+
+    await help(message.channel, isMod);
+
+    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
+        message.mentions.users.forEach(async function(value, key) {
+            await unmute(key);
+        });
+    }
+
+    if (message.guild == null) {
+        await dmReporter(message);
+
+        return;
+    }
+
     await role(message, messageMember);
 
     await raidBan(message, messageMember);
 
-    await offlineChecker(message.channel);
-
-    await help(message.channel);
-
-    if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
-        await unmute(message.mentions.users.first().id);
-    }
+    await badWordsReporter(message, messageMember, false);
 })
 
 bot.on("messageUpdate", async function(oldMessage, newMessage) {
