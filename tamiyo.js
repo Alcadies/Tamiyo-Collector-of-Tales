@@ -444,6 +444,12 @@ function help(channel, isMod) {
     }
 }
 
+function cache(message) {
+    if (lowmessage.indexOf(",cache ") == 0 && !isNaN(lowmessage.split(" ")[1] && bot.channels.has(lowmessage.split(" ")[1] && !isNaN(lowmessage.split(" ")[2])) {
+        bot.channels.get(lowmessage.split(" ")[1]).fetchMessage(lowmessage.split(" ")[2]);
+    }
+}
+
 bot.on("message", async function(message) {
     if (message.author.bot) {return;}
     lowmessage = message.content.toLowerCase();
@@ -463,6 +469,8 @@ bot.on("message", async function(message) {
     await offlineChecker(message.channel);
 
     await help(message.channel, isMod);
+
+    await cache(message);
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         message.mentions.users.forEach(async function(value, key) {
