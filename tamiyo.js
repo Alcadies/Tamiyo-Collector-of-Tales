@@ -240,23 +240,27 @@ function kick(message, isMod) {
     }
 }
 
-function ban(message, isMod) {
+async function ban(message, isMod) {
     if (lowmessage.indexOf(",ban") == 0) {
         if (isMod) {
             if (message.mentions.members.size == 0) {
                 message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@ID>`.");
             }
             else {
-                message.mentions.members.forEach(async function(value, key) {
-                    if (value.roles.has(modRole)) {
-                        message.channel.send("I'm sorry, I won't ban another mod or admin.");
+                message.mentions.users.forEach(async function(value, key) {
+                    if (bot.guilds.get(guildID).members.has(key)) {
+                        var banMember = await bout.guilds.get(guildID).fetchMember(key);
+                        if (banMember.roles.has(modRole)) {
+                            message.channel.send("I'm sorry, I won't ban another mod or admin.");
+                        }
+                        if (key.bannable) {
+                            await banMember.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">")));
+                            await banMember.ban(message.content.substring(message.content.lastIndexOf("> ")));
+                            await message.channel.send("Member " + banMember.displayName + " (id " + key + ") banned.");
+                        }
                     }
-                    if (!value.deleted && value.bannable) {
-                        await value.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">")));
-                    }
-                    if (value.bannable) {
-                        await value.ban(message.content.substring(message.content.lastIndexOf("> ")));
-                        await message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") banned.");
+                    else {
+                        bot.guilds.get(guildID).ban(value);
                     }
                 });
             }
