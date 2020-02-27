@@ -445,7 +445,7 @@ function help(channel, isMod) {
 }
 
 function cache(message) {
-    if (lowmessage.indexOf(",cache ") == 0 && !isNaN(lowmessage.split(" ")[1] && bot.channels.has(lowmessage.split(" ")[1]) && !isNaN(lowmessage.split(" ")[2])) {
+    if (lowmessage.indexOf(",cache ") == 0 && !isNaN(lowmessage.split(" ")[1]) && bot.channels.has(lowmessage.split(" ")[1]) && !isNaN(lowmessage.split(" ")[2])) {
         bot.channels.get(lowmessage.split(" ")[1]).fetchMessage(lowmessage.split(" ")[2]);
     }
 }
