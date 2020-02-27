@@ -245,7 +245,7 @@ function ban(message, isMod) {
         message.channel.send("testing1");
         if (isMod) {
             message.channel.send("testing2");
-            if (message.mentions.members.length == 0) {
+            if (message.mentions.members.size == 0) {
                 message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@ID>`.");
                 message.channel.send("testing3");
             }
