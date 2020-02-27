@@ -243,17 +243,19 @@ function kick(message, isMod) {
 function ban(message, isMod) {
     if (lowmessage.indexOf(",ban") == 0) {
         if (isMod) {
-            if (message.mentions.members.first().roles.has(modRole)) {
-                message.channel.send("I'm sorry, I won't ban another mod or admin.")
+            if (message.mentions.members.length == 0) {
+                message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@ID>`.");
             }
             else {
-                if (!message.mentions.members.first().bannable) { return; }
-                if (message.mentions.members.length != 0) {
-                    message.mentions.members.first().send("You've been banned from *Magic & Chill* for the following reason: " + message.content.split("> ")[1]);
-                    message.mentions.members.first().ban(message.content.split("> ")[1]);
-                    message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") banned.");
-                }
-                else { message.channel.send("Please include a mention for the person you would like to ban."); }
+                message.mentions.members.forEach(async function(value, key) {
+                    if (value.roles.has(modRole)) {
+                        message.channel.send("I'm sorry, I won't ban another mod or admin.")
+                    }
+                    if (!value.bannable) { break; }
+                    await value.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">")));
+                    await.ban(message.content.split("> ")[1]);
+                    await message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") banned.");
+                });
             }
         }
         else { message.channel.send("You must be a mod or admin to use this function.")}
@@ -276,6 +278,7 @@ function role(message, messageMember) {
 }
 
 function links(message) {
+    if (lowmessage.indexOf(",unsanctioned") == 0) { message.channel.send("Unsanctioned FAQTIKPWAMOMBSIATHTTASTTTETMOTWSTAAA: https://magic.wizards.com/en/articles/archive/feature/unsanctioned-faq-2020-02-25"); }
     if (lowmessage.indexOf(",unstable") == 0) { message.channel.send("Unstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06"); }
     if (lowmessage.indexOf(",unhinged") == 0) { message.channel.send("Unhinged FAQTIWDAWCC: http://www.wizards.com/default.asp?x=magic%2Ffaq%2Funhinged"); }
     if (lowmessage.indexOf(",unglued") == 0) { message.channel.send("Unglued QAS (archive): http://archive.is/20121210142816/www.vic.com/~dbd/NFd/faqs/Unglued.QAS"); }
@@ -490,9 +493,9 @@ bot.on("guildMemberRemove", function(member) {
     }
 })
 
-/*bot.on("guildMemberUpdate", function(oldMember, newMember) {
+bot.on("guildMemberUpdate", function(oldMember, newMember) {
     if (newMember.roles.has(muteRole) && newMember.roles.has(leakRole)) { newMember.removeRole(leakRole); }
-})*/
+})
 
 bot.on("messageReactionAdd", function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
