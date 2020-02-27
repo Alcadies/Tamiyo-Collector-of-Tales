@@ -252,8 +252,8 @@ function ban(message, isMod) {
                         message.channel.send("I'm sorry, I won't ban another mod or admin.")
                     }
                     if (!value.bannable) { break; }
-                    await value.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">")));
-                    await.ban(message.content.split("> ")[1]);
+                    if (!value.deleted) { await value.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">"))); }
+                    await value.ban(message.content.substring(message.content.lastIndexOf("> ")));
                     await message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") banned.");
                 });
             }
