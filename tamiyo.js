@@ -242,26 +242,19 @@ function kick(message, isMod) {
 
 function ban(message, isMod) {
     if (lowmessage.indexOf(",ban") == 0) {
-        message.channel.send("testing1");
         if (isMod) {
-            message.channel.send("testing2");
             if (message.mentions.members.size == 0) {
                 message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@ID>`.");
-                message.channel.send("testing3");
             }
             else {
                 message.mentions.members.forEach(async function(value, key) {
-                    message.channel.send("testing4 " + value);
                     if (value.roles.has(modRole)) {
                         message.channel.send("I'm sorry, I won't ban another mod or admin.");
-                        message.channel.send("testing5");
                     }
                     if (!value.deleted && value.bannable) {
                         await value.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">")));
-                        message.channel.send("testing6");
                     }
                     if (value.bannable) {
-                        message.channel.send("testing7");
                         await value.ban(message.content.substring(message.content.lastIndexOf("> ")));
                         await message.channel.send("Member " + message.mentions.members.first().displayName + " (id " + message.mentions.members.first().id + ") banned.");
                     }
@@ -269,7 +262,6 @@ function ban(message, isMod) {
             }
         }
         else {
-            message.channel.send("testing7");
             message.channel.send("You must be a mod or admin to use this function.");
         }
     }
