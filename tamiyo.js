@@ -243,7 +243,7 @@ function kick(message, isMod) {
 async function ban(message, isMod) {
     if (lowmessage.indexOf(",ban") == 0) {
         if (isMod) {
-            if (message.mentions.members.size == 0) {
+            if (message.mentions.users.size == 0) {
                 message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@ID>`.");
             }
             else {
