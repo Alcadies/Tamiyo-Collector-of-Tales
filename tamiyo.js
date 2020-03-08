@@ -319,7 +319,7 @@ async function deleteReporter(message) {
     if (message.guild.id != guildID) {return;}
     if (message.author.bot) {return;}
     if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
-    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help")) {return;}
+    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) {return;}
     var channelToNotify = logChannel;
     if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
