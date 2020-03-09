@@ -184,13 +184,17 @@ async function mute(message, isMod) {
                         d = new Date();
                         unmuteTime = muteHours * 3600000 + d.getTime();
                         logMessage.edit(logMessage.content + "\n" + key + " " + unmuteTime);
+                        await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted for " + muteHours + " hours.");
+                    }
+                    else {
+                        await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted indefinitely. To set a duration, please use `,mute HOURS @MEMBER`.");
                     }
                     await muteMember.addRole(message.guild.roles.get(muteRole));
-                    await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted for " + muteHours + " hours.");
                     var muteMessage = await "You have been muted for " + muteHours + " hours";
                     if (message.content.includes("Reason: ")) { muteMessage += await " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
                     else if (message.content.includes("reason: ")) { muteMessage += await " with reason \"" + message.content.split("reason: ")[1] + "\""; }
                     else if (message.content.includes("REASON: ")) { muteMessage += await " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
+                    else if (message.mentions.users.size == 1) { muteMessage += await " with reason \"" + message.content.split(">")[1] + "\""; }
                     else { muteMessage += await "."; }
                     await value.send(muteMessage);
                 })
