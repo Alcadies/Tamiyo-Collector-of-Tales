@@ -215,7 +215,7 @@ async function unmute(id) {
         bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
     }
     var logs = logMessage.content;
-    var newLog = logs.slice(0, logs.indexOf(id.toString())) + logs.slice(logs.indexOf(id.toString()) + id.toString().length + 14);
+    var newLog = logs.slice(0, logs.indexOf(id.toString())) + logs.substring(logs.indexOf(id.toString()) + id.toString().length + 14);
     logMessage.edit(newLog);
 }
 
@@ -475,6 +475,8 @@ bot.on("message", async function(message) {
     await help(message.channel, isMod);
 
     await cache(message);
+
+    await manualReset(isMod);
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         message.mentions.users.forEach(async function(value, key) {
