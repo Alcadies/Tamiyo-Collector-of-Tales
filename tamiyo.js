@@ -253,7 +253,7 @@ async function ban(message, isMod) {
             else {
                 message.mentions.users.forEach(async function(value, key) {
                     if (bot.guilds.get(guildID).members.has(key)) {
-                        var banMember = await bout.guilds.get(guildID).fetchMember(key);
+                        var banMember = await bot.guilds.get(guildID).fetchMember(key);
                         if (banMember.roles.has(modRole)) {
                             message.channel.send("I'm sorry, I won't ban another mod or admin.");
                         }
