@@ -141,7 +141,7 @@ function watchingMessage() {
 async function badWordsReporter(message, messageMember, isEdit) {
     if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildID)) { return; }
     var badWordsLog = "";
-    lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfAgytghja/g, "");
+    lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "");
     var reporting = false;
     for (let i = 0; i < badWords.length; i++) {
         if (lowmessage.indexOf(badWords[i]) != -1) {
@@ -258,7 +258,7 @@ async function ban(message, isMod) {
                             message.channel.send("I'm sorry, I won't ban another mod or admin.");
                         }
                         if (banMember.bannable) {
-                            await banMember.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">")));
+                            if (message.content.substring(message.content.lastIndexOf(">")).length > 1) { await banMember.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">"))); }
                             await banMember.ban(message.content.substring(message.content.lastIndexOf("> ")));
                             await message.channel.send("Member " + banMember.displayName + " (id " + key + ") banned.");
                         }
@@ -298,6 +298,7 @@ function links(message) {
     if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash.\nBlack is now allowed to cause opponents to sacrifice enchantments."); }
     if (lowmessage.indexOf(",pioneer") == 0) { message.channel.send("Return to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death"); }
     if (lowmessage.indexOf(",modern") == 0) { message.channel.send("Modern Horizons\nEighth Edition, Mirrodin, Darksteel, Fifth Dawn\nChampions of Kamigawa, Betrayers of Kamigawa, Saviors of Kamigawa, Ninth Edition\nRavnica: City of Guilds, Dissention, Guildpact, Coldsnap\nTime Spiral, Planar Chaos, Future Sight, Tenth Edition\nLorwyn, Morningtide, Shadowmoor, Eventide\nShards of Alara, Conflux, Alara Reborn, Magic 2010\nZendikar, Worldwake, Rise of the Eldrazi, Magic 2011\nScars of Mirrodin, Mirrodin Besieged, New Phyrexia, Magic 2012\nInnistrad, Dark Ascension, Avacyn Restored, Magic 2013\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death"); }
+    if (lowmessage.indexOf(",xmage") == 0 || lowmessage.indexOf(",cockatrice") == 0) { message.channel.send("XMage and Cockatrice are the two most common ways to play *Magic* for free online.  Both support using (almost) any card and a variety of foramts.  The major difference is that XMage has rules enforcement, similar to MTGO or Arena, while Cockatrice does not.  They can be found at https://xmage.de/ and https://cockatrice.github.io/"); }
 }
 
 function raidBan(message, messageMember) {
@@ -321,7 +322,12 @@ async function deleteReporter(message) {
     if (message.guild === null) {return;}
     if (!message.guild.available) {return;}
     if (message.guild.id != guildID) {return;}
-    if (message.author.bot) {return;}
+    if (message.author.bot) {
+        if (message.author.id == bot.user.id && logChannel == message.channel.id) {
+            message.channel.send("One of my logs was deleted from here.");
+        }
+        return;
+    }
     if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
     if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) {return;}
     var channelToNotify = logChannel;
@@ -454,6 +460,16 @@ function cache(message) {
     }
 }
 
+function designChallenge(message) {
+    if (lowmessage.indexOf(",challenge") == 0) {
+        var num = Math.floor(Math.random() * 1)
+        if (lowmessage.split(" ")[1] && !isNaN(lowmessage.split(" ")[1])) { num = lowmessage.split(" ")[1]; }
+        switch (num) {
+            case 0: message.channel.send("make a 2 mana blue cantrip that's modern relevant but wouldn't break standard"); break;
+        }
+    }
+}
+
 bot.on("message", async function(message) {
     if (message.author.bot) {return;}
     lowmessage = message.content.toLowerCase();
@@ -504,16 +520,21 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 })
 
 bot.on("guildMemberAdd", function(member) {
-    if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); } 
+    if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); }
+    var d = new Date();
+    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField(Joined, d));
+    bot.channels.get("693709957014749196").send(newBlood);
 })
 
 bot.on("guildMemberRemove", function(member) {
+    var d = new Date();
     if (member.roles.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
-        var d = new Date();
         var unmuteTime = d.getTime() + 604800000;
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
+    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField(Left, d));
+    bot.channels.get("693709957014749196").send(newBlood);
 })
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
