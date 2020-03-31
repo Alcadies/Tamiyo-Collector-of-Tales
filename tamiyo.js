@@ -522,7 +522,7 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); }
     var d = new Date();
-    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField(Joined, d));
+    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField(Joined, d);
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
@@ -533,7 +533,7 @@ bot.on("guildMemberRemove", function(member) {
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
-    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField(Left, d));
+    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField(Left, d);
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
