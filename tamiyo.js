@@ -470,6 +470,13 @@ function designChallenge(message) {
     }
 }
 
+function spoilerCleaner(message) {
+    if ((lowmessage.includes("/iko/") || lowmessage.includes("/c20/")) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
+        message.delete();
+        message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
+    }
+}
+
 bot.on("message", async function(message) {
     if (message.author.bot) {return;}
     lowmessage = message.content.toLowerCase();
@@ -493,6 +500,8 @@ bot.on("message", async function(message) {
     await cache(message);
 
     await manualReset(isMod);
+
+    await spoilerCleaner(message);
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         message.mentions.users.forEach(async function(value, key) {
