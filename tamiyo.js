@@ -478,8 +478,11 @@ function spoilerCleaner(message) {
 }
 
 bot.on("message", async function(message) {
-    if (message.author.bot) {return;}
     lowmessage = message.content.toLowerCase();
+
+    await spoilerCleaner(message);
+
+    if (message.author.bot) {return;}
 
     var isMod = false;
     var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
@@ -500,8 +503,6 @@ bot.on("message", async function(message) {
     await cache(message);
 
     await manualReset(isMod);
-
-    await spoilerCleaner(message);
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         message.mentions.users.forEach(async function(value, key) {
