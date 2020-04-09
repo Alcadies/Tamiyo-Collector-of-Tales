@@ -329,7 +329,7 @@ async function deleteReporter(message) {
         return;
     }
     if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
-    if (message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) {return;}
+    if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032") {return;}
     var channelToNotify = logChannel;
     if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
@@ -473,6 +473,7 @@ function designChallenge(message) {
 function spoilerCleaner(message) {
     if ((lowmessage.includes("/iko/") || lowmessage.includes("/c20/")) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
         message.delete();
+        deleteReporter(message);
         message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
     }
 }
