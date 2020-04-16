@@ -31,7 +31,7 @@ bot.on("ready", async function() {
     bot.channels.get("531433553225842700").send("I know I noted this somewhere...");
 })
 
-bot.once("ready", asynch function() {
+bot.once("ready", async function() {
     logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
     //await logMessage.edit(logMessage.content.replace(/\n\n/g, "\n").replace(/\r\n\r\n/g, "\r\n").replace(/\r\r/g, "\r").replace(/\n\r\n\r/g, "\n\r"));
     var str = await logMessage.content;
