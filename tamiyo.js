@@ -28,6 +28,10 @@ bot.on("ready", async function() {
     logger.info("Connected")
     logger.info("Logged in as: ")
     logger.info(bot.user.username + " - (" + bot.user.id + ")")
+    bot.channels.get("531433553225842700").send("I know I noted this somewhere...");
+})
+
+bot.once("ready", asynch function() {
     logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
     //await logMessage.edit(logMessage.content.replace(/\n\n/g, "\n").replace(/\r\n\r\n/g, "\r\n").replace(/\r\r/g, "\r").replace(/\n\r\n\r/g, "\n\r"));
     var str = await logMessage.content;
@@ -471,7 +475,7 @@ function designChallenge(message) {
 }
 
 function spoilerCleaner(message) {
-    if ((lowmessage.includes("/iko/") || lowmessage.includes("/c20/")) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
+    if (lowmessage.includes("/m21/") && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
         message.delete();
         deleteReporter(message);
         message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
@@ -533,7 +537,7 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); }
     var d = new Date();
-    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField("Joined", d);
+    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField("Joined", d).setColor('GREEN');
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
@@ -544,7 +548,7 @@ bot.on("guildMemberRemove", function(member) {
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
-    var newBlood = new Discord.RichEmbed().setThumbnail(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField("Left", d);
+    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField("Left", d).setColor('RED');
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
