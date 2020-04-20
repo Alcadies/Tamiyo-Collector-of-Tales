@@ -178,11 +178,14 @@ async function mute(message, isMod) {
                     var muteMember = await message.guild.fetchMember(value)
                     if (!isNaN(muteHours)) {
                         setTimeout(function () {
-                            unmute(muteMember);
+                            unmute(muteMember.id);
                         }, muteHours * 3600000)
                         if (logMessage.content.includes(key)) {
                             var logs = logMessage.content;
-                            var newLog = logs.slice(0, logs.indexOf(key) - 1) + logs.slice(logs.indexOf(key) + key.length + 14);
+                            var newLog = logs.split("\n")[0];
+                            for (var x = 1; x < logs.split("\n").length; x++) {
+                                if (!logs.split("\n")[x].includes(key)) { newLog += "\n" + logs.split("\n")[x]; }
+                            }
                             logMessage.edit(newLog);
                         }
                         d = new Date();
@@ -219,7 +222,10 @@ async function unmute(id) {
         bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
     }
     var logs = logMessage.content;
-    var newLog = logs.slice(0, logs.indexOf(id.toString())) + logs.substring(logs.indexOf(id.toString()) + id.toString().length + 14);
+    var newLog = logs.split("\n")[0];
+    for (var x = 1; x < logs.split("\n").length; x++) {
+        if (!logs.split("\n")[x].includes(key)) { newLog += "\n" + logs.split("\n")[x]; }
+    }
     logMessage.edit(newLog);
 }
 
