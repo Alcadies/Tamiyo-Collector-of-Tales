@@ -224,7 +224,7 @@ async function unmute(id) {
     var logs = logMessage.content;
     var newLog = logs.split("\n")[0];
     for (var x = 1; x < logs.split("\n").length; x++) {
-        if (!logs.split("\n")[x].includes(key)) { newLog += "\n" + logs.split("\n")[x]; }
+        if (!logs.split("\n")[x].includes(id)) { newLog += "\n" + logs.split("\n")[x]; }
     }
     logMessage.edit(newLog);
 }
