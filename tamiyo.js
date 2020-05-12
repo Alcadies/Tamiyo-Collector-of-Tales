@@ -393,7 +393,7 @@ async function deleteReporter(message) {
 async function offlineChecker(channel) {
     var judgebot = await bot.fetchUser("240537940378386442");
     var scryfall = await bot.fetchUser("268547439714238465");
-    if (judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help"))) {
+    if (judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help") || lowmessage.includes("!define"))) {
         if (scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].  You can also do [[!`CARDNAME`]] or [[!`CARDNAME`|`SET`]] for just the image.");
         }
@@ -585,5 +585,13 @@ bot.on("messageDeleteBulk", async function(messages) {
         await deleteReporter(value);
     });
 })
+
+bot.on("presenceUpdate", function(oldMember, newMember)) {
+    if (newMember.id == "695434707264995350" || newMember.id == "676989741173964800") {
+        if (newMember.presence.status == "offline") {
+            bot.channels.get("531433553225842700").send("<@135999597947387904>, <@" + newMember.id "> appears to be offline.");
+        }
+    }
+}
 
 bot.login(process.env.token)
