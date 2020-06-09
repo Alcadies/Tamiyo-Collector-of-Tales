@@ -145,7 +145,7 @@ function watchingMessage() {
 async function badWordsReporter(message, messageMember, isEdit) {
     if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildID)) { return; }
     var badWordsLog = "";
-    lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "");
+    lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
     for (let i = 0; i < badWords.length; i++) {
         if (lowmessage.indexOf(badWords[i]) != -1) {
@@ -165,6 +165,7 @@ async function badWordsReporter(message, messageMember, isEdit) {
         badWordsLog += ">: ```";
         badWordsLog += message.cleanContent;
         badWordsLog += "```"
+        badWordsLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).setColor('RED');
     }
     if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
 }
@@ -386,6 +387,12 @@ async function deleteReporter(message) {
         deleteLog += ": ```";
         deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
         deleteLog += "```";
+    }
+    messageMember = await message.guild.fetchMember(message.author);
+    var deleteMember = await message.guild.fetchMember(user);
+    if (attaches.length == 0) {
+        if (messageMember.id == deleteMember.id) { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
+        else { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
     }
     bot.channels.get(channelToNotify).send(deleteLog);
 }
