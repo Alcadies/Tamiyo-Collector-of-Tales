@@ -352,9 +352,9 @@ async function deleteReporter(message) {
       && (entry.target.id === message.author.id)
       && (entry.createdTimestamp > (Date.now() - 5000))
       && (entry.extra.count >= 1)) {
-        user = entry.executor.username;
+        user = entry.executor;
     } else {
-        user = message.author.username;
+        user = message.author;
     }
     var deleteLog = ""
     if (message.cleanContent != "") {
@@ -382,7 +382,7 @@ async function deleteReporter(message) {
     deleteLog += " was deleted from <#";
     deleteLog += message.channel.id;
     deleteLog += "> by ";
-    deleteLog += user;
+    deleteLog += user.username;
     if (message.cleanContent != "") {
         deleteLog += ": ```";
         deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
