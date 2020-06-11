@@ -12,6 +12,7 @@ logger.level = "debug"
 // Initialize Discord Bot
 var bot = new Discord.Client({ disableEveryone: true })
 var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg", "💣"];
+var badCards = ["Invoke Prejudice", "Cleanse", "Stone-Throwing Devils", "Pradesh Gypsies", "Jihad", "Imprison", "Crusade"];
 var lowmessage = "";
 var logChannel = "633429050089799687" /*"531433553225842700"*/;
 var modRole = "407400920746426368" /*"606659573159428169"*/;
@@ -505,6 +506,16 @@ function spoilerCleaner(message) {
         message.delete();
         deleteReporter(message);
         message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
+    }
+    if (message.channel.id != "720436488247967754") {
+        for (var x = 0; x < badCards.length; x++) {
+            var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
+            if (lowmessage.includes(scryfallURL)) {
+                message.delete();
+                deleteReporter(message);
+                message.channel.send("This cards has been banned in all formats for issues about serious topics. To discuss those topics, please see https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152")
+            }
+        }
     }
 }
 
