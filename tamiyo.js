@@ -510,7 +510,7 @@ function spoilerCleaner(message) {
     if (message.channel.id != "720436488247967754") {
         for (var x = 0; x < badCards.length; x++) {
             var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
-            if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title.split(" :")[0] == badCards[x])) {
+            if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title.split(" <")[0] == badCards[x])) {
                 message.delete();
                 deleteReporter(message, true);
                 message.channel.send("This cards has been banned in all formats for issues about serious topics. To discuss those topics, please see https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152")
