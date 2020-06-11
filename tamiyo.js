@@ -343,11 +343,11 @@ async function dmReporter(message) {
     }
 }
 
-async function deleteReporter(message) {
+async function deleteReporter(message, forced) {
     if (message.guild === null) {return;}
     if (!message.guild.available) {return;}
     if (message.guild.id != guildID) {return;}
-    if (message.author.bot) {
+    if (message.author.bot && !forced) {
         if (message.author.id == bot.user.id && logChannel == message.channel.id) {
             message.channel.send("One of my logs was deleted from here.");
         }
@@ -502,17 +502,17 @@ function designChallenge(message) {
 }
 
 function spoilerCleaner(message) {
-    if (lowmessage.includes("/m21/") && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
+    if ((lowmessage.includes("/m21/") || (message.embeds[0] != undefined && message.embeds[0].description.includes("(M21 "))) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
         message.delete();
-        deleteReporter(message);
+        deleteReporter(message, true);
         message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
     }
     if (message.channel.id != "720436488247967754") {
         for (var x = 0; x < badCards.length; x++) {
             var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
-            if (lowmessage.includes(scryfallURL)) {
+            if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title.split(" :")[0] == badCards[x])) {
                 message.delete();
-                deleteReporter(message);
+                deleteReporter(message, true);
                 message.channel.send("This cards has been banned in all formats for issues about serious topics. To discuss those topics, please see https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152")
             }
         }
@@ -609,12 +609,12 @@ bot.on("messageReactionRemove", function(messageReaction, user) {
 })
 
 bot.on("messageDelete", async function(message) {
-    deleteReporter(message);
+    deleteReporter(message, false);
 })
 
 bot.on("messageDeleteBulk", async function(messages) {
     messages.forEach(async function(value, key) {
-        await deleteReporter(value);
+        await deleteReporter(value, false);
     });
 })
 
