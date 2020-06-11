@@ -18,6 +18,7 @@ var modRole = "407400920746426368" /*"606659573159428169"*/;
 var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildID = "162586705524686848";
 var leakRole = "638981519116861442";
+var seriousRole = "720433065893036113";
 var roleMessageID = "639173241679904771";
 var roleChannelID = "407401913253101601";
 var elkRole = "640599175326728203";
@@ -165,7 +166,7 @@ async function badWordsReporter(message, messageMember, isEdit) {
         badWordsLog += ">: ```";
         badWordsLog += message.cleanContent;
         badWordsLog += "```"
-        badWordsLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).setColor('RED');
+        badWordsLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).addField("Context:", message.url).setColor('RED');
     }
     if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
 }
@@ -296,6 +297,18 @@ function role(message, messageMember) {
             else {
                 messageMember.addRole(message.guild.roles.get(leakRole));
                 message.channel.send("Leaks role added!")
+            }
+        }
+    }
+    if (lowmessage.indexOf(",role") == 0 || lowmessage.indexOf(",serious") == 0) {
+        if (lowmessage.includes("serious")) {
+            if (messageMember.roles.has(seriousRole)) {
+                messageMember.removeRole(message.guild.roles.get(seriousRole));
+                message.channel.send("Serious Discussion role removed!")
+            }
+            else {
+                messageMember.addRole(message.guild.roles.get(seriousRole));
+                message.channel.send("Serious Discussion role added!")
             }
         }
     }
@@ -567,6 +580,7 @@ bot.on("guildMemberRemove", function(member) {
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
     if (newMember.roles.has(muteRole) && newMember.roles.has(leakRole)) { newMember.removeRole(leakRole); }
+    if (newMember.roles.has(muteRole) && newMember.roles.has(seriousRole)) { newMember.removeRole(seriousRole); }
 })
 
 bot.on("messageReactionAdd", function(messageReaction, user) {
