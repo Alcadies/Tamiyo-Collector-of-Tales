@@ -595,7 +595,7 @@ bot.on("guildMemberRemove", async function(member) {
         await newBlood.addFooter("Banned by " + entry.executor.username, entry.executor.displayAvatarURL);
     }
     else if (entry2 != null && (entry2.target.id === member.id) && (entry2.createdTimestamp > (Date.now() - 5000))) {
-        await newBlood.addFooter("Kicked by " + entry.executor.username, entry.executor.displayAvatarURL);
+        await newBlood.addFooter("Kicked by " + entry2.executor.username, entry2.executor.displayAvatarURL);
     }
     await bot.channels.get("693709957014749196").send(newBlood);
 })
