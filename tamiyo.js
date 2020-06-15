@@ -404,11 +404,14 @@ async function deleteReporter(message, forced) {
     }
     messageMember = await message.guild.fetchMember(message.author);
     var deleteMember = await message.guild.fetchMember(user);
+    if (messageMember.id == deleteMember.id) { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
+    else { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
     if (attaches.length == 0) {
-        if (messageMember.id == deleteMember.id) { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
-        else { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
+        bot.channels.get(channelToNotify).send(deleteLog);
     }
-    bot.channels.get(channelToNotify).send(deleteLog);
+    else {
+        bot.channels.get(channelToNotify).send("The following " + attachmessage, deleteLog);
+    }
 }
 
 async function offlineChecker(channel) {
@@ -473,9 +476,9 @@ async function offlineChecker(channel) {
 
 function help(channel, isMod) {
     if (lowmessage.indexOf(",help") == 0) {
-        var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`,  `,unstable`, or `,unsanctioned`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
+        var helpMessage = "I will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
         if ((isMod && channel.guild == null) || channel.id == modChannel) {
-            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\n\n" + helpMessage;
+            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.\n\n" + helpMessage;
         }
         else {
             helpMessage += "\nI assist the moderators with various things.";
@@ -574,7 +577,7 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); }
     var d = new Date();
-    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField("Joined", d).setColor('GREEN');
+    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setAuthor(member.displayName + " (" + member.id + ")", member.displayAvatarURL).addField("Joined", d).setColor('GREEN');
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
@@ -585,7 +588,15 @@ bot.on("guildMemberRemove", function(member) {
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
-    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setTitle(member.displayName + " (" + member.id + ")").addField("Left", d).setColor('RED');
+    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setAuthor(member.displayName + " (" + member.id + ")", member.displayAvatarURL).addField("Left", d).setColor('RED');
+    const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
+    const entry2 = await member.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first())
+    if (entry != null && (entry.target.id === member.id) && (entry.createdTimestamp > (Date.now() - 5000))) {
+        newBlood.addFooter("Banned by " + entry.executor.username, entry.executor.displayAvatarURL);
+    }
+    else if (entry2 != null && (entry2.target.id === member.id) && (entry2.createdTimestamp > (Date.now() - 5000))) {
+        newBlood.addFooter("Kicked by " + entry.executor.username, entry.executor.displayAvatarURL);
+    }
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
