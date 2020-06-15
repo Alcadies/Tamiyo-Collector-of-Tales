@@ -577,7 +577,7 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.addRole(member.guild.roles.get(muteRole)); }
     var d = new Date();
-    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setAuthor(member.displayName + " (" + member.id + ")", member.displayAvatarURL).addField("Joined", d).setColor('GREEN');
+    var newBlood = new Discord.RichEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL).addField("Joined", d).setColor('GREEN');
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
@@ -588,7 +588,7 @@ bot.on("guildMemberRemove", async function(member) {
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
-    var newBlood = new Discord.RichEmbed().setImage(member.displayAvatarURL).setAuthor(member.displayName + " (" + member.id + ")", member.displayAvatarURL).addField("Left", d).setColor('RED');
+    var newBlood = new Discord.RichEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL).addField("Left", d).setColor('RED');
     const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
     const entry2 = await member.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first())
     if (entry != null && (entry.target.id === member.id) && (entry.createdTimestamp > (Date.now() - 5000))) {
