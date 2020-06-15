@@ -592,12 +592,12 @@ bot.on("guildMemberRemove", async function(member) {
     const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
     const entry2 = await member.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first())
     if (entry != null && (entry.target.id === member.id) && (entry.createdTimestamp > (Date.now() - 5000))) {
-        newBlood.addFooter("Banned by " + entry.executor.username, entry.executor.displayAvatarURL);
+        await newBlood.addFooter("Banned by " + entry.executor.username, entry.executor.displayAvatarURL);
     }
     else if (entry2 != null && (entry2.target.id === member.id) && (entry2.createdTimestamp > (Date.now() - 5000))) {
-        newBlood.addFooter("Kicked by " + entry.executor.username, entry.executor.displayAvatarURL);
+        await newBlood.addFooter("Kicked by " + entry.executor.username, entry.executor.displayAvatarURL);
     }
-    bot.channels.get("693709957014749196").send(newBlood);
+    await bot.channels.get("693709957014749196").send(newBlood);
 })
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
