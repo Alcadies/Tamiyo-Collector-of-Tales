@@ -581,7 +581,7 @@ bot.on("guildMemberAdd", function(member) {
     bot.channels.get("693709957014749196").send(newBlood);
 })
 
-bot.on("guildMemberRemove", function(member) {
+bot.on("guildMemberRemove", async function(member) {
     var d = new Date();
     if (member.roles.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
         var unmuteTime = d.getTime() + 604800000;
