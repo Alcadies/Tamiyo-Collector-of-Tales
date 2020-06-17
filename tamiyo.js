@@ -409,6 +409,10 @@ async function deleteReporter(message, forced) {
     if (attaches.length == 0) {
         bot.channels.get(channelToNotify).send(deleteLog);
     }
+    else if (attaches.length == 1) {
+        deleteLog.setImage(attaches[0]);
+        bot.channels.get(channelToNotify).send(deleteLog);
+    }
     else {
         bot.channels.get(channelToNotify).send("The following " + attachmessage, deleteLog);
     }
@@ -524,6 +528,10 @@ function spoilerCleaner(message) {
 
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
+
+    if (message.author.id == "135999597947387904" && message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700") {
+        message.channel.send("```javascript\n" + eval(message.content.split(",eval ")[1]) + "```");
+    }
 
     await spoilerCleaner(message);
 
