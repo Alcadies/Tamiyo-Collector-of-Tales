@@ -509,7 +509,7 @@ function designChallenge(message) {
 }
 
 function spoilerCleaner(message) {
-    if ((lowmessage.includes("/m21/") || (message.embeds[0] != undefined && message.embeds[0].description.includes("(M21 "))) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
+    if ((lowmessage.includes("/m21/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(M21 "))) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353") {
         message.delete();
         deleteReporter(message, true);
         message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
