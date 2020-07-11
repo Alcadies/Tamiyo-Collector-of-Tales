@@ -14,10 +14,11 @@ var bot = new Discord.Client({ disableEveryone: true })
 var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg", "💣"];
 var badCards = ["Invoke Prejudice", "Cleanse", "Stone-Throwing Devils", "Pradesh Gypsies", "Jihad", "Imprison", "Crusade"];
 var lowmessage = "";
-var logChannel = "633429050089799687" /*"531433553225842700"*/;
+var logChannel = ["531433553225842700", "633429050089799687", "729753384407662602"];
+var botCommandChannel = ["531433553225842700", "213126280323923970"];
 var modRole = "407400920746426368" /*"606659573159428169"*/;
 var muteRole = "280463986531631104" /*"586432252901195777"*/;
-var guildID = "162586705524686848";
+var guildID = ["531433553225842698", "162586705524686848", "729748959991562330"]; //Testing, M&C, LGS
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageID = "639173241679904771";
@@ -25,6 +26,8 @@ var roleChannelID = "407401913253101601";
 var elkRole = "640599175326728203";
 var modChannel = "407401913253101601";
 var logMessage = "";
+var deleteList = "";
+var reportList = "";
 
 bot.on("ready", async function() {
     logger.info("Connected")
@@ -34,7 +37,7 @@ bot.on("ready", async function() {
 })
 
 bot.once("ready", async function() {
-    logMessage = await bot.channels.get(logChannel).fetchMessage("633472791982768158");
+    logMessage = await bot.channels.get(logChannel[1]).fetchMessage("633472791982768158");
     //await logMessage.edit(logMessage.content.replace(/\n\n/g, "\n").replace(/\r\n\r\n/g, "\r\n").replace(/\r\r/g, "\r").replace(/\n\r\n\r/g, "\n\r"));
     var str = await logMessage.content;
     while (str.includes("\n") && str.length > 2) {
@@ -64,6 +67,8 @@ bot.once("ready", async function() {
         var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
         logMessage.edit(newLog);
     }*/
+    deleteList = bot.channels.get(logChannel[2]).fetchMessage("729754971947663381");
+    reportList = bot.channels.get(logChannel[2]).fetchMessage("729755004054798379");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
@@ -145,7 +150,7 @@ function watchingMessage() {
 }
 
 async function badWordsReporter(message, messageMember, isEdit) {
-    if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildID)) { return; }
+    if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildID[1])) { return; }
     var badWordsLog = "";
     lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
@@ -169,7 +174,7 @@ async function badWordsReporter(message, messageMember, isEdit) {
         badWordsLog += "```"
         badWordsLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).addField("Context:", message.url).setColor('RED');
     }
-    if (badWordsLog != "") {await bot.channels.get(logChannel).send(badWordsLog);}
+    if (badWordsLog != "") {await bot.channels.get(logChannel[1]).send(badWordsLog);}
 }
 
 async function mute(message, isMod) {
@@ -216,13 +221,13 @@ async function mute(message, isMod) {
 }
 
 async function unmute(id) {
-    if (!bot.guilds.get(guildID).members.has(id)) {
-        bot.channels.get(logChannel).send("Member <@" + id + "> has left before scheduled unmute time.");
+    if (!bot.guilds.get(guildID[1]).members.has(id)) {
+        bot.channels.get(logChannel[1]).send("Member <@" + id + "> has left before scheduled unmute time.");
     }
     else {
-        member = await bot.guilds.get(guildID).fetchMember(id);
+        member = await bot.guilds.get(guildID[1]).fetchMember(id);
         member.removeRole(member.guild.roles.get(muteRole));
-        bot.channels.get(logChannel).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
+        bot.channels.get(logChannel[1]).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
     }
     var logs = logMessage.content;
     var newLog = logs.split("\n")[0];
@@ -265,8 +270,8 @@ async function ban(message, isMod) {
             }
             else {
                 message.mentions.users.forEach(async function(value, key) {
-                    if (bot.guilds.get(guildID).members.has(key)) {
-                        var banMember = await bot.guilds.get(guildID).fetchMember(key);
+                    if (bot.guilds.get(guildID[1]).members.has(key)) {
+                        var banMember = await bot.guilds.get(guildID[1]).fetchMember(key);
                         if (banMember.roles.has(modRole)) {
                             message.channel.send("I'm sorry, I won't ban another mod or admin.");
                         }
@@ -277,7 +282,7 @@ async function ban(message, isMod) {
                         }
                     }
                     else {
-                        bot.guilds.get(guildID).ban(value);
+                        bot.guilds.get(guildID[1]).ban(value);
                     }
                 });
             }
@@ -291,6 +296,10 @@ async function ban(message, isMod) {
 function role(message, messageMember) {
     if (lowmessage.indexOf(",role") == 0 || lowmessage.indexOf(",leak") == 0) {
         if (lowmessage.includes("leak")) {
+            if (message.channel.id != botCommandChannel[1]) {
+                message.channel.send("There's an anomoly at this location.  Please try in <#" + botCommandChannel[1] + ">.");
+                return;
+            }
             if (messageMember.roles.has(leakRole)) {
                 messageMember.removeRole(message.guild.roles.get(leakRole));
                 message.channel.send("Leaks role removed!")
@@ -303,6 +312,10 @@ function role(message, messageMember) {
     }
     if (lowmessage.indexOf(",role") == 0 || lowmessage.indexOf(",serious") == 0) {
         if (lowmessage.includes("serious")) {
+            if (message.channel.id != botCommandChannel[1]) {
+                message.channel.send("There's an anomoly at this location.  Please try in <#" + botCommandChannel[1] + ">.");
+                return;
+            }
             if (messageMember.roles.has(seriousRole)) {
                 messageMember.removeRole(message.guild.roles.get(seriousRole));
                 message.channel.send("Serious Discussion role removed!")
@@ -321,8 +334,8 @@ function links(message) {
     if (lowmessage.indexOf(",unhinged") == 0) { message.channel.send("Unhinged FAQTIWDAWCC: https://magic.wizards.com/en/articles/archive/feature/unhinged-faqtiwdawcc"); }
     if (lowmessage.indexOf(",unglued") == 0) { message.channel.send("Unglued QAS: https://magic.wizards.com/en/articles/archive/feature/unglued-qas-questions-asked-sometimes"); }
     if (lowmessage.indexOf(",colorpie") == 0) { message.channel.send("Mechanical Color Pie 2017: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2017-2017-06-05\nMajor changes since then:\nGreen is now secondary in haste and black is tertiary in it.\nBlack is secondary in flash.\nBlack is now allowed to cause opponents to sacrifice enchantments."); }
-    if (lowmessage.indexOf(",pioneer") == 0) { message.channel.send("Return to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths"); }
-    if (lowmessage.indexOf(",modern") == 0) { message.channel.send("Modern Horizons\nEighth Edition, Mirrodin, Darksteel, Fifth Dawn\nChampions of Kamigawa, Betrayers of Kamigawa, Saviors of Kamigawa, Ninth Edition\nRavnica: City of Guilds, Dissention, Guildpact, Coldsnap\nTime Spiral, Planar Chaos, Future Sight, Tenth Edition\nLorwyn, Morningtide, Shadowmoor, Eventide\nShards of Alara, Conflux, Alara Reborn, Magic 2010\nZendikar, Worldwake, Rise of the Eldrazi, Magic 2011\nScars of Mirrodin, Mirrodin Besieged, New Phyrexia, Magic 2012\nInnistrad, Dark Ascension, Avacyn Restored, Magic 2013\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths"); }
+    if (lowmessage.indexOf(",pioneer") == 0) { message.channel.send("Return to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021"); }
+    if (lowmessage.indexOf(",modern") == 0) { message.channel.send("Modern Horizons\nEighth Edition, Mirrodin, Darksteel, Fifth Dawn\nChampions of Kamigawa, Betrayers of Kamigawa, Saviors of Kamigawa, Ninth Edition\nRavnica: City of Guilds, Dissention, Guildpact, Coldsnap\nTime Spiral, Planar Chaos, Future Sight, Tenth Edition\nLorwyn, Morningtide, Shadowmoor, Eventide\nShards of Alara, Conflux, Alara Reborn, Magic 2010\nZendikar, Worldwake, Rise of the Eldrazi, Magic 2011\nScars of Mirrodin, Mirrodin Besieged, New Phyrexia, Magic 2012\nInnistrad, Dark Ascension, Avacyn Restored, Magic 2013\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021"); }
     if (lowmessage.indexOf(",xmage") == 0 || lowmessage.indexOf(",cockatrice") == 0) { message.channel.send("XMage and Cockatrice are the two most common ways to play *Magic* for free online.  Both support using (almost) any card and a variety of formats.  The major difference is that XMage has rules enforcement, similar to MTGO or Arena, while Cockatrice does not.  They can be found at https://xmage.de/ and https://cockatrice.github.io/"); }
     if (lowmessage.indexOf(",proxy") == 0 || lowmessage.indexOf(",counterfeit") == 0) { message.channel.send(new Discord.RichEmbed().setTitle("Proxies vs Counterfeits").setImage("https://media.discordapp.net/attachments/375903183563915265/724555752974581770/image0.png").addField("Proxy Types:", "There are several different ways to make proxies for casual play.  Here are a few:\n\nYou can print out an image of the card on a slip of paper and put it over a real card (Overgrown Tomb, Black Lotus, Misty Rainforest).  No one, no matter how unfamiliar with authenticity, will think this is real if they pull it out of the sleeve, but it looks nice and is probably the most readable option.  The downside is the printer ink can be expensive to print out so many images.").addField("Proxies Cont.", "You can write the name (and if you want also the rules text) out by hand on a piece of paper and put it over a real card (Rest in Peace, Troll Ascetic, Scattered Groves).  It's even easier than the above to tell this is not real and is incredibly cheap to do, but it also doesn't look as nice.\n\nYou can write the name (and if you want also the rules text) directly on a real card (Wall of Omens).  It will permanently mark the card you use and again is very easy to tell is not a real version of what it's proxying, but it's also the least likely to shuffle any different as there's no second thing in the sleeve.").addField("Counterfeits:", "Counterfeits on the other hand look like real cards.  Depending on the quality of the counterfeit and how knowledgeable the examiner is, it may be noticeable in a sleeve, when you're holding it, upon very close examination, or not at all.  However in all cases it will likely pass as real to someone who doesn't know to look for it or what to look for.  No matter why you have counterfeits, knowingly acquiring them is supporting their ability to make more and deceive people into buying full price fakes.\n\nRemember, just because you think it can't be faked doesn't mean people aren't trying.").setColor('RED'));}
 }
@@ -333,31 +346,31 @@ function raidBan(message, messageMember) {
             days: 1,
             reason: "Mention spam"
         });
-        bot.channels.get(logChannel).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
+        bot.channels.get(logChannel[guildID.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
     }
 }
 
 async function dmReporter(message) {
-    var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
+    var messageMember = await bot.guilds.get(guildID[1]).fetchMember(message.author);
     if (messageMember.roles.has(muteRole)) {
-        bot.channels.get(logChannel).send("Muted member " + messageMember.displayName + " (id " + messageMember.id + ") said this in DM: ```" + message.cleanContent + "```");
+        bot.channels.get(logChannel[1]).send("Muted member " + messageMember.displayName + " (id " + messageMember.id + ") said this in DM: ```" + message.cleanContent + "```");
     }
 }
 
 async function deleteReporter(message, forced) {
     if (message.guild === null) {return;}
     if (!message.guild.available) {return;}
-    if (message.guild.id != guildID) {return;}
+    if (message.guild.id != guildID[1]) {return;}
     if (message.author.bot && !forced) {
-        if (message.author.id == bot.user.id && logChannel == message.channel.id) {
+        if (message.author.id == bot.user.id && logChannel[1] == message.channel.id) {
             message.channel.send("One of my logs was deleted from here.");
         }
         return;
     }
     if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
     if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032") {return;}
-    var channelToNotify = logChannel;
-    if (message.channel.id == logChannel && message.author.id == "657605267709493265") {
+    var channelToNotify = logChannel[1];
+    if (message.channel.id == logChannel[1] && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
         return;
     }
@@ -527,6 +540,64 @@ function spoilerCleaner(message) {
     }
 }
 
+function updateWords(message) {
+    if (lowmessage.indexOf(",banword ") == 0) {
+        var newDeleteList = deleteList.content;
+        newDeleteList += "\n" + lowmessage.split(",banword ")[1]
+        deleteList.edit(newDeleteList);
+        message.channel.send("`" + lowmessage.split(",banword ")[1] + "` added to list of words/phrases to immediately delete.");
+    }
+    if (lowmessage.indexOf(",reportword ") == 0) {
+        var newDeleteList = reportList.content;
+        newDeleteList += "\n" + lowmessage.split(",banword ")[1]
+        reportList.edit(newDeleteList);
+        message.channel.send("`" + lowmessage.split(",reportword ")[1] + "` added to list of words/phrases to report.");
+    }
+    if (lowmessage.indexOf(",unbanword ") == 0 && deleteList.content.split("\n").indexOf(lowmessage.split(",unbanword ")[1]) > 0) {
+        var newDeleteList = deleteList.content.split("\n")[0];
+        for (var x = 1; x < deleteList.content.split("\n").length; x++) {
+            if (!deleteList.content.split("\n")[x] == lowmessage.split(",unbanword ")[1]) { newDeleteList += "\n" + deleteList.content.split("\n")[x]; }
+        }
+        deleteList.edit(newDeleteList);
+        message.channel.send("`" + lowmessage.split(",unbanword ")[1] + "` removed from list of words/phases to immediately delete.");
+    }
+    if (lowmessage.indexOf(",unreportword ") == 0 && deleteList.content.split("\n").indexOf(lowmessage.split(",unreportword ")[1]) > 0) {
+        var newDeleteList = reportList.content.split("\n")[0];
+        for (var x = 1; x < reportList.content.split("\n").length; x++) {
+            if (!reportList.content.split("\n")[x] == lowmessage.split(",unreportword ")[1]) { newDeleteList += "\n" + reportList.content.split("\n")[x]; }
+        }
+        reportList.edit(newDeleteList);
+        message.channel.send("`" + lowmessage.split(",unreportword ")[1] + "` removed from list of words/phases to report.");
+    }
+}
+
+async function badWordsReporterLGS(message, messageMember, isEdit) {
+    var badWordsLog = "";
+    var messageToLink = message;
+    var reporting = false;
+    var deleteWords = await deleteList.content.split("\n");
+    var reportWords = await reportList.content.split("\n");
+    for (let i = 1; i < deleteWords.length; i++) {
+        if (lowmessage.indexOf(deleteWords[i]) != -1) {
+            reporting = true;
+            await message.delete();
+            messageToLink = await message.channel.send("")
+            break;
+        }
+    }
+    for (let i = 1; i < reportWords.length; i++) {
+        if (lowmessage.indexOf(reportWords[i]) != -1) {
+            reporting = true;
+            break;
+        }
+    }
+    if (reporting) {
+        badWordsLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).addField("Context:", message.url).setColor('RED');
+        if (isEdit) { badWordsLog.setFooter("This was an edit."); }
+        await bot.channels.get(logChannel[guildID.indexOf(message.guild.id)]).send(badWordsLog);
+    }
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -534,12 +605,30 @@ bot.on("message", async function(message) {
         message.channel.send("```javascript\n" + eval(message.content.split(",eval ")[1]) + "```");
     }
 
+    if (message.guild != null && message.guild.id == guildID[2]) {
+        var isMod = false;
+        var messageMember = await message.guild.fetchMember(message.author);
+        if (messageMember.permissions.has("ADMINISTRATOR")) { isMod = true; }
+
+        await offlineChecker(message.channel);
+
+        await raidBan(message, messageMember);
+
+        await links(message);
+
+        await badWordsReporterLGS(message, messageMember, false);
+
+        if (isMod) {
+            updateWords(message);
+        }
+    }
+
     await spoilerCleaner(message);
 
     if (message.author.bot) {return;}
 
     var isMod = false;
-    var messageMember = await bot.guilds.get(guildID).fetchMember(message.author);
+    var messageMember = await bot.guilds.get(guildID[1]).fetchMember(message.author);
     if (messageMember.roles.has(modRole)) { isMod = true; }
 
     await links(message);
@@ -595,7 +684,7 @@ bot.on("guildMemberRemove", async function(member) {
     if (member.roles.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
         var unmuteTime = d.getTime() + 604800000;
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
-        bot.channels.get(logChannel).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
+        bot.channels.get(logChannel[1]).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
     var newBlood = new Discord.RichEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL).addField("Left", d).setColor('RED');
     const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
