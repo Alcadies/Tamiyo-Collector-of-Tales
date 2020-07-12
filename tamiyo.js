@@ -182,6 +182,11 @@ async function mute(message, isMod) {
         if (isMod) {
             if (message.mentions.users.size != 0) {
                 var muteHours = lowmessage.split(" ")[1];
+                var shift = 0;
+                if (muteHours.indexOf("<@") == 0) {
+                    muteHours = lowmessage.split(" ")[message.mentions.users.size + 1];
+                    shift = 1;
+                }
                 message.mentions.users.forEach(async function(value, key) {
                     var muteMember = await message.guild.fetchMember(value)
                     if (!isNaN(muteHours)) {
@@ -205,11 +210,13 @@ async function mute(message, isMod) {
                         await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted indefinitely. To set a duration, please use `,mute HOURS @MEMBER`.");
                     }
                     await muteMember.addRole(message.guild.roles.get(muteRole));
-                    var muteMessage = await "You have been muted for " + muteHours + " hours";
+                    var muteMessage = "";
+                    if (!isNaN(muteHours)) { muteMessage = await "You have been muted for " + muteHours + " hours"; }
+                    else { muteMessage = await "You've been muted indefinitely"; }
                     if (message.content.includes("Reason: ")) { muteMessage += await " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
                     else if (message.content.includes("reason: ")) { muteMessage += await " with reason \"" + message.content.split("reason: ")[1] + "\""; }
                     else if (message.content.includes("REASON: ")) { muteMessage += await " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
-                    else if (message.mentions.users.size == 1 && message.content.split(">")[1].length > 1) { muteMessage += await " with reason \"" + message.content.split(">")[1] + "\""; }
+                    else if (message.content.split(">")[message.mentions.users.size + shift].length > 1) { muteMessage += await " with reason \"" + message.content.split(">")[message.mentions.users.size + shift] + "\""; }
                     else { muteMessage += await "."; }
                     await value.send(muteMessage);
                 })
