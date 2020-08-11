@@ -542,7 +542,7 @@ function spoilerCleaner(message) {
             if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title != undefined && message.embeds[0].title.split(" <")[0] == badCards[x])) {
                 message.delete();
                 deleteReporter(message, true);
-                message.channel.send("This cards has been banned in all formats for issues about serious topics. To discuss those topics, please see rule 8 (or for more details, https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152).")
+                message.channel.send("This cards has been banned in all formats for issues about serious topics. To discuss those topics, please see rule 8 (or for more details, <https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152>).")
             }
         }
     }
