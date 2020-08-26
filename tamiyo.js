@@ -432,7 +432,7 @@ async function deleteReporter(message, forced) {
         bot.channels.get(channelToNotify).send(deleteLog);
     }
     else if (attaches.length == 1) {
-        deleteLog.setImage(attaches[0]);
+        deleteLog.setImage(attaches[0].proxyURL);
         bot.channels.get(channelToNotify).send(deleteLog);
     }
     else {
