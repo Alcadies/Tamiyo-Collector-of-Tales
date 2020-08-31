@@ -502,7 +502,7 @@ async function offlineChecker(channel) {
 
 function help(channel, isMod) {
     if (lowmessage.indexOf(",help") == 0) {
-        var helpMessage = "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.";
+        var helpMessage = "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.";
         if ((isMod && channel.guild == null) || channel.id == modChannel) {
             helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.\n\n" + helpMessage;
         }
@@ -606,6 +606,31 @@ async function badWordsReporterLGS(message, messageMember, isEdit) {
     }
 }
 
+function magicCardFetcher(message) {
+    if (lowmessage.indexOf("<<") != -1 && lowmessage.lastIndexOf(">>") != -1 && lowmessage.indexOf("|") != -1) {
+        magicCardPoster(message.cleanContent, message.channel);
+    }
+}
+
+function magicCardPoster(input, channel) {
+    var request = input.replace(/\<\</g, "🦌🦌").replace(/\|/g, "🦌🦌").replace(/>>/g, "🦌🦌");
+    if (request.split("🦌🦌").length < 2) {return;}
+    var cardName = request.split("🦌🦌")[1];
+    var cardSet = request.split("🦌🦌")[2];
+    var fetched = false;
+    if (cardSet.length > 5 || cardSet.length < 2) {return;}
+    if (request.split("🦌🦌")[3].length > 0 && !isNaN(request.split("🦌🦌")[3]) && request.split("🦌🦌")[3].indexOf(" ") == -1) {
+        var cardNumber = request.split("🦌🦌")[3];
+        cardName = cardName.replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-");
+        channel.send("https://scryfall.com/card/" + cardSet.toLowerCase() +"/" + cardNumber + "/" + cardName.toLowerCase() + "?utm_source=discord");
+        fetched = true;
+    }
+    if (cardName == "Mine, Mine, Mine" || cardName == "Incoming" || cardName == "Kill! Destroy") {cardName += "!";}
+    cardName = cardName.replace(/ /g, "%2B").replace(/,/g, "%252C").replace(/\./, "%252E").replace(/û/g, "u").replace(/\'/g, "%2527").replace(/`/g, "%2527").replace(/®/g, "%25C2%25AE").replace(/:registered:/g, "%25C2%25AE").replace(/&/g, "%2526").replace(/"/g, "%2522").replace(/!/g, "%2521").replace(/\?/g, "%253F");
+    if (!fetched) {channel.send("https://cdn1.mtggoldfish.com/images/gf/" + cardName + "%2B%255B" + cardSet.toUpperCase().replace(/INV/, "IN") + "%255D.jpg"); }
+    if (input.indexOf(">>") != input.lastIndexOf(">>")) { magicCardPoster(input.substring(input.indexOf(">>") + 2), channel); } 
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -670,6 +695,8 @@ bot.on("message", async function(message) {
     await role(message, messageMember);
 
     await raidBan(message, messageMember);
+
+    await magicCardFetcher(message);
 
     await badWordsReporter(message, messageMember, false);
 })
