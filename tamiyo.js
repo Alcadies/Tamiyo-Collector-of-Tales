@@ -28,6 +28,7 @@ var modChannel = "407401913253101601";
 var logMessage = "";
 var deleteList = "";
 var reportList = "";
+var setCodes = "";
 
 bot.on("ready", async function() {
     logger.info("Connected")
@@ -69,6 +70,7 @@ bot.once("ready", async function() {
     }*/
     deleteList = bot.channels.get(logChannel[2]).fetchMessage("729754971947663381");
     reportList = bot.channels.get(logChannel[2]).fetchMessage("729755004054798379");
+    setCodes = bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
@@ -626,15 +628,19 @@ function magicCardPoster(input, channel) {
         fetched = true;
     }
     if (cardName == "Mine, Mine, Mine" || cardName == "Incoming" || cardName == "Kill! Destroy") {cardName += "!";}
+    cardSet = cardSet.toUpperCase();
+    for (var x = 1; x < setCodes.content.split("\n").length; x++) {
+        cardSet = cardSet.replace(setCodes.content.split("\n")[0], setCodes.content.split("\n")[1]);
+    }
     cardName = cardName.replace(/ /g, "%2B").replace(/,/g, "%252C").replace(/\./, "%252E").replace(/û/g, "u").replace(/\'/g, "%2527").replace(/`/g, "%2527").replace(/®/g, "%25C2%25AE").replace(/:registered:/g, "%25C2%25AE").replace(/&/g, "%2526").replace(/"/g, "%2522").replace(/!/g, "%2521").replace(/\?/g, "%253F");
-    if (!fetched) {channel.send("https://cdn1.mtggoldfish.com/images/gf/" + cardName + "%2B%255B" + cardSet.toUpperCase().replace(/INV/, "IN") + "%255D.jpg"); }
+    if (!fetched) {channel.send("https://cdn1.mtggoldfish.com/images/gf/" + cardName + "%2B%255B" + cardSet + "%255D.jpg"); }
     if (input.indexOf(">>") != input.lastIndexOf(">>")) { magicCardPoster(input.substring(input.indexOf(">>") + 2), channel); } 
 }
 
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
-    if (message.author.id == "135999597947387904" && message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700") {
+    if (message.author.id == "135999597947387904" && (message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700" ) || message.content.indexOf(",teval") == 0) {
         message.channel.send("```javascript\n" + eval(message.content.split(",eval ")[1]) + "```");
     }
 
