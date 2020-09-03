@@ -640,8 +640,12 @@ function magicCardPoster(input, channel) {
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
-    if (message.author.id == "135999597947387904" && (message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700" ) || message.content.indexOf(",teval") == 0) {
+    if (message.author.id == "135999597947387904" && message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700") {
         message.channel.send("```javascript\n" + eval(message.content.split(",eval ")[1]) + "```");
+    }
+
+    if (message.author.id == "135999597947387904" && message.content.indexOf(",teval ") == 0 && message.channel.id == "531433553225842700") {
+        message.channel.send("```javascript\n" + eval(message.content.split(",teval ")[1]) + "```");
     }
 
     if (message.guild != null && message.guild.id == guildID[2]) {
