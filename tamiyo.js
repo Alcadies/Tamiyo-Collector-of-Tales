@@ -68,9 +68,9 @@ bot.once("ready", async function() {
         var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
         logMessage.edit(newLog);
     }*/
-    deleteList = bot.channels.get(logChannel[2]).fetchMessage("729754971947663381");
-    reportList = bot.channels.get(logChannel[2]).fetchMessage("729755004054798379");
-    setCodes = bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
+    deleteList = await bot.channels.get(logChannel[2]).fetchMessage("729754971947663381");
+    reportList = await bot.channels.get(logChannel[2]).fetchMessage("729755004054798379");
+    setCodes = await bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
