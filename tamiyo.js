@@ -29,6 +29,7 @@ var logMessage = "";
 var deleteList = "";
 var reportList = "";
 var setCodes = "";
+var spoilerSets = "";
 
 bot.on("ready", async function() {
     logger.info("Connected")
@@ -71,6 +72,7 @@ bot.once("ready", async function() {
     deleteList = await bot.channels.get(logChannel[2]).fetchMessage("729754971947663381");
     reportList = await bot.channels.get(logChannel[2]).fetchMessage("729755004054798379");
     setCodes = await bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
+    spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
@@ -506,7 +508,7 @@ function help(channel, isMod) {
     if (lowmessage.indexOf(",help") == 0) {
         var helpMessage = "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.";
         if ((isMod && channel.guild == null) || channel.id == modChannel) {
-            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.\n\n" + helpMessage;
+            helpMessage = "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\n`,addspoiler LEA` `,removespoiler LEA`: Mark or unmark set code LEA as spoilers to be automatically removed outside of appropriate channels.\nCurrent bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.\n\n" + helpMessage;
         }
         else {
             helpMessage += "\nI assist the moderators with various things.";
@@ -532,12 +534,32 @@ function designChallenge(message) {
     }
 }
 
-function spoilerCleaner(message) {
-    if ((lowmessage.includes("/cmr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(CMR ")) || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR "))) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754") {
-        message.delete();
-        deleteReporter(message, true);
-        message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
+function spoilerUpdate(message, isMod) {
+    if (lowmessage.indexOf(",addspoiler ") == 0 && isMod) {
+        var newSpoilerSets = spoilerSets.content;
+        newSpoilerSets += "\n" + lowmessage.split(",addspoiler ")[1]
+        spoilerSets.edit(newSpoilerSets);
+        message.channel.send("`" + lowmessage.split(",addspoiler ")[1] + "` added to list of sets treated treated as spoilers.");
+        spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     }
+    if (lowmessage.indexOf(",removespoiler ") == 0 && deleteList.content.split("\n").indexOf(lowmessage.split(",removespoiler ")[1]) > 0 && isMod) {
+        var newSpoilerSets = spoilerSets.content.split("\n")[0];
+        for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
+            if (!spoilerSets.content.split("\n")[x] == lowmessage.split(",removespoiler ")[1]) { newSpoilerSets += "\n" + spoilerSets.content.split("\n")[x]; }
+        }
+        spoilerSets.edit(newSpoilerSets);
+        message.channel.send("`" + lowmessage.split(",removespoiler ")[1] + "` removed from list of sets treated as spoilers.");
+        spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
+    }
+}
+
+function spoilerCleaner(message) {
+    for (var x = 1; x < spoilerSets.content.split("\n").length; x++)
+        if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " ")))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR "))) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754")*/ {
+            message.delete();
+            deleteReporter(message, true);
+            message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
+        }
     if (message.channel.id != "720436488247967754") {
         for (var x = 0; x < badCards.length; x++) {
             var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
@@ -689,6 +711,8 @@ bot.on("message", async function(message) {
     await cache(message);
 
     await manualReset(isMod);
+
+    await spoilerUpdate(message, isMod);
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         message.mentions.users.forEach(async function(value, key) {
