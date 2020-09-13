@@ -534,7 +534,7 @@ function designChallenge(message) {
     }
 }
 
-function spoilerUpdate(message, isMod) {
+async function spoilerUpdate(message, isMod) {
     if (lowmessage.indexOf(",addspoiler ") == 0 && isMod) {
         var newSpoilerSets = spoilerSets.content;
         newSpoilerSets += "\n" + lowmessage.split(",addspoiler ")[1]
