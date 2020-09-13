@@ -554,12 +554,13 @@ async function spoilerUpdate(message, isMod) {
 }
 
 function spoilerCleaner(message) {
-    for (var x = 1; x < spoilerSets.content.split("\n").length; x++)
+    for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
         if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " ")))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR "))) && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754")*/ {
             message.delete();
             deleteReporter(message, true);
             message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
         }
+    }
     if (message.channel.id != "720436488247967754") {
         for (var x = 0; x < badCards.length; x++) {
             var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
