@@ -542,7 +542,7 @@ async function spoilerUpdate(message, isMod) {
         message.channel.send("`" + lowmessage.split(",addspoiler ")[1] + "` added to list of sets treated treated as spoilers.");
         spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     }
-    if (lowmessage.indexOf(",removespoiler ") == 0 && deleteList.content.split("\n").indexOf(lowmessage.split(",removespoiler ")[1]) > 0 && isMod) {
+    if (lowmessage.indexOf(",removespoiler ") == 0 && spoilerSets.content.split("\n").indexOf(lowmessage.split(",removespoiler ")[1]) > 0 && isMod) {
         var newSpoilerSets = spoilerSets.content.split("\n")[0];
         for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
             if (!spoilerSets.content.split("\n")[x] == lowmessage.split(",removespoiler ")[1]) { newSpoilerSets += "\n" + spoilerSets.content.split("\n")[x]; }
@@ -555,7 +555,7 @@ async function spoilerUpdate(message, isMod) {
 
 function spoilerCleaner(message) {
     for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
-        if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " "))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR ")))*/ && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754") {
+        if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " "))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR ")))*/ && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754" ) {
             message.delete();
             deleteReporter(message, true);
             message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
