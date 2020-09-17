@@ -542,13 +542,13 @@ async function spoilerUpdate(message, isMod) {
         message.channel.send("`" + lowmessage.split(",addspoiler ")[1] + "` added to list of sets treated treated as spoilers.");
         spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     }
-    if (lowmessage.indexOf(",removespoiler ") == 0 && spoilerSets.content.split("\n").indexOf(lowmessage.split(",removespoiler ")[1]) > 0 && isMod) {
+    if (lowmessage.indexOf(",removespoiler ") == 0 && spoilerSets.content.toUpperCase().split("\n").indexOf(lowmessage.split(",removespoiler ")[1].toUpperCase()) > 0 && isMod) {
         var newSpoilerSets = spoilerSets.content.split("\n")[0];
         for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
-            if (!spoilerSets.content.split("\n")[x] == lowmessage.split(",removespoiler ")[1]) { newSpoilerSets += "\n" + spoilerSets.content.split("\n")[x]; }
+            if (!spoilerSets.content.toUpperCase().split("\n")[x] == lowmessage.split(",removespoiler ")[1].toUpperCase()) { newSpoilerSets += "\n" + spoilerSets.content.split("\n")[x]; }
         }
         spoilerSets.edit(newSpoilerSets);
-        message.channel.send("`" + lowmessage.split(",removespoiler ")[1] + "` removed from list of sets treated as spoilers.");
+        message.channel.send("`" + lowmessage.split(",removespoiler ")[1].toUpperCase() + "` removed from list of sets treated as spoilers.");
         spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     }
 }
