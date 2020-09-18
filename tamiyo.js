@@ -567,7 +567,7 @@ function spoilerCleaner(message) {
         var cardName = reprintList.content.split("\n")[x];
         if (message.embeds[0] != undefined && message.embeds[0].title.split(":")[0] == cardName + " ") { return; }
         cardName = cardName.toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-");
-        if (message.content.includes("/" + cardName + "?"))
+        if (message.content.includes("/" + cardName + "?")) { return; }
     }
     for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
         if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " "))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR ")))*/ && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754" ) {
