@@ -30,6 +30,7 @@ var deleteList = "";
 var reportList = "";
 var setCodes = "";
 var spoilerSets = "";
+var reprintList = "";
 
 bot.on("ready", async function() {
     logger.info("Connected")
@@ -73,6 +74,7 @@ bot.once("ready", async function() {
     reportList = await bot.channels.get(logChannel[2]).fetchMessage("729755004054798379");
     setCodes = await bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
     spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
+    reprintList = await bot.channels.get(logChannel[0]).fetchMessage("756507174200541255");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
@@ -537,9 +539,9 @@ function designChallenge(message) {
 async function spoilerUpdate(message, isMod) {
     if (lowmessage.indexOf(",addspoiler ") == 0 && isMod) {
         var newSpoilerSets = spoilerSets.content;
-        newSpoilerSets += "\n" + lowmessage.split(",addspoiler ")[1]
+        newSpoilerSets += "\n" + lowmessage.split(",addspoiler ")[1].toUpperCase();
         spoilerSets.edit(newSpoilerSets);
-        message.channel.send("`" + lowmessage.split(",addspoiler ")[1] + "` added to list of sets treated treated as spoilers.");
+        message.channel.send("`" + lowmessage.split(",addspoiler ")[1].toUpperCase() + "` added to list of sets treated treated as spoilers.");
         spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     }
     if (lowmessage.indexOf(",removespoiler ") == 0 && spoilerSets.content.toUpperCase().split("\n").indexOf(lowmessage.split(",removespoiler ")[1].toUpperCase()) > 0 && isMod) {
@@ -551,9 +553,22 @@ async function spoilerUpdate(message, isMod) {
         message.channel.send("`" + lowmessage.split(",removespoiler ")[1].toUpperCase() + "` removed from list of sets treated as spoilers.");
         spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     }
+    if (message.content.indexOf(",addreprint ") == 0 && isMod) {
+        var newReprintList = reprintList.content;
+        newReprintList += "\n" + message.content.split(",addreprint ")[1];
+        reprintList.edit(newReprintList);
+        message.channel.send("`" + message.content.split(",addreprint ")[1] + "` added to list of reprints exempt from spoiler policy.");
+        reprintList = await bot.channels.get(logChannel[0]).fetchMessage("756507174200541255");
+    }
 }
 
 function spoilerCleaner(message) {
+    for (var x = 1; x < reprintList.content.split("\n").length; x++) {
+        var cardName = reprintList.content.split("\n")[x];
+        if (message.embeds[0] != undefined && message.embeds[0].title.split(":")[0] == cardName + " ") { return; }
+        cardName = cardName.toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-");
+        if (message.content.includes("/" + cardName + "?"))
+    }
     for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
         if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " "))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR ")))*/ && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754" ) {
             message.delete();
@@ -646,8 +661,8 @@ function magicCardPoster(input, channel) {
     if (cardSet.length > 5 || cardSet.length < 2) {return;}
     if (request.split("🦌🦌")[3].length > 0 && !isNaN(request.split("🦌🦌")[3]) && request.split("🦌🦌")[3].indexOf(" ") == -1) {
         var cardNumber = request.split("🦌🦌")[3];
-        cardName = cardName.replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-");
-        channel.send("https://scryfall.com/card/" + cardSet.toLowerCase() +"/" + cardNumber + "/" + cardName.toLowerCase() + "?utm_source=discord");
+        cardName = cardName.toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-");
+        channel.send("https://scryfall.com/card/" + cardSet.toLowerCase() +"/" + cardNumber + "/" + cardName + "?utm_source=discord");
         fetched = true;
     }
     if (cardName == "Mine, Mine, Mine" || cardName == "Incoming" || cardName == "Kill! Destroy") {cardName += "!";}
