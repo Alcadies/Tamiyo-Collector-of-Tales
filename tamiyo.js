@@ -431,7 +431,8 @@ async function deleteReporter(message, forced) {
         deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
         deleteLog += "```";
     }
-    messageMember = await message.guild.fetchMember(message.author);
+    messageMember = message.author.username;
+    if (message.guild.members.has(message.author.id)) { messageMember = await message.guild.fetchMember(message.author); }
     var deleteMember = await message.guild.fetchMember(user);
     if (messageMember.id == deleteMember.id) { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
     else { deleteLog = new Discord.RichEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL).addField("Deletion", message.channel + ": " + message.content); }
