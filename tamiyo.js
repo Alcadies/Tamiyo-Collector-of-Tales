@@ -814,10 +814,11 @@ bot.on("messageDeleteBulk", async function(messages) {
     });
 })
 
-bot.on("presenceUpdate", function(oldMember, newMember) {
+bot.on("presenceUpdate", async function(oldMember, newMember) {
     if (newMember.id == "695434707264995350" || newMember.id == "676989741173964800") {
         if (newMember.presence.status == "offline") {
-            bot.fetchUser("135999597947387904").send("<@135999597947387904>, <@" + newMember.id + "> appears to be offline.");
+            var ash = bot.fetchUser("135999597947387904")
+            ash.send("<@135999597947387904>, <@" + newMember.id + "> appears to be offline.");
         }
     }
 })
