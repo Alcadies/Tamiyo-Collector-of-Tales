@@ -520,7 +520,7 @@ function help(channel, isMod) {
         else {
             helpEmbed.setTitle("Help").addField("Other Functions:", "If either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.\nI assist the moderators with various things.");
         }
-        helpEmbed.addFooter("\n\nAll commands are case insensitive. If you have suggestions for new or improved commands, please @ Ash K. with them.");
+        helpEmbed.setFooter("\n\nAll commands are case insensitive. If you have suggestions for new or improved commands, please @ Ash K. with them.");
         channel.send(helpEmbed);
     }
 }
