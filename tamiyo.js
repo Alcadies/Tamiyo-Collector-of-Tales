@@ -574,6 +574,7 @@ async function spoilerUpdate(message, isMod) {
 }
 
 function spoilerCleaner(message) {
+    if (!message) {return;}
     for (var x = 1; x < reprintList.content.split("\n").length; x++) {
         var cardName = reprintList.content.split("\n")[x];
         if (message.embeds[0] != undefined && message.embeds[0].title instanceof String && message.embeds[0].title.split(":")[0] == cardName + " ") { return; }
@@ -697,13 +698,13 @@ async function lfgTest1(message) {
                 for (var y = 0; y < lfgPlatform.length; y++) {
                     if (lowmessage.includes(lfgPlatform[y].toLowerCase())) {
                         if (lfgPost[y][x] === 0) {
-                            var response = message.channel.send("My records indicate " + lfgPlatform[y] + " " + lfgFormat[x] + " doesn't exist.");
+                            var response = await message.channel.send("My records indicate " + lfgPlatform[y] + " " + lfgFormat[x] + " doesn't exist.");
                             setTimeout(function() {
                                 selfCleaner(response);
                             }, 30000);
                         }
                         else if (lfgPost[y][x] === "") {
-                            var response = message.channel.send("I don't currently support seeking " + lfgPlatform[y] + " " + lfgFormat[x] + " games.");
+                            var response = await message.channel.send("I don't currently support seeking " + lfgPlatform[y] + " " + lfgFormat[x] + " games.");
                             setTimeout(function() {
                                 selfCleaner(response);
                             }, 30000);
