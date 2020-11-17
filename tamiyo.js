@@ -18,11 +18,13 @@ var logChannel = ["531433553225842700", "633429050089799687", "72975338440766260
 var botCommandChannel = ["531433553225842700", "213126280323923970"];
 var modRole = "407400920746426368" /*"606659573159428169"*/;
 var muteRole = "280463986531631104" /*"586432252901195777"*/;
-var guildID = ["531433553225842698", "162586705524686848", "729748959991562330"]; //Testing, M&C, LGS
+var guildID = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
+var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️"];
+var roleID = ["778058673783046159", "778194801773641778", "778194798984822784", "778194420599881749"];
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
-var roleMessageID = "639173241679904771";
-var roleChannelID = "407401913253101601";
+var roleMessageID = "778198193304502273";
+var roleChannelID = "778058674010325034";
 var elkRole = "640599175326728203";
 var modChannel = "407401913253101601";
 var logMessage = "";
@@ -661,6 +663,10 @@ function magicCardPoster(input, channel) {
     var request = input.replace(/\<\</g, "🦌🦌").replace(/\|/g, "🦌🦌").replace(/>>/g, "🦌🦌");
     if (request.split("🦌🦌").length < 2) {return;}
     var cardName = request.split("🦌🦌")[1];
+    if (badCards.includes(cardName)) {
+        channel.send("This card has been banned in all formats for issues about serious topics.");
+        return;
+    }
     var cardSet = request.split("🦌🦌")[2];
     var fetched = false;
     if (cardSet.length > 5 || cardSet.length < 2) {return;}
@@ -793,17 +799,21 @@ bot.on("guildMemberUpdate", function(oldMember, newMember) {
     if (newMember.roles.has(muteRole) && newMember.roles.has(seriousRole)) { newMember.removeRole(seriousRole); }
 })
 
-bot.on("messageReactionAdd", function(messageReaction, user) {
+bot.on("messageReactionAdd", async function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
-        messageReaction.message.channel.send("You have reacted to this with ```" + messageReaction.emoji.name + "```");
-        if (messageReaction.emoji.name == "🙉") { messageReaction.message.channel.send("No evil shall be heard."); }
+        if(roleReact.includes(messageReaction.emoji.name)) {
+            member = await messageReaction.message.guild.fetchMember(user);
+            member.addRole(roleID[roleReact.indexOf(messageReaction.emoji.name)]);
+        }
     }
 })
 
-bot.on("messageReactionRemove", function(messageReaction, user) {
+bot.on("messageReactionRemove", async function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
-        messageReaction.message.channel.send("You have un-reacted to this with ```" + messageReaction.emoji.name + "```");
-        if (messageReaction.emoji.name == "🙉") { messageReaction.message.channel.send("No evil shall be heard."); }
+        if(roleReact.includes(messageReaction.emoji.name)) {
+            member = await messageReaction.message.guild.fetchMember(user);
+            member.removeRole(roleID[roleReact.indexOf(messageReaction.emoji.name)]);
+        }
     }
 })
 
