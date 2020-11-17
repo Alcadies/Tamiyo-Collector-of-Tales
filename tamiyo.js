@@ -697,15 +697,21 @@ async function lfgTest1(message) {
                 for (var y = 0; y < lfgPlatform.length; y++) {
                     if (lowmessage.includes(lfgPlatform[y].toLowerCase())) {
                         if (lfgPost[y][x] === 0) {
-                            message.channel.send("My records indicate " + lfgPlatform[y] + " " + lfgFormat[x] + " doesn't exist.");
+                            var response = message.channel.send("My records indicate " + lfgPlatform[y] + " " + lfgFormat[x] + " doesn't exist.");
+                            setTimeout(function() {
+                                selfCleaner(response);
+                            }, 30000);
                         }
                         else if (lfgPost[y][x] === "") {
-                            message.channel.send("I don't currently support seeking " + lfgPlatform[y] + " " + lfgFormat[x] + " games.");
+                            var response = message.channel.send("I don't currently support seeking " + lfgPlatform[y] + " " + lfgFormat[x] + " games.");
+                            setTimeout(function() {
+                                selfCleaner(response);
+                            }, 30000);
                         }
                         else {
                             var theList = await bot.channels.get("778206142299897877").fetchMessage(lfgPost[y][x]);
                             if (theList.content.split("\n").length >= lfgPlayerCount[x]) {
-                                var thePings = "";
+                                var thePings = "<@" + message.author.id + ">";
                                 for (var i = 1; i < lfgPlayerCount[x]; i++) {
                                     thePings += "<@" + theList.content.split("\n")[i] + "> ";
                                 }
@@ -722,6 +728,10 @@ async function lfgTest1(message) {
         }
         message.delete();
     }
+}
+
+function selfCleaner(message) {
+    message.delete();
 }
 
 bot.on("message", async function(message) {
