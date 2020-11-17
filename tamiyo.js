@@ -21,6 +21,10 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildID = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️"];
 var roleID = ["778058673783046159", "778194801773641778", "778194798984822784", "778194420599881749"];
+var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "Commander", "Canlander", "Historic", "Brawl", "HBrawl"];
+var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2]
+var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
+var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", ""], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""]]
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageID = "778198193304502273";
@@ -686,6 +690,40 @@ function magicCardPoster(input, channel) {
     if (input.indexOf(">>") != input.lastIndexOf(">>")) { magicCardPoster(input.substring(input.indexOf(">>") + 2), channel); } 
 }
 
+async function lfgTest1(message) {
+    if (lowmessage.indexOf(",lfg") == 0) {
+        for (var x = 0; x < lfgFormat.length; x++) {
+            if (lowmessage.includes(lfgFormat[x].toLowerCase())) {
+                for (var y = 0; y < lfgPlatform.length; y++) {
+                    if (lowmessage.includes(lfgPlatform[y].toLowerCase())) {
+                        if (lfgPost[y][x] === 0) {
+                            message.channel.send("My records indicate " + lfgPlatform[y] + " " + lfgFormat[x] + " doesn't exist.");
+                        }
+                        else if (lfgPost[y][x] === "") {
+                            message.channel.send("I don't currently support seeking " + lfgPlatform[y] + " " + lfgFormat[x] + " games.");
+                        }
+                        else {
+                            var theList = await bot.channels.get("778206142299897877").fetchMessage(lfgPost[y][x]);
+                            if (theList.content.split("\n").length >= lfgPlayerCount[x]) {
+                                var thePings = "";
+                                for (var i = 1; i < lfgPlayerCount[x]; i++) {
+                                    thePings += "<@" + theList.content.split("\n")[i] + "> ";
+                                }
+                                message.channel.send(thePings + " you've been matched for a game of " + lfgPlatform[y] + " " + lfgFormat[x] + "!");
+                                theList.edit(theList.content.split("\n")[0]);
+                            }
+                            else {
+                                theList.edit(theList.content + "\n" + message.author.id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        message.delete();
+    }
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -760,6 +798,10 @@ bot.on("message", async function(message) {
     await magicCardFetcher(message);
 
     await badWordsReporter(message, messageMember, false);
+
+    if (message.guild.id == guildID[3]) {
+        await lfgTest1(message);
+    }
 })
 
 bot.on("messageUpdate", async function(oldMessage, newMessage) {
