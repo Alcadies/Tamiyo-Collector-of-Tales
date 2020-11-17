@@ -692,7 +692,7 @@ function magicCardPoster(input, channel) {
 }
 
 async function lfgTest1(message) {
-    if (lowmessage.indexOf(",lfg") == 0) {
+    if (lowmessage.indexOf(",lfg") == 0 || lowmessage.indexOf("-lfg") == 0) {
         for (var x = 0; x < lfgFormat.length; x++) {
             if (lowmessage.includes(lfgFormat[x].toLowerCase())) {
                 for (var y = 0; y < lfgPlatform.length; y++) {
@@ -711,16 +711,25 @@ async function lfgTest1(message) {
                         }
                         else {
                             var theList = await bot.channels.get("778206142299897877").fetchMessage(lfgPost[y][x]);
-                            if (theList.content.split("\n").length >= lfgPlayerCount[x]) {
-                                var thePings = "<@" + message.author.id + ">";
-                                for (var i = 1; i < lfgPlayerCount[x]; i++) {
-                                    thePings += "<@" + theList.content.split("\n")[i] + "> ";
+                            if (lowmessage.indexOf(",lfg") == 0) {
+                                if (theList.content.split("\n").length >= lfgPlayerCount[x]) {
+                                    var thePings = "<@" + message.author.id + ">";
+                                    for (var i = 1; i < lfgPlayerCount[x]; i++) {
+                                        thePings += "<@" + theList.content.split("\n")[i] + "> ";
+                                    }
+                                    message.channel.send(thePings + " you've been matched for a game of " + lfgPlatform[y] + " " + lfgFormat[x] + "!");
+                                    theList.edit(theList.content.split("\n")[0]);
                                 }
-                                message.channel.send(thePings + " you've been matched for a game of " + lfgPlatform[y] + " " + lfgFormat[x] + "!");
-                                theList.edit(theList.content.split("\n")[0]);
+                                else {
+                                    theList.edit(theList.content + "\n" + message.author.id);
+                                }
                             }
                             else {
-                                theList.edit(theList.content + "\n" + message.author.id);
+                                var newList = theList.content.split("\n")[0];
+                                for (var z = 1; z < theList.content.split("\n").length; z++) {
+                                    if (!theList.content.split("\n")[z].includes(message.author.id)) { newList += await "\n" + theList.content.split("\n")[z]; }
+                                }
+                                theList.edit(newList);
                             }
                         }
                     }
