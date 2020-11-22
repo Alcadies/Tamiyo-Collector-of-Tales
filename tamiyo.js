@@ -760,7 +760,7 @@ async function lfgTest2(message) {
                 var matchedFormats = [];
                 var matchedPlatforms = [];
                 //for (var y = 0; y < thePost.content.split(":")[0].split("\n").length; y++) {
-                for (var y = 0; y < thePost.content.split(",").length; y++)
+                for (var y = 0; y < thePost.content.split(",").length; y++) {
                     if (thePost.content.includes("Commander")) {
                         //if (lowmessage.includes())
                     }
@@ -820,7 +820,7 @@ async function lfgTest2(message) {
             lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
         }
         //message.delete();
-    } 
+    }
 }
 
 function selfCleaner(message) {
