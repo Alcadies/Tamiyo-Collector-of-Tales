@@ -582,7 +582,7 @@ async function spoilerUpdate(message, isMod) {
 }
 
 function spoilerCleaner(message) {
-    if (!reprintList.content) {return;}
+    if (!message) {return;}
     for (var x = 1; x < reprintList.content.split("\n").length; x++) {
         var cardName = reprintList.content.split("\n")[x];
         if (message.embeds[0] != undefined && message.embeds[0].title instanceof String && message.embeds[0].title.split(":")[0] == cardName + " ") { return; }
@@ -837,7 +837,7 @@ async function lfg2End(id) {
     selfCleaner(thePost);
     var newSuper = lfgSuper.content.split("\n")[0];
     for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
-        if (lfg.content.split("\n")[z].split(" ")[0] != id) {
+        if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
             newSuper += lfgSuper.content.split("\n")[z];
         }
     }
