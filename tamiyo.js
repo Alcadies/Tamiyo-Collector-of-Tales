@@ -25,6 +25,7 @@ var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper",
 var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
 var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", ""], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""]]
+var lfgSuper = "";
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageID = "778198193304502273";
@@ -81,6 +82,7 @@ bot.once("ready", async function() {
     setCodes = await bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
     spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     reprintList = await bot.channels.get(logChannel[0]).fetchMessage("756507174200541255");
+    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
@@ -692,7 +694,7 @@ function magicCardPoster(input, channel) {
 }
 
 async function lfgTest1(message) {
-    if (lowmessage.indexOf(",lfg") == 0 || lowmessage.indexOf("-lfg") == 0) {
+    if ((lowmessage.indexOf(",lfg") == 0 || lowmessage.indexOf("-lfg") == 0) && message.channel.id == "778206142299897877") {
         for (var x = 0; x < lfgFormat.length; x++) {
             if (lowmessage.includes(lfgFormat[x].toLowerCase())) {
                 for (var y = 0; y < lfgPlatform.length; y++) {
@@ -712,6 +714,12 @@ async function lfgTest1(message) {
                         else {
                             var theList = await bot.channels.get("778206142299897877").fetchMessage(lfgPost[y][x]);
                             if (lowmessage.indexOf(",lfg") == 0) {
+                                if (theList.content.includes(message.author.id)) {
+                                    var response = await message.channel.send("You seem to already be on the list for " + lfgPlatform[y] + " " + lfgFormat[x] + ".");
+                                    setTimeout(function() {
+                                        selfCleaner(response);
+                                    }, 30000);
+                                }
                                 if (theList.content.split("\n").length >= lfgPlayerCount[x]) {
                                     var thePings = "<@" + message.author.id + ">";
                                     for (var i = 1; i < lfgPlayerCount[x]; i++) {
@@ -719,6 +727,7 @@ async function lfgTest1(message) {
                                     }
                                     message.channel.send(thePings + " you've been matched for a game of " + lfgPlatform[y] + " " + lfgFormat[x] + "!");
                                     theList.edit(theList.content.split("\n")[0]);
+                                    theList.unpin();
                                 }
                                 else {
                                     theList.edit(theList.content + "\n" + message.author.id);
@@ -730,6 +739,9 @@ async function lfgTest1(message) {
                                     if (!theList.content.split("\n")[z].includes(message.author.id)) { newList += await "\n" + theList.content.split("\n")[z]; }
                                 }
                                 theList.edit(newList);
+                                if(!theList.pinned) {
+                                    theList.pin();
+                                }
                             }
                         }
                     }
@@ -738,6 +750,76 @@ async function lfgTest1(message) {
         }
         message.delete();
     }
+}
+
+async function lfgTest2(message) {
+    if (message.channel.id == "778272322490597376") {
+        if (lowmessage.indexOf(",lfg") == 0) {
+            for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
+                var thePost = await bot.channels.get("778272322490597376").fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
+                var matchedFormats = [];
+                var matchedPlatforms = [];
+                //for (var y = 0; y < thePost.content.split(":")[0].split("\n").length; y++) {
+                for (var y = 0; y < thePost.content.split(",").length; y++)
+                    if (thePost.content.includes("Commander")) {
+                        //if (lowmessage.includes())
+                    }
+                    else {
+                        /*if (lowmessage.includes(thePost.content.split(":")[0].split("\n")[y].split(" ")[0].toLowerCase()) && lowmessage.includes(thePost.content.split(":")[0].split("\n")[y].split(" ")[1].toLowerCase())) {
+                            if (thePost.content.split(":")[1].split("\n").length >= lfgPlayerCount[lfgFormat.indexOf(thePost.content.split(":")[0].split("\n")[y].split(" ")[1])) {
+                                matchedFormats.push(thePost.content.split("\n")[y]);
+                            }
+                        }*/
+                        if (lowmessage.includes(thePost.content.split(",")[y].toLowerCase())) {
+                            if (lfgFormat.includes(thePost.content.split(",")[y])) {
+                                matchedFormats.push(thePost.content.split(",")[y]);
+                            }
+                            else {
+                                matchedPlatforms.push(thePost.content.split(",")[y]);
+                            }
+                        }
+                    }
+                }
+                if (matchedFormats.length > 0 && matchedPlatforms.length > 0) {
+                    message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split(":")[1].split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats "` on one of `" + matchedPlatforms + "`.");
+                    var newSuper = lfgSuper.content.split("\n")[0];
+                    for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
+                        if (z != x) {
+                            newSuper += lfgSuper.content.split("\n")[z];
+                        }
+                    }
+                    lfgSuper.edit(newSuper);
+                    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+                    return;
+                }
+            }
+            var timer = 60;
+            if (!isNaN(lowmessage.split(" ")[1])) {
+                timer = lowmessage.split(" ")[1];
+            }
+            var d = new Date();
+            var timeEnd = (timer * 60000) + d.getTime();
+            var formats = [];
+            var platforms = [];
+            for (var x = 0; x < lfgFormat.length; x++) {
+                if (lowmessage.includes(lfgFormat[x].toLowerCase()) && lfgPlayerCount[x] == 2) {
+                    formats.push(lfgFormat[x]);
+                }
+            }
+            for (var y = 0; y < lfgPlatform.length; y++) {
+                if (lowmessage.includes(lfgPlatform[y].toLowerCase())) {
+                    platforms.push(lfgPlatform[y]);
+                }
+            }
+            if (formats.length == 0 || platforms.length == 0) {
+                message.channel.send("You must specify at least one format and at least one platform.");
+                return;
+            }
+            var newPost = await bot.channels.get("778272322490597376").send(formats + "," + platforms + "\n" + message.author.id);
+            lfgSuper.edit(lfgSuper.content + "\n" + message.author.id);
+            lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+        }
+    } 
 }
 
 function selfCleaner(message) {
