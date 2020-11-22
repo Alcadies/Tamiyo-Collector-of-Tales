@@ -748,7 +748,7 @@ async function lfgTest1(message) {
                 }
             }
         }
-        message.delete();
+        //message.delete();
     }
 }
 
@@ -781,7 +781,7 @@ async function lfgTest2(message) {
                     }
                 }
                 if (matchedFormats.length > 0 && matchedPlatforms.length > 0) {
-                    message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split(":")[1].split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats "` on one of `" + matchedPlatforms + "`.");
+                    message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split(":")[1].split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats + "` on one of `" + matchedPlatforms + "`.");
                     var newSuper = lfgSuper.content.split("\n")[0];
                     for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
                         if (z != x) {
@@ -819,6 +819,7 @@ async function lfgTest2(message) {
             lfgSuper.edit(lfgSuper.content + "\n" + message.author.id);
             lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
         }
+        //message.delete();
     } 
 }
 
