@@ -582,7 +582,7 @@ async function spoilerUpdate(message, isMod) {
 }
 
 function spoilerCleaner(message) {
-    if (!message) {return;}
+    if (!reprintList.content) {return;}
     for (var x = 1; x < reprintList.content.split("\n").length; x++) {
         var cardName = reprintList.content.split("\n")[x];
         if (message.embeds[0] != undefined && message.embeds[0].title instanceof String && message.embeds[0].title.split(":")[0] == cardName + " ") { return; }
@@ -926,6 +926,8 @@ bot.on("message", async function(message) {
 
     if (message.guild.id == guildID[3]) {
         await lfgTest1(message);
+
+        await lfgTest2(message);
     }
 })
 
