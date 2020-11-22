@@ -72,6 +72,12 @@ bot.once("ready", async function() {
             }, timer)
         }
     }
+    for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
+        var d = new Date();
+        setTimeout(function () {
+            lfg2End(lfgSuper.content.split("\n")[x].split(" ")[0])
+        }, Math.max(lfgSuper.content.split("\n")[x].split(" ")[1] - d, 0))
+    }
     /*else {
         var logs = logMessage.content;
         var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
@@ -794,7 +800,7 @@ async function lfgTest2(message) {
                 }
             }
             var timer = 60;
-            if (!isNaN(lowmessage.split(" ")[1])) {
+            if (!isNaN(lowmessage.split(" ")[1]) && lowmessage.split(" ")[1] > 0) {
                 timer = lowmessage.split(" ")[1];
             }
             var d = new Date();
@@ -816,11 +822,27 @@ async function lfgTest2(message) {
                 return;
             }
             var newPost = await bot.channels.get("778272322490597376").send(formats + "," + platforms + "\n" + message.author.id);
-            lfgSuper.edit(lfgSuper.content + "\n" + message.author.id);
+            lfgSuper.edit(lfgSuper.content + "\n" + newPost.id + " " + timeEnd);
             lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+            setTimeout(function () {
+                lfg2End(newPost.id)
+            }, timer * 60000);
         }
         //message.delete();
     }
+}
+
+function lfg2End(id) {
+    thePost = await bot.channels.get("778272322490597376").fetchMessage(id);
+    selfCleaner(thePost);
+    var newSuper = lfgSuper.content.split("\n")[0];
+    for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
+        if (lfg.content.split("\n")[z].split(" ")[0] != id) {
+            newSuper += lfgSuper.content.split("\n")[z];
+        }
+    }
+    lfgSuper.edit(newSuper);
+    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
 }
 
 function selfCleaner(message) {
