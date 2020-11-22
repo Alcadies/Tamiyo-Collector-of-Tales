@@ -832,7 +832,7 @@ async function lfgTest2(message) {
     }
 }
 
-function lfg2End(id) {
+async function lfg2End(id) {
     thePost = await bot.channels.get("778272322490597376").fetchMessage(id);
     selfCleaner(thePost);
     var newSuper = lfgSuper.content.split("\n")[0];
