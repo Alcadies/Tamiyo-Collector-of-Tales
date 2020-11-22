@@ -73,12 +73,35 @@ bot.once("ready", async function() {
         }
     }
     lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
-    for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
+    var str = await lfgSuper.content;
+    while (str.includes("\n") && str.length > 2) {
+        str = str.slice(str.indexOf("\n") + 1);
+        var timeIn = 0;
+        if (!str.includes("\n")) {
+            timeIn = str.split(" ")[1];
+        }
+        else {
+            timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
+        }
+        var messageID = str.split(" ")[0];
+        var d = new Date();
+        var timer = 0;
+        if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
+        else { timer = parseInt(str.substring(str.indexOf(" "))); }
+        timer -= d.getTime();
+        if (timer <= 0) { lfg2End(messageID); }
+        else {
+            setTimeout(function () {
+                lfg2End(messageID);
+            }, timer)
+        }
+    }
+    /*for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
         var d = new Date();
         setTimeout(function () {
             lfg2End(lfgSuper.content.split("\n")[x].split(" ")[0])
         }, Math.max(lfgSuper.content.split("\n")[x].split(" ")[1] - d, 0))
-    }
+    }*/
     /*else {
         var logs = logMessage.content;
         var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
