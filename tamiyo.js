@@ -72,6 +72,7 @@ bot.once("ready", async function() {
             }, timer)
         }
     }
+    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
     for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
         var d = new Date();
         setTimeout(function () {
@@ -88,7 +89,6 @@ bot.once("ready", async function() {
     setCodes = await bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
     spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     reprintList = await bot.channels.get(logChannel[0]).fetchMessage("756507174200541255");
-    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
