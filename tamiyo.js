@@ -851,7 +851,7 @@ async function lfgTest2(message) {
             var platforms = [];
             var commands = [];
             for (var x = 0; x < lfgFormat.length; x++) {
-                if (lowmessage.includes(lfgFormat[x].toLowerCase()))
+                if (lowmessage.includes(lfgFormat[x].toLowerCase())) {
                     if (lfgPlayerCount[x] == 2) {
                         formats.push(lfgFormat[x]);
                     }
