@@ -821,7 +821,7 @@ async function lfgTest2(message) {
                                             newSuper += "\n" + lfgSuper.content.split("\n")[z];
                                         }
                                         else {
-                                            newSuper += "\n" + thePost.id + " " + timeEnd;
+                                            newSuper += "\n" + thePost.id + " " + Math.min(timeEnd, lfgSuper.content.split("\n")[x].split(" ")[1];
                                         }
                                     }
                                     lfgSuper.edit(newSuper);
@@ -889,7 +889,7 @@ async function lfgTest2(message) {
             if (commands.length > 0) {
                 for (var z = 0; z < commands.length; z++) {
                     for (var i = 0; i < platforms.length; i++) {
-                        var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id);
+                        var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id + " " + timeEnd);
                         lfgSuper.edit(lfgSuper.content + "\n" + newPost.id + " " + timeEnd);
                         lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
                     }
