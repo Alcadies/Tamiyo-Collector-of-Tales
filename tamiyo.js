@@ -21,10 +21,10 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildID = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️"];
 var roleID = ["778058673783046159", "778194801773641778", "778194798984822784", "778194420599881749"];
-var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "Commander", "Canlander", "Historic", "Brawl", "HBrawl"];
-var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2]
+var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "HBrawl", "cEDH"];
+var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
-var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", ""], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", ""]]
+var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", "", 0], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""]]
 var lfgSuper = "";
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
@@ -724,6 +724,7 @@ function magicCardPoster(input, channel) {
 
 async function lfgTest1(message) {
     if ((lowmessage.indexOf(",lfg") == 0 || lowmessage.indexOf("-lfg") == 0) && message.channel.id == "778206142299897877") {
+        lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh")
         for (var x = 0; x < lfgFormat.length; x++) {
             if (lowmessage.includes(lfgFormat[x].toLowerCase())) {
                 for (var y = 0; y < lfgPlatform.length; y++) {
@@ -796,7 +797,7 @@ async function lfgTest2(message) {
                                 var newSuper = lfgSuper.content.split("\n")[0];
                                 for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
                                     if (z != x) {
-                                        newSuper += lfgSuper.content.split("\n")[z];
+                                        newSuper += "\n" + lfgSuper.content.split("\n")[z];
                                     }
                                 }
                                 lfgSuper.edit(newSuper);
@@ -833,7 +834,7 @@ async function lfgTest2(message) {
                     var newSuper = lfgSuper.content.split("\n")[0];
                     for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
                         if (z != x) {
-                            newSuper += lfgSuper.content.split("\n")[z];
+                            newSuper += "\n" + lfgSuper.content.split("\n")[z];
                         }
                     }
                     lfgSuper.edit(newSuper);
@@ -898,7 +899,7 @@ async function lfg2End(id) {
     var newSuper = lfgSuper.content.split("\n")[0];
     for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
         if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
-            newSuper += lfgSuper.content.split("\n")[z];
+            newSuper += "\n" + lfgSuper.content.split("\n")[z];
         }
     }
     lfgSuper.edit(newSuper);
