@@ -821,7 +821,7 @@ async function lfgTest2(message) {
                                             newSuper += "\n" + lfgSuper.content.split("\n")[z];
                                         }
                                         else {
-                                            newSuper += "\n" + thePost.id + " " + Math.min(timeEnd, lfgSuper.content.split("\n")[x].split(" ")[1];
+                                            newSuper += "\n" + thePost.id + " " + Math.min(timeEnd, lfgSuper.content.split("\n")[x].split(" ")[1]);
                                         }
                                     }
                                     lfgSuper.edit(newSuper);
