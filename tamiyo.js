@@ -552,7 +552,7 @@ function help(channel, isMod) {
         var helpMessage = "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.";
         var helpEmbed = new Discord.RichEmbed().addField("Links and Explanations:", "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`");
         if ((isMod && channel.guild == null) || channel.id == modChannel) {
-            helpEmbed.setTitle("Mod Help").addField("Moderator Commander:", "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\n`,addspoiler LEA` `,removespoiler LEA`: Mark or unmark set code LEA as spoilers to be automatically removed outside of appropriate channels.").addField("Other Moderator Functions:", "Current bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.");
+            helpEmbed.setTitle("Mod Help").addField("Moderator Commands:", "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\n`,addspoiler LEA` `,removespoiler LEA`: Mark or unmark set code LEA as spoilers to be automatically removed outside of appropriate channels.").addField("Other Moderator Functions:", "Current bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.");
         }
         else {
             helpEmbed.setTitle("Help").addField("Other Functions:", "If either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.\nI assist the moderators with various things.");
@@ -724,7 +724,7 @@ function magicCardPoster(input, channel) {
 
 async function lfgTest1(message) {
     if ((lowmessage.indexOf(",lfg") == 0 || lowmessage.indexOf("-lfg") == 0) && message.channel.id == "778206142299897877") {
-        lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh")
+        lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh").replace(/mtga/g, "arena").replace(/canadian highlander/g, "canlander").replace(/historic brawl/g, "hbrawl");
         for (var x = 0; x < lfgFormat.length; x++) {
             if (lowmessage.includes(lfgFormat[x].toLowerCase())) {
                 for (var y = 0; y < lfgPlatform.length; y++) {
@@ -785,12 +785,13 @@ async function lfgTest1(message) {
 async function lfgTest2(message) {
     if (message.channel.id == "778272322490597376") {
         if (lowmessage.indexOf(",lfg") == 0) {
+            lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh").replace(/mtga/g, "arena").replace(/canadian highlander/g, "canlander").replace(/historic brawl/g, "hbrawl");
             for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
                 var thePost = await bot.channels.get("778272322490597376").fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
                 var matchedFormats = [];
                 var matchedPlatforms = [];
-                if (thePost.content.includes("Commander")) {
-                    if (lowmessage.includes("commander")) {
+                if (thePost.content.includes("EDH")) {
+                    if (lowmessage.includes("edh")) {
                         if (lowmessage.includes(thePost.content.split(",")[1])) {
                             if (thePost.content.split("\n").length == 4) {
                                 message.channel.send("<@" + thePost.content.split("\n")[1] + "> <@" + thePost.content.split("\n")[2] + "> <@" + thePost.content.split("\n")[3] + "> <@" + message.author.id + ">, you have been matched for a game of " + thePost.content.split(",")[1] + " " + thePost.content.split(",")[0] + ".");
@@ -813,7 +814,7 @@ async function lfgTest2(message) {
                 }
                 //for (var y = 0; y < thePost.content.split(":")[0].split("\n").length; y++) {
                 for (var y = 0; y < thePost.content.split(",").length; y++) {
-                    if (!lowmessage.includes("commander")) {
+                    if (!lowmessage.includes("edh")) {
                         /*if (lowmessage.includes(thePost.content.split(":")[0].split("\n")[y].split(" ")[0].toLowerCase()) && lowmessage.includes(thePost.content.split(":")[0].split("\n")[y].split(" ")[1].toLowerCase())) {
                             if (thePost.content.split(":")[1].split("\n").length >= lfgPlayerCount[lfgFormat.indexOf(thePost.content.split(":")[0].split("\n")[y].split(" ")[1])) {
                                 matchedFormats.push(thePost.content.split("\n")[y]);
