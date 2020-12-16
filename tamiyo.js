@@ -897,7 +897,7 @@ async function lfgTest2(message) {
                     for (var i = 0; i < platforms.length; i++) {
                         if (!found.split("\n").includes(commands[z] + "," + platforms[i] + ",")) {
                             var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id + " " + timeEnd);
-                            newSuper += "\n" + newPost.id + " " + timeEnd);
+                            newSuper += "\n" + newPost.id + " " + timeEnd;
                             setTimeout(function () {
                                 lfg2End(newPost.id)
                             }, timer * 60000);
