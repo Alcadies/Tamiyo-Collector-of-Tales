@@ -799,7 +799,7 @@ async function lfgTest2(message) {
                 var matchedPlatforms = [];
                 if (thePost.content.includes("EDH")) {
                     if (lowmessage.includes("edh")) {
-                        if (lowmessage.includes(thePost.content.split(",")[1])) {
+                        if (lowmessage.includes(thePost.content.split(",")[1].toLowerCase())) {
                             if (thePost.content.split("\n").length == 4) {
                                 message.channel.send("<@" + thePost.content.split("\n")[1] + "> <@" + thePost.content.split("\n")[2] + "> <@" + thePost.content.split("\n")[3] + "> <@" + message.author.id + ">, you have been matched for a game of " + thePost.content.split(",")[1] + " " + thePost.content.split(",")[0] + ".");
                                 var newSuper = lfgSuper.content.split("\n")[0];
@@ -852,7 +852,7 @@ async function lfgTest2(message) {
                     }
                 }
                 if (matchedFormats.length > 0 && matchedPlatforms.length > 0) {
-                    message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split(":")[1].split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats + "` on one of `" + matchedPlatforms + "`.");
+                    message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats + "` on one of `" + matchedPlatforms + "`.");
                     var newSuper = lfgSuper.content.split("\n")[0];
                     for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
                         if (z != x) {
