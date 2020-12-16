@@ -927,7 +927,7 @@ async function lfg2End(id) {
                 times.push(thePost.content.split("\n")[x].split(" ")[1])
             }
         }
-        if (newPost.content.split("\n")[x] > 1) {
+        if (newPost.split("\n")[x] > 1) {
             thePost.edit(newPost);
             var newSuper = lfgSuper.content.split("\n")[0];
             for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
