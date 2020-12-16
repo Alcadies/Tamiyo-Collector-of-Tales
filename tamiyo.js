@@ -26,6 +26,7 @@ var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
 var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", "", 0], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""]]
 var lfgSuper = "";
+var lfg2channel = "778272322490597376";
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageID = "778198193304502273";
@@ -72,7 +73,7 @@ bot.once("ready", async function() {
             }, timer)
         }
     }
-    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
     var str = await lfgSuper.content;
     while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
@@ -783,11 +784,17 @@ async function lfgTest1(message) {
 }
 
 async function lfgTest2(message) {
-    if (message.channel.id == "778272322490597376") {
+    if (message.channel.id == lfg2channel) {
         if (lowmessage.indexOf(",lfg") == 0) {
             lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh").replace(/mtga/g, "arena").replace(/canadian highlander/g, "canlander").replace(/historic brawl/g, "hbrawl");
+            var timer = 60;
+            if (!isNaN(lowmessage.split(" ")[1]) && lowmessage.split(" ")[1] > 0) {
+                timer = lowmessage.split(" ")[1];
+            }
+            var d = new Date();
+            var timeEnd = (timer * 60000) + d.getTime();
             for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
-                var thePost = await bot.channels.get("778272322490597376").fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
+                var thePost = await bot.channels.get(lfg2channel).fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
                 var matchedFormats = [];
                 var matchedPlatforms = [];
                 if (thePost.content.includes("EDH")) {
@@ -802,12 +809,26 @@ async function lfgTest2(message) {
                                     }
                                 }
                                 lfgSuper.edit(newSuper);
-                                lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+                                lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
                                 return;
                             }
                             else {
-                                await thePost.edit(thePost.content + "\n" + message.author.id);
-                                thePost = await bot.channels.get("778272322490597376").fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
+                                await thePost.edit(thePost.content + "\n" + message.author.id + " " + timeEnd);
+                                if (lfgSuper.content.split("\n")[x].split(" ")[1] > timeEnd) {
+                                    var newSuper = lfgSuper.content.split("\n")[0];
+                                    for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
+                                        if (z != x) {
+                                            newSuper += "\n" + lfgSuper.content.split("\n")[z];
+                                        }
+                                        else {
+                                            newSuper += "\n" + thePost.id + " " + timeEnd;
+                                        }
+                                    }
+                                    lfgSuper.edit(newSuper);
+                                    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                                }
+                                thePost = await bot.channels.get(lfg2channel).fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
+
                             }
                         }
                     }
@@ -839,16 +860,10 @@ async function lfgTest2(message) {
                         }
                     }
                     lfgSuper.edit(newSuper);
-                    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+                    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
                     return;
                 }
             }
-            var timer = 60;
-            if (!isNaN(lowmessage.split(" ")[1]) && lowmessage.split(" ")[1] > 0) {
-                timer = lowmessage.split(" ")[1];
-            }
-            var d = new Date();
-            var timeEnd = (timer * 60000) + d.getTime();
             var formats = [];
             var platforms = [];
             var commands = [];
@@ -874,18 +889,18 @@ async function lfgTest2(message) {
             if (commands.length > 0) {
                 for (var z = 0; z < commands.length; z++) {
                     for (var i = 0; i < platforms.length; i++) {
-                        var newPost = await bot.channels.get("778272322490597376").send(commands[z] + "," + platforms[i] + ",\n" + message.author.id);
+                        var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id);
                         lfgSuper.edit(lfgSuper.content + "\n" + newPost.id + " " + timeEnd);
-                        lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+                        lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
                     }
                 }
             }
             if (formats.length == 0) {
                 return;
             }
-            var newPost = await bot.channels.get("778272322490597376").send(formats + "," + platforms + ",\n" + message.author.id);
+            var newPost = await bot.channels.get(lfg2channel).send(formats + "," + platforms + ",\n" + message.author.id);
             lfgSuper.edit(lfgSuper.content + "\n" + newPost.id + " " + timeEnd);
-            lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+            lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
             setTimeout(function () {
                 lfg2End(newPost.id)
             }, timer * 60000);
@@ -895,7 +910,33 @@ async function lfgTest2(message) {
 }
 
 async function lfg2End(id) {
-    thePost = await bot.channels.get("778272322490597376").fetchMessage(id);
+    thePost = await bot.channels.get(lfg2channel).fetchMessage(id);
+    if (thePost.content.split("\n").length > 2) {
+        var d = new Date();
+        var newPost = thePost.content.split("\n")[0];
+        var times = [];
+        for (var x = 1; x < thePost.content.split("\n").length; x++) {
+            if (d < thePost.content.split("\n")[x].split(" ")[1]) {
+                newPost += "\n" + thePost.content.split("\n")[x];
+                times.push(thePost.content.split("\n")[x].split(" ")[1])
+            }
+        }
+        if (newPost.content.split("\n")[x] > 1) {
+            thePost.edit(newPost);
+            var newSuper = lfgSuper.content.split("\n")[0];
+            for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
+                if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
+                    newSuper += "\n" + lfgSuper.content.split("\n")[z];
+                }
+                else {
+                    newSuper += "\n" + id + " " + Math.min(...times);
+                }
+            }
+            lfgSuper.edit(newSuper);
+            lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+            return;
+        }
+    }
     selfCleaner(thePost);
     var newSuper = lfgSuper.content.split("\n")[0];
     for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
@@ -904,7 +945,7 @@ async function lfg2End(id) {
         }
     }
     lfgSuper.edit(newSuper);
-    lfgSuper = await bot.channels.get("778272322490597376").fetchMessage("778272504161763359");
+    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
 }
 
 function selfCleaner(message) {
