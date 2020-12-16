@@ -606,7 +606,7 @@ async function spoilerUpdate(message, isMod) {
 }
 
 function spoilerCleaner(message) {
-    if (!message) {return;}
+    if (!reprintList.content) {return;}
     for (var x = 1; x < reprintList.content.split("\n").length; x++) {
         var cardName = reprintList.content.split("\n")[x];
         if (message.embeds[0] != undefined && message.embeds[0].title instanceof String && message.embeds[0].title.split(":")[0] == cardName + " ") { return; }
@@ -892,6 +892,9 @@ async function lfgTest2(message) {
                         var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id + " " + timeEnd);
                         lfgSuper.edit(lfgSuper.content + "\n" + newPost.id + " " + timeEnd);
                         lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                        setTimeout(function () {
+                            lfg2End(newPost.id)
+                        }, timer * 60000);
                     }
                 }
             }
