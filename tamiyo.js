@@ -827,6 +827,11 @@ async function lfgTest2(message) {
                                     }
                                     lfgSuper.edit(newSuper);
                                     lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                                    if (timeEnd < lfgSuper.content.split("\n")[x].split(" ")[1]) {
+                                        setTimeout(function () {
+                                            lfg2End(thePost.id)
+                                        }, timer * 60000);
+                                    }
                                 }
                                 thePost = await bot.channels.get(lfg2channel).fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
                                 found.push(thePost.content.split(",")[1]);
@@ -916,42 +921,44 @@ async function lfgTest2(message) {
 }
 
 async function lfg2End(id) {
-    thePost = await bot.channels.get(lfg2channel).fetchMessage(id);
-    if (thePost.content.split("\n").length > 2) {
-        var d = new Date();
-        var newPost = thePost.content.split("\n")[0];
-        var times = [];
-        for (var x = 1; x < thePost.content.split("\n").length; x++) {
-            if (d < thePost.content.split("\n")[x].split(" ")[1]) {
-                newPost += "\n" + thePost.content.split("\n")[x];
-                times.push(thePost.content.split("\n")[x].split(" ")[1])
-            }
-        }
-        if (newPost.split("\n")[x] > 1) {
-            thePost.edit(newPost);
-            var newSuper = lfgSuper.content.split("\n")[0];
-            for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
-                if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
-                    newSuper += "\n" + lfgSuper.content.split("\n")[z];
-                }
-                else {
-                    newSuper += "\n" + id + " " + Math.min(...times);
+    if (lfgSuper.content.includes(id)) {
+        thePost = await bot.channels.get(lfg2channel).fetchMessage(id);
+        if (thePost.content.split("\n").length > 2) {
+            var d = new Date();
+            var newPost = thePost.content.split("\n")[0];
+            var times = [];
+            for (var x = 1; x < thePost.content.split("\n").length; x++) {
+                if (d < thePost.content.split("\n")[x].split(" ")[1]) {
+                    newPost += "\n" + thePost.content.split("\n")[x];
+                    times.push(thePost.content.split("\n")[x].split(" ")[1])
                 }
             }
-            lfgSuper.edit(newSuper);
-            lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
-            return;
+            if (newPost.split("\n")[x] > 1) {
+                thePost.edit(newPost);
+                var newSuper = lfgSuper.content.split("\n")[0];
+                for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
+                    if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
+                        newSuper += "\n" + lfgSuper.content.split("\n")[z];
+                    }
+                    else {
+                        newSuper += "\n" + id + " " + Math.min(...times);
+                    }
+                }
+                lfgSuper.edit(newSuper);
+                lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                return;
+            }
         }
-    }
-    selfCleaner(thePost);
-    var newSuper = lfgSuper.content.split("\n")[0];
-    for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
-        if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
-            newSuper += "\n" + lfgSuper.content.split("\n")[z];
+        selfCleaner(thePost);
+        var newSuper = lfgSuper.content.split("\n")[0];
+        for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
+            if (lfgSuper.content.split("\n")[z].split(" ")[0] != id) {
+                newSuper += "\n" + lfgSuper.content.split("\n")[z];
+            }
         }
+        lfgSuper.edit(newSuper);
+        lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
     }
-    lfgSuper.edit(newSuper);
-    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
 }
 
 function selfCleaner(message) {
