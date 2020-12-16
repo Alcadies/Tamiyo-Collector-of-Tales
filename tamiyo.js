@@ -793,7 +793,7 @@ async function lfgTest2(message) {
             }
             var d = new Date();
             var timeEnd = (timer * 60000) + d.getTime();
-            var found = [];
+            var found = "";
             for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
                 var thePost = await bot.channels.get(lfg2channel).fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
                 var matchedFormats = [];
@@ -832,7 +832,7 @@ async function lfgTest2(message) {
                                     }, timer * 60000);
                                 }
                                 //thePost = await bot.channels.get(lfg2channel).fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
-                                found.push(thePost.content.split("\n")[0]);
+                                found += thePost.content.split("\n")[0] + "\n";
                             }
                         }
                     }
@@ -892,18 +892,20 @@ async function lfgTest2(message) {
                 return;
             }
             if (commands.length > 0) {
+                var newSuper = lfgSuper.content;
                 for (var z = 0; z < commands.length; z++) {
                     for (var i = 0; i < platforms.length; i++) {
-                        if (!found.includes(commands[z] + "," + platforms[i] + ",")) {
+                        if (!found.split("\n").includes(commands[z] + "," + platforms[i] + ",")) {
                             var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id + " " + timeEnd);
-                            lfgSuper.edit(lfgSuper.content + "\n" + newPost.id + " " + timeEnd);
-                            lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                            newSuper += "\n" + newPost.id + " " + timeEnd);
                             setTimeout(function () {
                                 lfg2End(newPost.id)
                             }, timer * 60000);
                         }
                     }
                 }
+                lfgSuper.edit(newSuper);
+                lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
             }
             if (formats.length == 0) {
                 return;
