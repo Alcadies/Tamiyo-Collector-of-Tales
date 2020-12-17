@@ -1080,6 +1080,10 @@ bot.on("message", async function(message) {
 
     await spoilerUpdate(message, isMod);
 
+    if (message.channel.id == "788824774389399573" && message.attachments.size == 0) {
+        message.delete();
+    }
+
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
         message.mentions.users.forEach(async function(value, key) {
             await unmute(key);
