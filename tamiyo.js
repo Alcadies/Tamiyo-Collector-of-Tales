@@ -904,7 +904,7 @@ async function lfgTest2(message) {
                 var newSuper = lfgSuper.content;
                 for (var z = 0; z < commands.length; z++) {
                     for (var i = 0; i < platforms.length; i++) {
-                        if (platforms != "Arena" && !found.includes(commands[z] + "," + platforms[i] + ",")) {
+                        if (platforms[i] != "Arena" && !found.includes(commands[z] + "," + platforms[i] + ",")) {
                             var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id + " " + timeEnd);
                             newSuper += "\n" + newPost.id + " " + timeEnd;
                             setTimeout(function () {
@@ -913,8 +913,10 @@ async function lfgTest2(message) {
                         }
                     }
                 }
-                lfgSuper.edit(newSuper);
-                lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                if (newSuper != lfgSuper.content) {
+                    lfgSuper.edit(newSuper);
+                    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+                }
             }
             if (formats.length == 0) {
                 return;
