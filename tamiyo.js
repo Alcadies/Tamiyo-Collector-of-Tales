@@ -796,7 +796,7 @@ async function lfgTest2(message) {
             var found = [];
             for (var x = 1; x < lfgSuper.content.split("\n").length; x++) {
                 var thePost = await bot.channels.get(lfg2channel).fetchMessage(lfgSuper.content.split("\n")[x].split(" ")[0]);
-                if (!thePost.includes(message.author.id)) {
+                if (!thePost.content.includes(message.author.id)) {
                     var matchedFormats = [];
                     var matchedPlatforms = [];
                     if (thePost.content.includes("EDH")) {
@@ -858,7 +858,10 @@ async function lfgTest2(message) {
                             }
                         }
                     }
-                    if (matchedFormats.length > 0 && matchedPlatforms.length > 0) {
+                    if (!(matchedFormats.includes("Standard") || matchedFormats.includes("Brawl") || matchedFormats.includes("HBrawl") || matchedFormats.includes("Historic"))) {
+                        matchedPlatforms.pop
+                    }
+                    if (matchedFormats.length > 0 && matchedPlatforms.length > 0 && (matchedPlatforms != ["Arena"] || matchedFormats.includes("Standard") || matchedFormats.includes("Brawl") || matchedFormats.includes("HBrawl") || matchedFormats.includes("Historic")))) {
                         message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats + "` on one of `" + matchedPlatforms + "`.");
                         /*var newSuper = lfgSuper.content.split("\n")[0];
                         for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
@@ -882,7 +885,9 @@ async function lfgTest2(message) {
                         formats.push(lfgFormat[x]);
                     }
                     else {
-                        commands.push(lfgFormat[x]);
+                        if (x > 6 || lowmessage.includes(" edh")) {
+                            commands.push(lfgFormat[x]);
+                        }
                     }
                 }
             }
@@ -899,7 +904,7 @@ async function lfgTest2(message) {
                 var newSuper = lfgSuper.content;
                 for (var z = 0; z < commands.length; z++) {
                     for (var i = 0; i < platforms.length; i++) {
-                        if (!found.includes(commands[z] + "," + platforms[i] + ",")) {
+                        if (platforms != "Arena" && !found.includes(commands[z] + "," + platforms[i] + ",")) {
                             var newPost = await bot.channels.get(lfg2channel).send(commands[z] + "," + platforms[i] + ",\n" + message.author.id + " " + timeEnd);
                             newSuper += "\n" + newPost.id + " " + timeEnd;
                             setTimeout(function () {
