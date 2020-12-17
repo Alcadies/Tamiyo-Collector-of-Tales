@@ -26,7 +26,7 @@ var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
 var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", "", 0], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""]]
 var lfgSuper = "";
-var lfg2channel = "778272322490597376";
+var lfg2channel = "788823431428309052";
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageID = "788829000860041236";
@@ -73,7 +73,7 @@ bot.once("ready", async function() {
             }, timer)
         }
     }
-    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("778272504161763359");
+    lfgSuper = await bot.channels.get(lfg2channel).fetchMessage("788838965461254164");
     var str = await lfgSuper.content;
     while (str.includes("\n") && str.length > 2) {
         str = str.slice(str.indexOf("\n") + 1);
