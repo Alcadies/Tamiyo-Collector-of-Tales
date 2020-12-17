@@ -21,7 +21,7 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildID = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️"];
 var roleID = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566"];
-var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "HBrawl", "cEDH"];
+var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "BHrawl", "cEDH"];
 var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
 var lfgPost = [["778206375921975297", 0, 0, 0, 0, 0, 0, 0, "", "", "", 0], ["778206460991635466", "", "", "", "", "", "778206512077602816", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", ""]]
@@ -790,7 +790,7 @@ async function lfgTest1(message) {
 async function lfgTest2(message) {
     if (message.channel.id == lfg2channel) {
         if (lowmessage.indexOf(",lfg") == 0) {
-            lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh").replace(/mtga/g, "arena").replace(/canadian highlander/g, "canlander").replace(/historic brawl/g, "hbrawl").replace(/untap.in/g, "untap");
+            lowmessage = lowmessage.replace(/modo/g, "mtgo").replace(/commander/g, "edh").replace(/mtga/g, "arena").replace(/canadian highlander/g, "canlander").replace(/historic brawl/g, "bhrawl").replace(/hbrawl/g, "bhrawl").replace(/untap.in/g, "untap");
             var timer = 60;
             if (!isNaN(lowmessage.split(" ")[1]) && lowmessage.split(" ")[1] > 0) {
                 timer = lowmessage.split(" ")[1];
@@ -936,8 +936,8 @@ async function lfgTest2(message) {
             setTimeout(function () {
                 lfg2End(newPost.id)
             }, timer * 60000);
+            message.delete();
         }
-        //message.delete();
     }
 }
 
