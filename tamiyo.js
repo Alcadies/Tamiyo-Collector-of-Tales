@@ -861,7 +861,7 @@ async function lfgTest2(message) {
                     if (!(matchedFormats.includes("Standard") || matchedFormats.includes("Brawl") || matchedFormats.includes("HBrawl") || matchedFormats.includes("Historic"))) {
                         matchedPlatforms.pop
                     }
-                    if (matchedFormats.length > 0 && matchedPlatforms.length > 0 && (matchedPlatforms != ["Arena"] || matchedFormats.includes("Standard") || matchedFormats.includes("Brawl") || matchedFormats.includes("HBrawl") || matchedFormats.includes("Historic")))) {
+                    if (matchedFormats.length > 0 && matchedPlatforms.length > 0 && (matchedPlatforms != ["Arena"] || matchedFormats.includes("Standard") || matchedFormats.includes("Brawl") || matchedFormats.includes("HBrawl") || matchedFormats.includes("Historic"))) {
                         message.channel.send("<@" + message.author.id + "> <@" + thePost.content.split("\n")[1].split(" ")[0] + ">, you have been matched for a game of one of `" + matchedFormats + "` on one of `" + matchedPlatforms + "`.");
                         /*var newSuper = lfgSuper.content.split("\n")[0];
                         for (var z = 1; z < lfgSuper.content.split("\n").length; z++) {
