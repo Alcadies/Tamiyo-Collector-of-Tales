@@ -1084,10 +1084,12 @@ bot.on("message", async function(message) {
 
     await badWordsReporter(message, messageMember, false);
 
+    await lfgTest2(message);
+
     if (message.guild.id == guildID[3]) {
         await lfgTest1(message);
 
-        await lfgTest2(message);
+        
     }
 })
 
