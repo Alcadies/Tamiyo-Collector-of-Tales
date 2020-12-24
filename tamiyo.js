@@ -39,6 +39,7 @@ var reportList = "";
 var setCodes = "";
 var spoilerSets = "";
 var reprintList = "";
+var leakList = "";
 
 bot.on("ready", async function() {
     logger.info("Connected")
@@ -113,6 +114,7 @@ bot.once("ready", async function() {
     setCodes = await bot.channels.get(logChannel[0]).fetchMessage("751124446701682708");
     spoilerSets = await bot.channels.get("407401913253101601").fetchMessage("639173870472921118");
     reprintList = await bot.channels.get(logChannel[0]).fetchMessage("756507174200541255");
+    leakList = await bot.channels.get(botCommandChannel[0]).fetchMessage("791694141335404584");
     bot.channels.get(roleChannelID).fetchMessage(roleMessageID);
     watchingMessage();
     bot.channels.get("531433553225842700").send("I have arrived to observe this plane.");
@@ -1021,6 +1023,34 @@ async function lfg2cleaner(ids) {
     }
 }
 
+async function leakCleaner(message) {
+    if (message.channel.id == "641920724856078336") {
+        for (var x = 1; x < leakList.content.split("\n").length; x++) {
+            if (lowmessage.includes(leakList.content.split("\n")[x].toLowerCase())) {
+                message.delete();
+                message.channel.send("My records indicate this is a leak and belongs in <#298465947319140353>. If you can't see that channel, please check the <#360574122436329483> for how to access it. If this card has been officially spoiled recently, please ping an available mod and tell them to use the command `,removeleak CARDNAME`.");
+            }
+        }
+    }
+}
+
+async function leakUpdate(message, isMod) {
+    if (isMod && lowmessage.indexOf(",addleak ") == 0) {
+        await leakList.edit(leakList.content + "\n" + message.substring(9));
+        leakList = await bot.channels.get(botCommandChannel[0]).fetchMessage("791694141335404584");
+    }
+    if (isMod && lowmessage.indexOf(",removeleak ") == 0) {
+        var newLeakList = leakList.content.split("\n")[0];
+        for (var x = 1; x < leakList.content.split("\n").length; x++) {
+            if (!lowmessage.includes(leakList.content.split("\n")[x].toLowerCase())) {
+                newLeakList += "\n" + leakList.content.split("\n")[x];
+            }
+        }
+        leakList.edit(newLeakList);
+        leakList = await bot.channels.get(botCommandChannel[0]).fetchMessage("791694141335404584");
+    }
+}
+
 function selfCleaner(message) {
     message.delete();
 }
@@ -1055,6 +1085,8 @@ bot.on("message", async function(message) {
     }
 
     await spoilerCleaner(message);
+    
+    await leakCleaner(message);
 
     if (message.author.bot) {return;}
 
@@ -1079,6 +1111,8 @@ bot.on("message", async function(message) {
     await manualReset(isMod);
 
     await spoilerUpdate(message, isMod);
+    
+    await leakUpdate(message, isMod);
 
     if (message.channel.id == "788824774389399573" && message.attachments.size == 0) {
         message.delete();
