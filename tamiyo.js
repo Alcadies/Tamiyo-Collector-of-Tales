@@ -1187,7 +1187,7 @@ bot.on("guildMemberUpdate", function(oldMember, newMember) {
 bot.on("messageReactionAdd", async function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
         member = await messageReaction.message.guild.fetchMember(user);
-        if(messageReaction.emoji.name == "⛔" && member.roles.has("796526525498523648") {
+        if(messageReaction.emoji.name == "⛔" && member.roles.has("796526525498523648")) {
             return;
         }
         if(roleReact.includes(messageReaction.emoji.name)) {
