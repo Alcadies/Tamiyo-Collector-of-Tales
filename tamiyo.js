@@ -1181,13 +1181,16 @@ bot.on("guildMemberRemove", async function(member) {
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
     if (newMember.roles.has(muteRole) && newMember.roles.has(leakRole)) { newMember.removeRole(leakRole); }
-    if (newMember.roles.has(muteRole) && newMember.roles.has(seriousRole)) { newMember.removeRole(seriousRole); }
+    if ((newMember.roles.has(muteRole) || newMember.roles.has("796526525498523648")) && newMember.roles.has(seriousRole)) { newMember.removeRole(seriousRole); }
 })
 
 bot.on("messageReactionAdd", async function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
+        member = await messageReaction.message.guild.fetchMember(user);
+        if(messageReaction.emoji.name == "⛔" && member.roles.has("796526525498523648") {
+            return;
+        }
         if(roleReact.includes(messageReaction.emoji.name)) {
-            member = await messageReaction.message.guild.fetchMember(user);
             member.addRole(roleID[roleReact.indexOf(messageReaction.emoji.name)]);
         }
     }
