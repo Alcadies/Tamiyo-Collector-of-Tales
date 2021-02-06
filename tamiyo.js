@@ -724,7 +724,7 @@ function magicCardPoster(input, channel) {
     for (var x = 1; x < setCodes.content.split("\n").length; x++) {
         cardSet = cardSet.replace(setCodes.content.split("\n")[x].split(" ")[0], setCodes.content.split("\n")[x].split(" ")[1]);
     }
-    cardName = cardName.replace(/ /g, "%2B").replace(/,/g, "%252C").replace(/\./, "%252E").replace(/û/g, "u").replace(/\'/g, "%2527").replace(/`/g, "%2527").replace(/®/g, "%25C2%25AE").replace(/:registered:/g, "%25C2%25AE").replace(/&/g, "%2526").replace(/"/g, "%2522").replace(/!/g, "%2521").replace(/\?/g, "%253F");
+    cardName = cardName.replace(/ /g, "%2B").replace(/,/g, "%252C").replace(/\./, "%252E").replace(/û/g, "u").replace(/\'/g, "%2527").replace(/`/g, "%2527").replace(/®/g, "%25C2%25AE").replace(/:registered:/g, "%25C2%25AE").replace(/&/g, "%2526").replace(/"/g, "%2522").replace(/!/g, "%2521").replace(/\?/g, "%253F").replace(/<showcase>/gi, "%253Cshowcase%253E").replace(/\[showcase]/gi, "%253Cshowcase%253E").replace(/\(showcase\)/gi, "%253Cshowcase%253E").replace(/ showcase/gi, " %253Cshowcase%253E").replace(/<borderless>/gi, "%253Cborderless%253E").replace(/\[borderless]/gi, "%253Cborderless%253E").replace(/\(borderless\)/gi, "%253Cborderless%253E").replace(/ borderless/gi, " %253Cborderless%253E").replace(/</g, "%253C").replace(/>/g, "%253E");
     if (!fetched) {channel.send("https://cdn1.mtggoldfish.com/images/gf/" + cardName + "%2B%255B" + cardSet + "%255D.jpg"); }
     if (input.indexOf(">>") != input.lastIndexOf(">>")) { magicCardPoster(input.substring(input.indexOf(">>") + 2), channel); } 
 }
