@@ -405,6 +405,11 @@ function raidBan(message, messageMember) {
         });
         bot.channels.get(logChannel[guildID.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
     }
+    const count = message.channel.messages.filter(m => m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
+    if(count > 5 && !messageMember.user.bot) messageMember.ban({
+        days: 1,
+        reason: "Message spam from non-member"
+    });
 }
 
 async function dmReporter(message) {
