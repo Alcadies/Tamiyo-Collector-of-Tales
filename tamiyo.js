@@ -1167,6 +1167,10 @@ bot.on("guildMemberAdd", function(member) {
         member.ban();
         bot.channels.get(logChannel[1]).send("New member " + member.user.username + " (" + member.id + ") banned for intolerant username.");
     }
+    if (member.user.username.toLowerCase().includes("twitter.com/h0nde")) {
+        member.ban();
+        bot.channels.get(logChannel[1]).send("New member " + member.user.username + " (" + member.id + ") banned for being a raid bot.");
+    }
 })
 
 bot.on("guildMemberRemove", async function(member) {
