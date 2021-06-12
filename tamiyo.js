@@ -1060,6 +1060,16 @@ function selfCleaner(message) {
     message.delete();
 }
 
+function goToBed(message) {
+    if (message.author.id == "214573974208643083") {
+        var theHours = bot.channels.get("531433553225842700").fetchMessage("853349767119896618").split("\n");
+        var d = new Date();
+        if (d > theHours[1] && d - theHours[1] < theHours[2]) {
+            message.author.send("Go to bed!");
+        }
+    }
+}
+
 bot.on("message", async function(message) {
     lowmessage = message.content.toLowerCase();
 
@@ -1079,6 +1089,8 @@ bot.on("message", async function(message) {
         await offlineChecker(message.channel);
 
         await raidBan(message, messageMember);
+        
+        await goToBed(message);
 
         await links(message);
 
