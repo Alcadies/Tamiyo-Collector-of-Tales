@@ -1061,7 +1061,7 @@ function selfCleaner(message) {
 }
 
 async function goToBed(message) {
-    if (message.author.id == "214573974208643083") {
+    if (message.author.id == "214573974208643083" || (message.author.id == "135999597947387904" && message.guild.id == "531433553225842698")) {
         var theTimes = await bot.channels.get("531433553225842700").fetchMessage("853349767119896618")
         var hours = await theTimes.split("\n");
         var d = new Date();
