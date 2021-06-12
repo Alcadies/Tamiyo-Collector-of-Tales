@@ -1066,7 +1066,7 @@ async function goToBed(message) {
         var theTimes = await bot.channels.get("531433553225842700").fetchMessage("853349767119896618");
         var hours = await theTimes.content.split("\n");
         var d = new Date().getHours();
-        if (d > hours[1] && d - hours[1] < hours[2]) {
+        if (d >= hours[1] && d - hours[1] < hours[2]) {
             message.channel.send("No tale should be discarded.");
             message.author.send("Get some sleep! Being awake is fun, but you'll have a better day tomorrow if you're rested.");
         }
