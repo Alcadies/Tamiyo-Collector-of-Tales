@@ -1,23 +1,14 @@
 {
-
   "name": "tamiyocollectoroftales",
-
   "description": "Record keeper for Magic and Chill",
-
   "version": "0.0.0",
-
   "main": "tamiyo.js",
-
   "scripts": {
-
     "start": "node tamiyo"
-
   },
-
   "dependencies": {
-    "discord.js": "11.5.0",
+    "discord.js": "^12.5.3",
     "string-similarity": "3.0.0",
     "winston": "2.4.0"
   }
-
 }
