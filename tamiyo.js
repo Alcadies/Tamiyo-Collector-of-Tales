@@ -1091,8 +1091,6 @@ bot.on("message", async function(message) {
             updateWords(message);
         }
     }
-        
-    await goToBed(message);
 
     await spoilerCleaner(message);
     
