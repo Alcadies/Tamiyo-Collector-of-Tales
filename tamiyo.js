@@ -299,7 +299,7 @@ function manualReset(isMod) {
 function kick(message, isMod) {
     if (lowmessage.indexOf(",kick") == 0) {
         if (isMod) {
-            if (message.mentions.members.first().roles.has(modRole)) {
+            if (message.mentions.members.first().roles.cache.has(modRole)) {
                 message.channel.send("I'm sorry, I won't kick another mod or admin.")
             }
             else {
@@ -325,7 +325,7 @@ async function ban(message, isMod) {
                 message.mentions.users.forEach(async function(value, key) {
                     if (bot.guilds.cache.get(guildID[1]).members.has(key)) {
                         var banMember = await bot.guilds.cache.get(guildID[1]).members.fetch(key);
-                        if (banMember.roles.has(modRole)) {
+                        if (banMember.roles.cache.has(modRole)) {
                             message.channel.send("I'm sorry, I won't ban another mod or admin.");
                         }
                         if (banMember.bannable) {
@@ -353,7 +353,7 @@ function role(message, messageMember) {
                 message.channel.send("There's an anomoly at this location.  Please try in <#" + botCommandChannel[1] + ">.");
                 return;
             }
-            if (messageMember.roles.has(leakRole)) {
+            if (messageMember.roles.cache.has(leakRole)) {
                 messageMember.roles.remove(message.guild.roles.cache.get(leakRole));
                 message.channel.send("Leaks role removed!")
             }
@@ -369,7 +369,7 @@ function role(message, messageMember) {
                 message.channel.send("There's an anomoly at this location.  Please try in <#" + botCommandChannel[1] + ">.");
                 return;
             }
-            if (messageMember.roles.has(seriousRole)) {
+            if (messageMember.roles.cache.has(seriousRole)) {
                 messageMember.roles.remove(message.guild.roles.cache.get(seriousRole));
                 message.channel.send("Serious Discussion role removed!")
             }
@@ -417,7 +417,7 @@ function raidBan(message, messageMember) {
 
 async function dmReporter(message) {
     var messageMember = await bot.guilds.cache.get(guildID[1]).members.fetch(message.author);
-    if (messageMember.roles.has(muteRole)) {
+    if (messageMember.roles.cache.has(muteRole)) {
         bot.channels.cache.get(logChannel[1]).send("Muted member " + messageMember.displayName + " (id " + messageMember.id + ") said this in DM: ```" + message.cleanContent + "```");
     }
 }
@@ -1100,7 +1100,7 @@ bot.on("message", async function(message) {
 
     var isMod = false;
     var messageMember = await bot.guilds.cache.get(guildID[1]).members.fetch(message.author);
-    if (messageMember.roles.has(modRole)) { isMod = true; }
+    if (messageMember.roles.cache.has(modRole)) { isMod = true; }
 
     await links(message);
 
@@ -1178,7 +1178,7 @@ bot.on("guildMemberAdd", function(member) {
 
 bot.on("guildMemberRemove", async function(member) {
     var d = new Date();
-    if (member.roles.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
+    if (member.roles.cache.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
         var unmuteTime = d.getTime() + 604800000;
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.cache.get(logChannel[1]).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
@@ -1196,14 +1196,14 @@ bot.on("guildMemberRemove", async function(member) {
 })
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
-    if (newMember.roles.has(muteRole) && newMember.roles.has(leakRole)) { newMember.roles.remove(leakRole); }
-    if ((newMember.roles.has(muteRole) || newMember.roles.has("796526525498523648")) && newMember.roles.has(seriousRole)) { newMember.roles.remove(seriousRole); }
+    if (newMember.roles.cache.has(muteRole) && newMember.roles.cache.has(leakRole)) { newMember.roles.remove(leakRole); }
+    if ((newMember.roles.cache.has(muteRole) || newMember.roles.cache.has("796526525498523648")) && newMember.roles.cache.has(seriousRole)) { newMember.roles.remove(seriousRole); }
 })
 
 bot.on("messageReactionAdd", async function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageID) {
         member = await messageReaction.message.guild.members.fetch(user);
-        if(messageReaction.emoji.name == "⛔" && member.roles.has("796526525498523648")) {
+        if(messageReaction.emoji.name == "⛔" && member.roles.cache.has("796526525498523648")) {
             return;
         }
         if(roleReact.includes(messageReaction.emoji.name)) {
