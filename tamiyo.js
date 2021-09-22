@@ -1,4 +1,6 @@
 const Discord = require("discord.js")
+const Intents = Discord.Intents;
+const Permissions = Discord.Permissions;
 const logger = require("winston")
 const fs = require("fs")
 const ss = require("string-similarity");
@@ -10,7 +12,7 @@ logger.add(logger.transports.Console, {
 })
 logger.level = "debug"
 // Initialize Discord Bot
-var bot = new Discord.Client({ disableMentions: 'everyone' })
+var bot = new Discord.Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.GUILD_PRESENCES], partials: ['MESSAGE', 'CHANNEL', 'REACTION'], allowedMentions: { parse: ['users', 'roles'], repliedUser: true } });
 var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg", "💣"];
 var badCards = ["Invoke Prejudice", "Cleanse", "Stone-Throwing Devils", "Pradesh Gypsies", "Jihad", "Imprison", "Crusade"];
 var lowmessage = "";
@@ -18,9 +20,9 @@ var logChannel = ["531433553225842700", "633429050089799687", "72975338440766260
 var botCommandChannel = ["531433553225842700", "213126280323923970"];
 var modRole = "407400920746426368" /*"606659573159428169"*/;
 var muteRole = "280463986531631104" /*"586432252901195777"*/;
-var guildID = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
+var guildId = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️", "⛔"];
-var roleID = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566", "720433065893036113"];
+var roleId = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566", "720433065893036113"];
 var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "BHrawl", "cEDH"];
 var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
@@ -29,8 +31,8 @@ var lfgSuper = "";
 var lfg2channel = "788823431428309052";
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
-var roleMessageID = "788829000860041236";
-var roleChannelID = "788822921694281749";
+var roleMessageId = "788829000860041236";
+var roleChannelId = "788822921694281749";
 var elkRole = "640599175326728203";
 var modChannel = "407401913253101601";
 var logMessage = "";
@@ -61,16 +63,16 @@ bot.once("ready", async function() {
         else {
             timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
         }
-        var mutedID = str.split(" ")[0];
+        var mutedId = str.split(" ")[0];
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
         else { timer = parseInt(str.substring(str.indexOf(" "))); }
         timer -= d.getTime();
-        if (timer <= 0) { unmute(mutedID); }
+        if (timer <= 0) { unmute(mutedId); }
         else {
             setTimeout(function () {
-                unmute(mutedID);
+                unmute(mutedId);
             }, timer)
         }
     }
@@ -85,16 +87,16 @@ bot.once("ready", async function() {
         else {
             timeIn = str.substring(str.indexOf(" ") + 1, str.indexOf("\n"));
         }
-        var messageID = str.split(" ")[0];
+        var messageId = str.split(" ")[0];
         var d = new Date();
         var timer = 0;
         if (str.includes("\n")) { timer = parseInt(str.substring(str.indexOf(" ") + 1, str.indexOf("\n"))); }
         else { timer = parseInt(str.substring(str.indexOf(" "))); }
         timer -= d.getTime();
-        if (timer <= 0) { lfg2End(messageID); }
+        if (timer <= 0) { lfg2End(messageId); }
         else {
             setTimeout(function () {
-                lfg2End(messageID);
+                lfg2End(messageId);
             }, timer)
         }
     }
@@ -115,7 +117,7 @@ bot.once("ready", async function() {
     spoilerSets = await bot.channels.cache.get("407401913253101601").messages.fetch("639173870472921118");
     reprintList = await bot.channels.cache.get(logChannel[0]).messages.fetch("756507174200541255");
     leakList = await bot.channels.cache.get(botCommandChannel[0]).messages.fetch("791694141335404584");
-    bot.channels.cache.get(roleChannelID).messages.fetch(roleMessageID);
+    bot.channels.cache.get(roleChannelId).messages.fetch(roleMessageId);
     watchingMessage();
     bot.channels.cache.get("531433553225842700").send("I have arrived to observe this plane.");
 })
@@ -196,7 +198,7 @@ function watchingMessage() {
 }
 
 async function badWordsReporter(message, messageMember, isEdit) {
-    if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildID[1])) { return; }
+    if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildId[1])) { return; }
     var badWordsLog = "";
     lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
@@ -219,8 +221,8 @@ async function badWordsReporter(message, messageMember, isEdit) {
         badWordsLog += message.cleanContent;
         badWordsLog += "```"
         badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).addField("Context:", message.url).setColor('RED');
-    }
-    if (badWordsLog != "") {await bot.channels.cache.get(logChannel[1]).send(badWordsLog);}
+    /*}
+    /if (badWordsLog != "") {*/await bot.channels.cache.get(logChannel[1]).send({ embeds: [badWordsLog] });}
 }
 
 async function mute(message, isMod) {
@@ -274,11 +276,11 @@ async function mute(message, isMod) {
 }
 
 async function unmute(id) {
-    if (!bot.guilds.cache.get(guildID[1]).members.has(id)) {
+    if (!bot.guilds.cache.get(guildId[1]).members.has(id)) {
         bot.channels.cache.get(logChannel[1]).send("Member <@" + id + "> has left before scheduled unmute time.");
     }
     else {
-        member = await bot.guilds.cache.get(guildID[1]).members.fetch(id);
+        member = await bot.guilds.cache.get(guildId[1]).members.fetch(id);
         member.roles.remove(member.guild.roles.cache.get(muteRole));
         bot.channels.cache.get(logChannel[1]).send("Member " + member.displayName + " (id " + member.id + ") unmuted.");
     }
@@ -319,23 +321,23 @@ async function ban(message, isMod) {
     if (lowmessage.indexOf(",ban") == 0) {
         if (isMod) {
             if (message.mentions.users.size == 0) {
-                message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@ID>`.");
+                message.channel.send("Please include a mention for the person or people you would like to ban.  If they cannot see this channel, this can be accomplished with `<@Id>`.");
             }
             else {
                 message.mentions.users.forEach(async function(value, key) {
-                    if (bot.guilds.cache.get(guildID[1]).members.has(key)) {
-                        var banMember = await bot.guilds.cache.get(guildID[1]).members.fetch(key);
+                    if (bot.guilds.cache.get(guildId[1]).members.has(key)) {
+                        var banMember = await bot.guilds.cache.get(guildId[1]).members.fetch(key);
                         if (banMember.roles.cache.has(modRole)) {
                             message.channel.send("I'm sorry, I won't ban another mod or admin.");
                         }
                         if (banMember.bannable) {
                             if (message.content.substring(message.content.lastIndexOf(">")).length > 1) { await banMember.send("You've been banned from *Magic & Chill* for the following reason: " + message.content.substring(message.content.lastIndexOf(">"))); }
-                            await bot.guilds.cache.get(guildID[1]).members.ban(banMember.user, { reason: message.content.substring(message.content.lastIndexOf("> ")) });
+                            await bot.guilds.cache.get(guildId[1]).members.ban(banMember.user, { reason: message.content.substring(message.content.lastIndexOf("> ")) });
                             await message.channel.send("Member " + banMember.displayName + " (id " + key + ") banned.");
                         }
                     }
                     else {
-                        bot.guilds.cache.get(guildID[1]).members.ban(value);
+                        bot.guilds.cache.get(guildId[1]).members.ban(value);
                     }
                 });
             }
@@ -403,7 +405,7 @@ function raidBan(message, messageMember) {
             days: 1,
             reason: "Mention spam"
         });
-        bot.channels.cache.get(logChannel[guildID.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
+        bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
     }
     const count = message.channel.messages.cache.filter(m => m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
     if(count > 5 && !messageMember.user.bot) {
@@ -411,12 +413,12 @@ function raidBan(message, messageMember) {
             days: 1,
             reason: "Message spam from non-member"
         });
-        bot.channels.cache.get(logChannel[guildID.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming messages.  Last message: ```" + message.cleanContent + "```");
+        bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming messages.  Last message: ```" + message.cleanContent + "```");
     }
 }
 
 async function dmReporter(message) {
-    var messageMember = await bot.guilds.cache.get(guildID[1]).members.fetch(message.author);
+    var messageMember = await bot.guilds.cache.get(guildId[1]).members.fetch(message.author);
     if (messageMember.roles.cache.has(muteRole)) {
         bot.channels.cache.get(logChannel[1]).send("Muted member " + messageMember.displayName + " (id " + messageMember.id + ") said this in DM: ```" + message.cleanContent + "```");
     }
@@ -425,14 +427,14 @@ async function dmReporter(message) {
 async function deleteReporter(message, forced) {
     if (message.guild === null) {return;}
     if (!message.guild.available) {return;}
-    if (message.guild.id != guildID[1]) {return;}
+    if (message.guild.id != guildId[1]) {return;}
     if (message.author.bot && !forced) {
         if (message.author.id == bot.user.id && logChannel[1] == message.channel.id) {
             message.channel.send("One of my logs was deleted from here.");
         }
         return;
     }
-    if (message.content.length < 5 && message.attachments.array().length == 0) {return;}
+    if (message.content.length < 5 && message.attachments.size == 0) {return;}
     if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032") {return;}
     var channelToNotify = logChannel[1];
     if (message.channel.id == logChannel[1] && message.author.id == "657605267709493265") {
@@ -461,7 +463,7 @@ async function deleteReporter(message, forced) {
     deleteLog += message.author.id;
     deleteLog += ")";
     var attachmessage = "";
-    var attaches = message.attachments.array();
+    var attaches = [...message.attachments.values()];
     var attachnames = "";
     for (i = 0; i < attaches.length; i++) {
         if (i == attaches.length -1 && i != 0) {attachnames += "and ";}
@@ -494,13 +496,13 @@ async function deleteReporter(message, forced) {
         bot.channels.cache.get(channelToNotify).send(deleteLog);
     }
     else {
-        bot.channels.cache.get(channelToNotify).send("The following " + attachmessage, deleteLog);
+        bot.channels.cache.get(channelToNotify).send({ content: "The following " + attachmessage, embeds: [deleteLog]);
     }
 }
 
 async function offlineChecker(channel) {
-    var judgebot = await bot.users.fetch("240537940378386442");
-    var scryfall = await bot.users.fetch("268547439714238465");
+    var judgebot = await bot.guilds.cache.get(guildId[1]).members.fetch("240537940378386442");
+    var scryfall = await bot.guilds.cache.get(guildId[1]).members.fetch("268547439714238465");
     if (judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help") || lowmessage.includes("!define"))) {
         if (scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].  You can also do [[!`CARDNAME`]] or [[!`CARDNAME`|`SET`]] for just the image.");
@@ -561,7 +563,7 @@ async function offlineChecker(channel) {
 function help(channel, isMod) {
     if (lowmessage.indexOf(",help") == 0) {
         if (lowmessage.includes("lfg")) {
-            channel.send(new Discord.MessageEmbed().setTitle("Magic & Chill Looking For Game").addField("Syntax:", "`,lfg [MINUTES] PLATFORMS/FORMATS`.  [MINUTES] is how long you want to keep the request up for, defaults to 60 if unspecified.  PLATFORMS/FORMATS is what type(s) of game you're looking for.  They can be in any order and are case insensitive.  As soon as there's another request that meets at least one two player platform/format pair, or three more that match a four player platform/format pair, all of you will be pinged and you'll be removed from all your other active requests (so you don't end up in two games at once, you can re-request whenever you're ready).").addField("Examples:", "`,lfg 5 XMage Commander Spelltable Modern Pioneer` will put out requests for a game of Commander, Modern, or Pioneer on either XMage or Spelltable.  If no game starts within 5 minutes, the request will end.\n`,LFG 5 edh SPELLtable xMAGE pionEEr MODern` will function exactly the same as the above.\n`,lfg Arena Historic` will put out a request for a Historic game on Arena that will time out after 60 minutes.").addField("Recognized Formats:", lfgFormat + "\nAlso accepts Historic Brawl, Commander, and Canadian Highlander as valid aliases for their respective formats.").addField("Recognized Platforms:", lfgPlatform + "\nAlso accepts MTGA and MODO as valid aliases for their respective platforms.").addField("Other:", "This function will only work in <#788823431428309052>.  All of my posts with platforms and formats in one line and numbers in the following line(s) represent active requests if you're curious what's currently requested (they're deleted when they time out or start a game).  If you have any suggestions for improvements or additional platforms/formats, <@135999597947387904> with them."));
+            channel.send({ embeds: [new Discord.MessageEmbed().setTitle("Magic & Chill Looking For Game").addField("Syntax:", "`,lfg [MINUTES] PLATFORMS/FORMATS`.  [MINUTES] is how long you want to keep the request up for, defaults to 60 if unspecified.  PLATFORMS/FORMATS is what type(s) of game you're looking for.  They can be in any order and are case insensitive.  As soon as there's another request that meets at least one two player platform/format pair, or three more that match a four player platform/format pair, all of you will be pinged and you'll be removed from all your other active requests (so you don't end up in two games at once, you can re-request whenever you're ready).").addField("Examples:", "`,lfg 5 XMage Commander Spelltable Modern Pioneer` will put out requests for a game of Commander, Modern, or Pioneer on either XMage or Spelltable.  If no game starts within 5 minutes, the request will end.\n`,LFG 5 edh SPELLtable xMAGE pionEEr MODern` will function exactly the same as the above.\n`,lfg Arena Historic` will put out a request for a Historic game on Arena that will time out after 60 minutes.").addField("Recognized Formats:", lfgFormat + "\nAlso accepts Historic Brawl, Commander, and Canadian Highlander as valid aliases for their respective formats.").addField("Recognized Platforms:", lfgPlatform + "\nAlso accepts MTGA and MODO as valid aliases for their respective platforms.").addField("Other:", "This function will only work in <#788823431428309052>.  All of my posts with platforms and formats in one line and numbers in the following line(s) represent active requests if you're curious what's currently requested (they're deleted when they time out or start a game).  If you have any suggestions for improvements or additional platforms/formats, <@135999597947387904> with them.")] });
             return;
         }
         var helpMessage = "See `,help lfg` for Looking for Game explanation.\nI will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.";
@@ -573,7 +575,7 @@ function help(channel, isMod) {
             helpEmbed.setTitle("Help").addField("Other Functions:", "If either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.\nI assist the moderators with various things.");
         }
         helpEmbed.setFooter("\n\nAll commands are case insensitive. If you have suggestions for new or improved commands, please @ Ash K. with them.");
-        channel.send(helpEmbed);
+        channel.send({ embeds: [helpEmbed] });
     }
 }
 
@@ -700,7 +702,7 @@ async function badWordsReporterLGS(message, messageMember, isEdit) {
     if (reporting) {
         badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).addField("Context:", message.url).setColor('RED');
         if (isEdit) { badWordsLog.setFooter("This was an edit."); }
-        await bot.channels.cache.get(logChannel[guildID.indexOf(message.guild.id)]).send(badWordsLog);
+        await bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send({ embeds: [badWordsLog] });
     }
 }
 
@@ -1063,18 +1065,18 @@ function selfCleaner(message) {
     message.delete();
 }
 
-bot.on("message", async function(message) {
+bot.on("messageCreate", async function(message) {
     lowmessage = message.content.toLowerCase();
 
     if (message.author.id == "135999597947387904" && message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700") {
         message.channel.send("```javascript\n" + eval(message.content.split(",eval ")[1]) + "```");
     }
 
-    if (message.author.id == "135999597947387904" && message.content.indexOf(",teval ") == 0 && message.guild.id == guildID[0]) {
+    if (message.author.id == "135999597947387904" && message.content.indexOf(",teval ") == 0 && message.guild.id == guildId[0]) {
         message.channel.send("```javascript\n" + eval(message.content.split(",teval ")[1]) + "```");
     }
 
-    if (message.guild != null && message.guild.id == guildID[2]) {
+    if (message.guild != null && message.guild.id == guildId[2]) {
         var isMod = false;
         var messageMember = await message.guild.members.fetch(message.author);
         if (messageMember.permissions.has("ADMINISTRATOR")) { isMod = true; }
@@ -1099,7 +1101,7 @@ bot.on("message", async function(message) {
     if (message.author.bot) {return;}
 
     var isMod = false;
-    var messageMember = await bot.guilds.cache.get(guildID[1]).members.fetch(message.author);
+    var messageMember = await bot.guilds.cache.get(guildId[1]).members.fetch(message.author);
     if (messageMember.roles.cache.has(modRole)) { isMod = true; }
 
     await links(message);
@@ -1148,7 +1150,7 @@ bot.on("message", async function(message) {
 
     await lfgTest2(message);
 
-    if (message.guild.id == guildID[3]) {
+    if (message.guild.id == guildId[3]) {
         await lfgTest1(message);
 
         
@@ -1165,7 +1167,7 @@ bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.roles.add(member.guild.roles.cache.get(muteRole)); }
     var d = new Date();
     var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Joined", d).setColor('GREEN');
-    bot.channels.cache.get("693709957014749196").send(newBlood);
+    bot.channels.cache.get("693709957014749196").send({ embeds: [newBlood] });
     if (member.user.username.toLowerCase().includes("girls are not human")) {
         member.ban();
         bot.channels.cache.get(logChannel[1]).send("New member " + member.user.username + " (" + member.id + ") banned for intolerant username.");
@@ -1192,7 +1194,7 @@ bot.on("guildMemberRemove", async function(member) {
     else if (entry2 != null && (entry2.target.id === member.id) && (entry2.createdTimestamp > (Date.now() - 5000))) {
         await newBlood.setFooter("Kicked by " + entry2.executor.username, entry2.executor.displayAvatarURL());
     }
-    await bot.channels.cache.get("693709957014749196").send(newBlood);
+    await bot.channels.cache.get("693709957014749196").send({ embeds: [newBlood] });
 })
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
@@ -1201,22 +1203,22 @@ bot.on("guildMemberUpdate", function(oldMember, newMember) {
 })
 
 bot.on("messageReactionAdd", async function(messageReaction, user) {
-    if (messageReaction.message.id == roleMessageID) {
+    if (messageReaction.message.id == roleMessageId) {
         member = await messageReaction.message.guild.members.fetch(user);
         if(messageReaction.emoji.name == "⛔" && member.roles.cache.has("796526525498523648")) {
             return;
         }
         if(roleReact.includes(messageReaction.emoji.name)) {
-            member.roles.add(roleID[roleReact.indexOf(messageReaction.emoji.name)]);
+            member.roles.add(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
         }
     }
 })
 
 bot.on("messageReactionRemove", async function(messageReaction, user) {
-    if (messageReaction.message.id == roleMessageID) {
+    if (messageReaction.message.id == roleMessageId) {
         if(roleReact.includes(messageReaction.emoji.name)) {
             member = await messageReaction.message.guild.members.fetch(user);
-            member.roles.remove(roleID[roleReact.indexOf(messageReaction.emoji.name)]);
+            member.roles.remove(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
         }
     }
 })
@@ -1232,9 +1234,9 @@ bot.on("messageDeleteBulk", async function(messages) {
 })
 
 bot.on("presenceUpdate", function(oldPresence, newPresence) {
-    if (newPresence.userID == "695434707264995350" || newPresence.userID == "676989741173964800") {
+    if (newPresence.userId == "695434707264995350" || newPresence.userId == "676989741173964800") {
         if (newPresence.status == "offline") {
-            bot.channels.cache.get("531433553225842700").send("<@135999597947387904>, <@" + newPresence.userID + "> appears to be offline.");
+            bot.channels.cache.get("531433553225842700").send("<@135999597947387904>, <@" + newPresence.userId + "> appears to be offline.");
         }
     }
 })
