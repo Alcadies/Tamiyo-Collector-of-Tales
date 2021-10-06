@@ -276,7 +276,7 @@ async function mute(message, isMod) {
 }
 
 async function unmute(id) {
-    if (!bot.guilds.cache.get(guildId[1]).members.has(id)) {
+    if (!bot.guilds.cache.get(guildId[1]).members.cache.has(id)) {
         bot.channels.cache.get(logChannel[1]).send("Member <@" + id + "> has left before scheduled unmute time.");
     }
     else {
@@ -325,7 +325,7 @@ async function ban(message, isMod) {
             }
             else {
                 message.mentions.users.forEach(async function(value, key) {
-                    if (bot.guilds.cache.get(guildId[1]).members.has(key)) {
+                    if (bot.guilds.cache.get(guildId[1]).members.cache.has(key)) {
                         var banMember = await bot.guilds.cache.get(guildId[1]).members.fetch(key);
                         if (banMember.roles.cache.has(modRole)) {
                             message.channel.send("I'm sorry, I won't ban another mod or admin.");
@@ -484,7 +484,7 @@ async function deleteReporter(message, forced) {
         deleteLog += "```";
     }
     messageMember = message.author.username;
-    if (message.guild.members.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
+    if (message.guild.members.cache.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
     var deleteMember = await message.guild.members.fetch(user);
     if (messageMember.id == deleteMember.id) { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).addField("Deletion", message.channel + ": " + message.content); }
     else { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL()).addField("Deletion", "<@#" + message.channel + ">: " + message.content); }
