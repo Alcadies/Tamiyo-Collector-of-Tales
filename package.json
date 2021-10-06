@@ -3,6 +3,9 @@
   "description": "Record keeper for Magic and Chill",
   "version": "0.0.0",
   "main": "tamiyo.js",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "node tamiyo"
   },
