@@ -496,7 +496,7 @@ async function deleteReporter(message, forced) {
         bot.channels.cache.get(channelToNotify).send(deleteLog);
     }
     else {
-        bot.channels.cache.get(channelToNotify).send({ content: "The following " + attachmessage, embeds: [deleteLog]);
+        bot.channels.cache.get(channelToNotify).send({ content: "The following " + attachmessage, embeds: [deleteLog]});
     }
 }
 
