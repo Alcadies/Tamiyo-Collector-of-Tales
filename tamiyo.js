@@ -489,11 +489,11 @@ async function deleteReporter(message, forced) {
     if (messageMember.id == deleteMember.id) { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).addField("Deletion", message.channel + ": " + message.content); }
     else { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL()).addField("Deletion", "<@#" + message.channel + ">: " + message.content); }
     if (attaches.length == 0) {
-        bot.channels.cache.get(channelToNotify).send(deleteLog);
+        bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
     }
     else if (attaches.length == 1) {
         deleteLog.setImage(attaches[0].proxyURL);
-        bot.channels.cache.get(channelToNotify).send(deleteLog);
+        bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
     }
     else {
         bot.channels.cache.get(channelToNotify).send({ content: "The following " + attachmessage, embeds: [deleteLog]});
