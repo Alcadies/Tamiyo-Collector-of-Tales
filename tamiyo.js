@@ -198,7 +198,7 @@ function watchingMessage() {
 }
 
 async function badWordsReporter(message, messageMember, isEdit) {
-    if (message.channel.id == modChannel || (message.guild != null && message.guild.id != guildId[1])) { return; }
+    if (message.channel.id == modChannel || (!message.guild&& message.guild.id != guildId[1])) { return; }
     var badWordsLog = "";
     lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
@@ -425,7 +425,7 @@ async function dmReporter(message) {
 }
 
 async function deleteReporter(message, forced) {
-    if (message.guild === null) {return;}
+    if (!message.guild) {return;}
     if (!message.guild.available) {return;}
     if (message.guild.id != guildId[1]) {return;}
     if (message.author.bot && !forced) {
@@ -487,7 +487,7 @@ async function deleteReporter(message, forced) {
     if (message.guild.members.cache.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
     var deleteMember = await message.guild.members.fetch(user);
     if (messageMember.id == deleteMember.id) { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).addField("Deletion", message.channel + ": " + message.content); }
-    else { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL()).addField("Deletion", "<@#" + message.channel + ">: " + message.content); }
+    else { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL()).addField("Deletion", "<#" + message.channel + ">: " + message.content); }
     if (attaches.length == 0) {
         bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
     }
@@ -568,7 +568,7 @@ function help(channel, isMod) {
         }
         var helpMessage = "See `,help lfg` for Looking for Game explanation.\nI will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.";
         var helpEmbed = new Discord.MessageEmbed().addField("Links and Explanations:", "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`");
-        if ((isMod && channel.guild == null) || channel.id == modChannel) {
+        if ((isMod && !channel.guild) || channel.id == modChannel) {
             helpEmbed.setTitle("Mod Help").addField("Moderator Commands:", "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\n`,addspoiler LEA` `,removespoiler LEA`: Mark or unmark set code LEA as spoilers to be automatically removed outside of appropriate channels.").addField("Other Moderator Functions:", "Current bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.");
         }
         else {
@@ -1076,7 +1076,7 @@ bot.on("messageCreate", async function(message) {
         message.channel.send("```javascript\n" + eval(message.content.split(",teval ")[1]) + "```");
     }
 
-    if (message.guild != null && message.guild.id == guildId[2]) {
+    if (message.guild && message.guild.id == guildId[2]) {
         var isMod = false;
         var messageMember = await message.guild.members.fetch(message.author);
         if (messageMember.permissions.has("ADMINISTRATOR")) { isMod = true; }
@@ -1134,7 +1134,7 @@ bot.on("messageCreate", async function(message) {
         });
     }
 
-    if (message.guild == null) {
+    if (!message.guild) {
         await dmReporter(message);
 
         return;
@@ -1234,7 +1234,7 @@ bot.on("messageDeleteBulk", async function(messages) {
 })
 
 bot.on("presenceUpdate", function(oldPresence, newPresence) {
-    if (newPresence.userId == "695434707264995350" || newPresence.userId == "676989741173964800") {
+    if (newPresence.userId == "695434707264995350" || newPresence.userId == "676989741173964800" || newPresence.userId == "531429270451519490") {
         if (newPresence.status == "offline") {
             bot.channels.cache.get("531433553225842700").send("<@135999597947387904>, <@" + newPresence.userId + "> appears to be offline.");
         }
