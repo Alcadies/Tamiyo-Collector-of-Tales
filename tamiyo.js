@@ -406,14 +406,14 @@ function raidBan(message, messageMember) {
         });
         bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
     }
-    const count = message.channel.messages.cache.filter(m => !m.system && m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
+    /*const count = message.channel.messages.cache.filter(m => !m.system && m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
     if(count > 5 && !messageMember.user.bot) {
         message.guild.members.ban(messageMember.user, {
             days: 1,
             reason: "Message spam from non-member"
         });
         bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming messages.  Last message: ```" + message.cleanContent + "```");
-    }
+    }*/
 }
 
 async function dmReporter(message) {
@@ -635,7 +635,7 @@ function spoilerCleaner(message) {
             message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
         }
     } 
-    if (message.channel.id != "720436488247967754") {
+    if (!message.channel.permissionOverwrites.cache.has(roleID[4]) || message.channel.permissionOverwrites.cache.get(roleID[4]).allow.has("READ_MESSAGES")) {
         for (var x = 0; x < badCards.length; x++) {
             var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
             if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title != undefined && message.embeds[0].title.split(" <")[0] == badCards[x])) {
