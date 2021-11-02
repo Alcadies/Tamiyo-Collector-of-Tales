@@ -406,7 +406,7 @@ function raidBan(message, messageMember) {
         });
         bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
     }
-    const count = message.channel.messages.cache.filter(m => m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
+    const count = message.channel.messages.cache.filter(m => !m.system && m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
     if(count > 5 && !messageMember.user.bot) {
         message.guild.members.ban(messageMember.user, {
             days: 1,
@@ -1065,6 +1065,7 @@ function selfCleaner(message) {
 }
 
 bot.on("messageCreate", async function(message) {
+    if (message.system) {return;}
     lowmessage = message.content.toLowerCase();
 
     if (message.author.id == "135999597947387904" && message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700") {
@@ -1184,7 +1185,7 @@ bot.on("guildMemberRemove", async function(member) {
         logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
         bot.channels.cache.get(logChannel[1]).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
     }
-    var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Left", d).setColor('RED');
+    var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Left", d.toString()).setColor('RED');
     const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
     const entry2 = await member.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first())
     if (entry != null && (entry.target.id === member.id) && (entry.createdTimestamp > (Date.now() - 5000))) {
