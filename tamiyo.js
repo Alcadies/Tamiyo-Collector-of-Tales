@@ -635,7 +635,7 @@ function spoilerCleaner(message) {
             message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
         }
     } 
-    if (!message.channel.permissionOverwrites.cache.has(roleId[4]) || message.channel.permissionOverwrites.cache.get(roleId[4]).allow.has("READ_MESSAGES")) {
+    if (!message.channel.permissionOverwrites || !message.channel.permissionOverwrites.cache.has(roleId[4]) || message.channel.permissionOverwrites.cache.get(roleId[4]).allow.has("READ_MESSAGES")) {
         for (var x = 0; x < badCards.length; x++) {
             var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
             if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title != undefined && message.embeds[0].title.split(" <")[0] == badCards[x])) {
@@ -1166,7 +1166,7 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
 bot.on("guildMemberAdd", function(member) {
     if (logMessage.content.includes(member.id + " ")) { member.roles.add(member.guild.roles.cache.get(muteRole)); }
     var d = new Date();
-    var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Joined", d).setColor('GREEN');
+    var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Joined", d.toString()).setColor('GREEN');
     bot.channels.cache.get("693709957014749196").send({ embeds: [newBlood] });
     if (member.user.username.toLowerCase().includes("girls are not human")) {
         member.ban();
