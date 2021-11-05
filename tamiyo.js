@@ -383,7 +383,7 @@ function role(message, messageMember) {
     }*/
 }
 
-function links(interaction) {
+async function links(interaction) {
     const data = interaction.options.getString('topic');
     switch (data) {
         case 'chains':
