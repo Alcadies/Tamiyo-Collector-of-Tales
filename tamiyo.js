@@ -1143,7 +1143,7 @@ bot.on("messageCreate", async function(message) {
     var messageMember = await bot.guilds.cache.get(guildId[1]).members.fetch(message.author);
     if (messageMember.roles.cache.has(modRole)) { isMod = true; }
 
-    await links(message);
+    //await links(message);
 
     await mute(message, isMod);
 
