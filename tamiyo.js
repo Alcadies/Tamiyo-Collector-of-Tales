@@ -383,8 +383,35 @@ function role(message, messageMember) {
     }*/
 }
 
-function links(message) {
-    if (lowmessage.indexOf(",mystery") == 0 || lowmessage.indexOf(",mb1") == 0 || lowmessage.indexOf(",cmb1") == 0) { message.channel.send("Mystery Booster release notes: https://magic.wizards.com/en/articles/archive/feature/mystery-booster-release-notes-2019-11-11")}
+function links(interaction) {
+    const data = interaction.options.getString('topic');
+    switch (data) {
+        case 'chains':
+        await interaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("Follow this __once__ per draw for Chains of Mephistopheles").setImage("https://media.discordapp.net/attachments/205775955434668032/776476567144366080/tumblr_moqdowzQCw1s0l902o1_r1_1280.png")]});
+        break;
+        case 'syntax':
+        await interaction.reply("Scryfall search syntax, also used by <@240537940378386442>: https://scryfall.com/docs/syntax");
+        break;
+        case 'proxy':
+        await inteaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("Proxies vs Counterfeits").setImage("https://media.discordapp.net/attachments/375903183563915265/724555752974581770/image0.png").addField("Proxy Types:", "There are several different ways to make proxies for casual play.  Here are a few:\n\nYou can print out an image of the card on a slip of paper and put it over a real card (Overgrown Tomb, Black Lotus, Misty Rainforest).  No one, no matter how unfamiliar with authenticity, will think this is real if they pull it out of the sleeve, but it looks nice and is probably the most readable option.  The downside is the printer ink can be expensive to print out so many images.").addField("Proxies Cont.", "You can write the name (and if you want also the rules text) out by hand on a piece of paper and put it over a real card (Rest in Peace, Troll Ascetic, Scattered Groves).  It's even easier than the above to tell this is not real and is incredibly cheap to do, but it also doesn't look as nice.\n\nYou can write the name (and if you want also the rules text) directly on a real card (Wall of Omens).  It will permanently mark the card you use and again is very easy to tell is not a real version of what it's proxying, but it's also the least likely to shuffle any different as there's no second thing in the sleeve.").addField("Counterfeits:", "Counterfeits on the other hand look like real cards.  Depending on the quality of the counterfeit and how knowledgeable the examiner is, it may be noticeable in a sleeve, when you're holding it, upon very close examination, or not at all.  However in all cases it will likely pass as real to someone who doesn't know to look for it or what to look for.  No matter why you have counterfeits, knowingly acquiring them is supporting their ability to make more and deceive people into buying full price fakes.\n\nRemember, just because you think it can't be faked doesn't mean people aren't trying.").setColor('RED')]});
+        break;
+        case 'colorpie':
+        await interaction.reply("Mechanical Color Pie 2021: https://magic.wizards.com/en/articles/archive/making-magic/mechanical-color-pie-2021-10-18");
+        break;
+        case 'platforms':
+        await interaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("MTG Platforms:").addField("Arena:", "An official platform with rules enforcement that is free-to-play, though allows in-app purchases. Cards are obtained by gameplay or spending in game currencies. Has all Standard sets starting with *Ixalan* and a variety of other cards. Only supports games with two players. Available on Windows, Mac, Android, and iOS. https://magic.wizards.com/en/mtgarena").addField("Magic: the Gathering Online", "Often called MTGO or MODO. Another official platform with rules enforcement. Has almost all cards in Magic. Cards are mostly obtained through purchases via real-world currency. Only available on Windows. https://magic.wizards.com/en/mtgo").addField("Spelltable", "An official website that facilitates webcam play with paper Magic decks. Can directly display life totals, commander damage, and some other info, as well as being able to display a larger version of cards. https://spelltable.wizards.com").addField("XMage", "An unofficial platform with rules enforcement. Has almost every card as well as a few custom cards and allows players to use cards without needing to acquire them. Works on any computer with Java. http://xmage.de/").addField("Cockatrice", "An unofficial platform without rules enforcement. Players can play any card without needing to acquire them, and can support custom cards. Available on any computer. https://cockatrice.github.io").addField("Untap", "An unofficial website without rules enforcement. Players can play any card without needing to acquire them. Can upgrade to premium for extra perks. https://untap.in")] });
+        break;
+        case 'modern':
+        await interaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("Modern Legal Sets:").addField("Non-Pioneer", "Modern Horizons, Modern Horizons 2\nEighth Edition, Mirrodin, Darksteel, Fifth Dawn\nChampions of Kamigawa, Betrayers of Kamigawa, Saviors of Kamigawa, Ninth Edition\nRavnica: City of Guilds, Dissention, Guildpact, Coldsnap\nTime Spiral, Planar Chaos, Future Sight, Tenth Edition\nLorwyn, Morningtide, Shadowmoor, Eventide\nShards of Alara, Conflux, Alara Reborn, Magic 2010\nZendikar, Worldwake, Rise of the Eldrazi, Magic 2011\nScars of Mirrodin, Mirrodin Besieged, New Phyrexia, Magic 2012\nInnistrad, Dark Ascension, Avacyn Restored, Magic 2013").addField("Pioneer", "\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021\nZendikar Rising, Kaldheim, Strixhaven: School of Mages, Dungeons & Dragons: Adventures in Forgotten Realms\nInnistrad: Midnight Hunt")]});
+        break;
+        case 'pioneer':
+        await interaction.reply({ embeds: [new Discord.MessageEmbed().addField("Pioneer", "\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021\nZendikar Rising, Kaldheim, Strixhaven: School of Mages, Dungeons & Dragons: Adventures in Forgotten Realms\nInnistrad: Midnight Hunt")]});
+        break;
+        case 'unsets':
+        await interaction.reply("Unglued QAS: https://magic.wizards.com/en/articles/archive/feature/unglued-qas-questions-asked-sometimes\nUnhinged FAQTIWDAWCC: https://magic.wizards.com/en/articles/archive/feature/unhinged-faqtiwdawcc\nUnstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06\nUnsanctioned FAQTIKPWAMOMBSIATHTTASTTTETMOTWSTAAA: https://magic.wizards.com/en/articles/archive/feature/unsanctioned-faq-2020-02-25\nMystery Booster release notes: https://magic.wizards.com/en/articles/archive/feature/mystery-booster-release-notes-2019-11-11");
+        break;
+    }
+    /*if (lowmessage.indexOf(",mystery") == 0 || lowmessage.indexOf(",mb1") == 0 || lowmessage.indexOf(",cmb1") == 0) { message.channel.send("Mystery Booster release notes: https://magic.wizards.com/en/articles/archive/feature/mystery-booster-release-notes-2019-11-11")}
     if (lowmessage.indexOf(",unsanctioned") == 0) { message.channel.send("Unsanctioned FAQTIKPWAMOMBSIATHTTASTTTETMOTWSTAAA: https://magic.wizards.com/en/articles/archive/feature/unsanctioned-faq-2020-02-25"); }
     if (lowmessage.indexOf(",unstable") == 0) { message.channel.send("Unstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06"); }
     if (lowmessage.indexOf(",unhinged") == 0) { message.channel.send("Unhinged FAQTIWDAWCC: https://magic.wizards.com/en/articles/archive/feature/unhinged-faqtiwdawcc"); }
@@ -395,7 +422,7 @@ function links(message) {
     if (lowmessage.indexOf(",xmage") == 0 || lowmessage.indexOf(",cockatrice") == 0) { message.channel.send("XMage and Cockatrice are the two most common ways to play *Magic* for free online.  Both support using (almost) any card and a variety of formats.  The major difference is that XMage has rules enforcement, similar to MTGO or Arena, while Cockatrice does not.  They can be found at http://xmage.de/ and http://cockatrice.github.io/"); }
     if (lowmessage.indexOf(",proxy") == 0 || lowmessage.indexOf(",counterfeit") == 0) { message.channel.send({ embeds: [new Discord.MessageEmbed().setTitle("Proxies vs Counterfeits").setImage("https://media.discordapp.net/attachments/375903183563915265/724555752974581770/image0.png").addField("Proxy Types:", "There are several different ways to make proxies for casual play.  Here are a few:\n\nYou can print out an image of the card on a slip of paper and put it over a real card (Overgrown Tomb, Black Lotus, Misty Rainforest).  No one, no matter how unfamiliar with authenticity, will think this is real if they pull it out of the sleeve, but it looks nice and is probably the most readable option.  The downside is the printer ink can be expensive to print out so many images.").addField("Proxies Cont.", "You can write the name (and if you want also the rules text) out by hand on a piece of paper and put it over a real card (Rest in Peace, Troll Ascetic, Scattered Groves).  It's even easier than the above to tell this is not real and is incredibly cheap to do, but it also doesn't look as nice.\n\nYou can write the name (and if you want also the rules text) directly on a real card (Wall of Omens).  It will permanently mark the card you use and again is very easy to tell is not a real version of what it's proxying, but it's also the least likely to shuffle any different as there's no second thing in the sleeve.").addField("Counterfeits:", "Counterfeits on the other hand look like real cards.  Depending on the quality of the counterfeit and how knowledgeable the examiner is, it may be noticeable in a sleeve, when you're holding it, upon very close examination, or not at all.  However in all cases it will likely pass as real to someone who doesn't know to look for it or what to look for.  No matter why you have counterfeits, knowingly acquiring them is supporting their ability to make more and deceive people into buying full price fakes.\n\nRemember, just because you think it can't be faked doesn't mean people aren't trying.").setColor('RED')]});}
     if (lowmessage.indexOf(",syntax") == 0) { message.channel.send("Scryfall search syntax, also used by <@240537940378386442>: https://scryfall.com/docs/syntax"); }
-    if (lowmessage.indexOf(",chains") == 0) { message.channel.send({ embeds: [new Discord.MessageEmbed().setTitle("Follow this __once__ per draw for Chains of Mephistopheles").setImage("https://media.discordapp.net/attachments/205775955434668032/776476567144366080/tumblr_moqdowzQCw1s0l902o1_r1_1280.png")]});}
+    if (lowmessage.indexOf(",chains") == 0) { message.channel.send({ embeds: [new Discord.MessageEmbed().setTitle("Follow this __once__ per draw for Chains of Mephistopheles").setImage("https://media.discordapp.net/attachments/205775955434668032/776476567144366080/tumblr_moqdowzQCw1s0l902o1_r1_1280.png")]});}*/
 }
 
 function raidBan(message, messageMember) {
@@ -715,7 +742,7 @@ function magicCardPoster(input, channel) {
     var request = input.replace(/\<\</g, "🦌🦌").replace(/\|/g, "🦌🦌").replace(/>>/g, "🦌🦌");
     if (request.split("🦌🦌").length < 2) {return;}
     var cardName = request.split("🦌🦌")[1];
-    if (badCards.includes(cardName)) {
+    if (badCards.includes(cardName) && (!message.channel.permissionOverwrites || !message.channel.permissionOverwrites.cache.has(roleId[4]) || message.channel.permissionOverwrites.cache.get(roleId[4]).allow.has("READ_MESSAGES"))) {
         channel.send("This card has been banned in all formats for issues about serious topics.");
         return;
     }
@@ -1064,6 +1091,18 @@ function selfCleaner(message) {
     message.delete();
 }
 
+bot.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
+
+    const { commandName } = interaction;
+
+    switch (commandName) {
+        case 'info':
+        await links(interaction);
+        break;
+    }
+}
+
 bot.on("messageCreate", async function(message) {
     if (message.system) {return;}
     lowmessage = message.content.toLowerCase();
@@ -1085,7 +1124,7 @@ bot.on("messageCreate", async function(message) {
 
         await raidBan(message, messageMember);
 
-        await links(message);
+        //await links(message);
 
         await badWordsReporterLGS(message, messageMember, false);
 
