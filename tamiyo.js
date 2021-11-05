@@ -1101,7 +1101,7 @@ bot.on('interactionCreate', async interaction => {
         await links(interaction);
         break;
     }
-}
+})
 
 bot.on("messageCreate", async function(message) {
     if (message.system) {return;}
