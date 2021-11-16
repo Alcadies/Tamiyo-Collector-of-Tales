@@ -454,6 +454,7 @@ async function deleteReporter(message, forced) {
     if (!message.guild) {return;}
     if (!message.guild.available) {return;}
     if (message.guild.id != guildId[1]) {return;}
+    if (message.system) {return;}
     if (message.author.bot && !forced) {
         if (message.author.id == bot.user.id && logChannel[1] == message.channel.id) {
             message.channel.send("One of my logs was deleted from here.");
@@ -1197,6 +1198,7 @@ bot.on("messageCreate", async function(message) {
 })
 
 bot.on("messageUpdate", async function(oldMessage, newMessage) {
+    if (!newMessage.content) {return;}
     lowmessage = newMessage.content.toLowerCase();
     var messageMember = await newMessage.guild.members.fetch(newMessage.author);
     await badWordsReporter(newMessage, messageMember, true);
