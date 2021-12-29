@@ -13,7 +13,7 @@ logger.add(logger.transports.Console, {
 logger.level = "debug"
 // Initialize Discord Bot
 var bot = new Discord.Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.GUILD_PRESENCES], partials: ['MESSAGE', 'CHANNEL', 'REACTION'], allowedMentions: { parse: ['users', 'roles'], repliedUser: true } });
-var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg", "💣"];
+var badWords = ["gay", "fag", "retard", "cuck", "slut", "autis", "discord.gg/", "discordapp.com/invite/", "nigg", "💣", "cunt"];
 var badCards = ["Invoke Prejudice", "Cleanse", "Stone-Throwing Devils", "Pradesh Gypsies", "Jihad", "Imprison", "Crusade"];
 var lowmessage = "";
 var logChannel = ["531433553225842700", "633429050089799687", "729753384407662602"];
@@ -514,7 +514,11 @@ async function deleteReporter(message, forced) {
     if (message.guild.members.cache.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
     var deleteMember = await message.guild.members.fetch(user);
     if (messageMember.id == deleteMember.id) { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).addField("Deletion", message.channel + ": " + message.content); }
-    else { deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL()).addField("Deletion", "<#" + message.channel + ">: " + message.content); }
+    else {
+        deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL());
+        if (message.content.length < 1024) { deleteLog.addField("Deletion", "<#" + message.channel.id + ">: " + message.content); }
+        else { deleteLog.addField("Deletion", "<#" + message.channel.id + ">: " + message.content.substring(0, 1000)).addField("Deletion cont.", message.content.substring(1000))}
+    }
     if (attaches.length == 0) {
         bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
     }
@@ -1246,7 +1250,7 @@ bot.on("guildMemberUpdate", function(oldMember, newMember) {
 bot.on("messageReactionAdd", async function(messageReaction, user) {
     if (messageReaction.message.id == roleMessageId) {
         member = await messageReaction.message.guild.members.fetch(user);
-        if(messageReaction.emoji.name == "⛔" && member.roles.cache.has("796526525498523648")) {
+        if((messageReaction.emoji.name == "⛔" || messageReaction.emoji.name == "💧") && member.roles.cache.has("796526525498523648")) {
             return;
         }
         if(roleReact.includes(messageReaction.emoji.name)) {
