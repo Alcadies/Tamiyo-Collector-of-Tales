@@ -536,8 +536,8 @@ async function deleteReporter(message, forced) {
 async function offlineChecker(channel) {
     var judgebot = await bot.guilds.cache.get(guildId[1]).members.fetch("240537940378386442");
     var scryfall = await bot.guilds.cache.get(guildId[1]).members.fetch("268547439714238465");
-    if (judgebot.presence && judgebot.presence.status == "offline" && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help") || lowmessage.includes("!define"))) {
-        if (scryfall.presence.status != "offline") {
+    if ((!judgebot.presence || judgebot.presence.status == "offline") && (lowmessage.includes("!card") || lowmessage.includes("!cr") || lowmessage.includes("!mtr") || lowmessage.includes("!ipg") || lowmessage.includes("!jar") || lowmessage.includes("!help") || lowmessage.includes("!define"))) {
+        if (scryfall.presence && scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[`CARDNAME`]] or [[`CARDNAME`|`SET`]].  You can also do [[!`CARDNAME`]] or [[!`CARDNAME`|`SET`]] for just the image.");
         }
         else {
@@ -545,8 +545,8 @@ async function offlineChecker(channel) {
             return;
         }
     }
-    if (judgebot.presence.status == "offline" && lowmessage.includes("!legal")) {
-        if (scryfall.presence.status != "offline") {
+    if ((!judgebot.presence || judgebot.presence.status == "offline") && lowmessage.includes("!legal")) {
+        if (scryfall.presence && scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[#`CARDNAME`]].");
         }
         else {
@@ -554,8 +554,8 @@ async function offlineChecker(channel) {
             return;
         }
     }
-    if (judgebot.presence.status == "offline" && lowmessage.includes("!price")) {
-        if (scryfall.presence.status != "offline") {
+    if ((!judgebot.presence || judgebot.presence.status == "offline") && lowmessage.includes("!price")) {
+        if (scryfall.presence && scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[$`CARDNAME`]] or [[$`CARDNAME`|`SET`]].");
         }
         else {
@@ -563,8 +563,8 @@ async function offlineChecker(channel) {
             return;
         }
     }
-    if (judgebot.presence.status == "offline" && lowmessage.includes("!rul")) {
-        if (scryfall.presence.status != "offline") {
+    if ((!judgebot.presence || judgebot.presence.status == "offline") && lowmessage.includes("!rul")) {
+        if (scryfall.presence && scryfall.presence.status != "offline") {
             channel.send("<@240537940378386442> appears to be offline.  Try using <@268547439714238465> instead, with [[?`CARDNAME`]].");
         }
         else {
@@ -572,8 +572,8 @@ async function offlineChecker(channel) {
             return;
         }
     }
-    if (scryfall.presence.status == "offline" && lowmessage.includes("[[") && lowmessage.includes("]]")) {
-        if (judgebot.presence.status != "offline") {
+    if ((!scryfall.presence || scryfall.presence.status == "offline") && lowmessage.includes("[[") && lowmessage.includes("]]")) {
+        if (judgebot.presence && judgebot.presence.status != "offline") {
             if (lowmessage.includes("[[$")) {
                 channel.send("<@268547439714238465> appears to be offline.  Try using <@240537940378386442> instead, with !price `NAME OR SCRYFALL SYNTAX`!, and for more info on full Scryfall syntax see https://scryfall.com/docs/syntax.");
             }
