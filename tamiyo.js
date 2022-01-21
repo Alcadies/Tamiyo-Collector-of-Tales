@@ -198,7 +198,7 @@ function watchingMessage() {
 }
 
 async function badWordsReporter(message, messageMember, isEdit) {
-    if (message.channel.id == modChannel || (!message.guild&& message.guild.id != guildId[1])) { return; }
+    if (message.channel.id == modChannel || !message.guild || message.guild.id != guildId[1]) { return; }
     var badWordsLog = "";
     lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
@@ -514,7 +514,7 @@ async function deleteReporter(message, forced) {
     if (message.guild.members.cache.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
     var deleteMember = await message.guild.members.fetch(user);
     if (messageMember.id == deleteMember.id) {
-        deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).addField("Deletion", "<#" + message.channel + ">: " + message.content);
+        deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL());
     }
     else {
         deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL());
