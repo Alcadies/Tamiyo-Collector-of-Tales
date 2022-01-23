@@ -199,7 +199,6 @@ function watchingMessage() {
 
 async function badWordsReporter(message, messageMember, isEdit) {
     if (message.channel.id == modChannel || !message.guild || message.guild.id != guildId[1]) { return; }
-    var badWordsLog = "";
     lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
     for (let i = 0; i < badWords.length; i++) {
@@ -209,20 +208,12 @@ async function badWordsReporter(message, messageMember, isEdit) {
         }
     }
     if (reporting) {
-        badWordsLog += messageMember.displayName;
-        badWordsLog += " (id ";
-        badWordsLog += messageMember.id;
-        badWordsLog += ")";
-        if (isEdit) { badWordsLog += await " edited a message to say"; }
-        else { badWordsLog += await " said"; }
-        badWordsLog += " the following here <";
-        badWordsLog += message.url;
-        badWordsLog += ">: ```";
-        badWordsLog += message.cleanContent;
-        badWordsLog += "```"
-        badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).addField("Context:", message.url).setColor('RED');
-    /*}
-    /if (badWordsLog != "") {*/await bot.channels.cache.get(logChannel[1]).send({ embeds: [badWordsLog] });}
+        let badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", "<#" + message.channel.id + ">: " + message.content).addField("Context:", message.url).setColor('RED');
+        if (isEdit) {
+            badWordsLog.setFooter("This is an edit.")
+        }
+        await bot.channels.cache.get(logChannel[1]).send({ embeds: [badWordsLog] });
+    }
 }
 
 async function mute(message, isMod) {
@@ -1281,7 +1272,7 @@ bot.on("messageDeleteBulk", async function(messages) {
 })
 
 bot.on("presenceUpdate", function(oldPresence, newPresence) {
-    if (newPresence.userId == "695434707264995350" || newPresence.userId == "676989741173964800" || newPresence.userId == "531429270451519490") {
+    if (newPresence.userId == "695434707264995350" || newPresence.userId == "676989741173964800" || newPresence.userId == "531429270451519490" || newPresence.userId == "933212401522851901") {
         if (newPresence.status == "offline") {
             bot.channels.cache.get("531433553225842700").send("<@135999597947387904>, <@" + newPresence.userId + "> appears to be offline.");
         }
