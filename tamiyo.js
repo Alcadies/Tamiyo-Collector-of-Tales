@@ -1236,12 +1236,12 @@ bot.on("messageCreate", async function(message) {
     
     await leakUpdate(message, isMod);
 
-    if (message.channel.id == "788824774389399573")
+    if (message.channel.id == "788824774389399573") {
         if (message.attachments.size == 0 && !message.content.includes("https://") && !message.content.includes("http://")) {
             message.delete();
         }
         else {
-            message.react("✅")
+            message.react("✅");
         }
     }
 
