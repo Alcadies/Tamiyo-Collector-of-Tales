@@ -23,6 +23,8 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildId = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️", "⛔"];
 var roleId = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566", "720433065893036113"];
+var roleReactLGS = ["🧙", "🧙‍♀️", "🧙‍♂️", "💸", "🎲", "🧊", "📦", "🇸", "🧑‍🚀", "🇲", "🇵", "🇱", "🇨"];
+var roleIdLGS = ["865861704042545162", "865861650120572939", "865861476409409576", "865863180428378122", "865862019550019594", "865862047619350539", "865862116334239745", "865861745746640956", "865861790096424961", "865861837811482684", "865861891268018196", "865861934703443968", "865861969378803713"];
 var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "BHrawl", "cEDH"];
 var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
@@ -33,11 +35,17 @@ var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageId = "788829000860041236";
 var roleChannelId = "788822921694281749";
+var roleMessageIdLGS = "865864634875379713";
+var roleChannelIdLGS = "864322761270624266";
 var elkRole = "640599175326728203";
 var modChannel = "407401913253101601";
 var logMessage = "";
-var deleteList = "";
-var reportList = "";
+var deleteListMC = "";
+var reportListMC = "";
+var exceptionListMC = "";
+var deleteListLGS = "";
+var reportListLGS = "";
+var exceptionListLGS = "";
 var setCodes = "";
 var spoilerSets = "";
 var reprintList = "";
@@ -111,14 +119,18 @@ bot.once("ready", async function() {
         var newLog = logs.slice(0, logs.indexOf(str.split(" ")[0]) - 1) + logs.slice(logs.indexOf(str.split(" ")[0]) + str.split(" ")[0].length + 14);
         logMessage.edit(newLog);
     }*/
-    deleteList = await bot.channels.cache.get(logChannel[2]).messages.fetch("729754971947663381");
-    reportList = await bot.channels.cache.get(logChannel[2]).messages.fetch("729755004054798379");
+    deleteListLGS = await bot.channels.cache.get(logChannel[2]).messages.fetch("729754971947663381");
+    reportListLGS = await bot.channels.cache.get(logChannel[2]).messages.fetch("729755004054798379");
+    exceptionListLGS = await bot.channels.cache.get(logChannel[2]).messages.fetch("958855188851077190");
+    deleteListMC = await bot.channels.cache.get(logChannel[1]).messages.fetch("958844796066209834");
+    reportListMC = await bot.channels.cache.get(logChannel[1]).messages.fetch("958844796552769536");
+    exceptionListMC = await bot.channels.cache.get(logChannel[1]).messages.fetch("958844796858925086");
     setCodes = await bot.channels.cache.get(logChannel[0]).messages.fetch("751124446701682708");
     spoilerSets = await bot.channels.cache.get("407401913253101601").messages.fetch("639173870472921118");
     reprintList = await bot.channels.cache.get(logChannel[0]).messages.fetch("756507174200541255");
     leakList = await bot.channels.cache.get(botCommandChannel[0]).messages.fetch("791694141335404584");
     bot.channels.cache.get(roleChannelId).messages.fetch(roleMessageId);
-    watchingMessage();
+    //watchingMessage();
     bot.channels.cache.get("531433553225842700").send("I have arrived to observe this plane.");
 })
 
@@ -143,7 +155,7 @@ function playingMessage() {
 }
 
 function watchingMessage() {
-    let watchingType = Math.floor(Math.random() * 44)
+    let watchingType = Math.floor(Math.random() * 45)
     let duration = Math.floor(Math.random() * 600000)
     switch (watchingType) {
         case 0: observing = "Everything"; break;
@@ -189,7 +201,8 @@ function watchingMessage() {
         case 40: observing = "Kylem"; break;
         case 41: observing = "Bablovia"; break;
         case 42: observing = "Skalla"; break;
-        case 43: playingMessage(); return;
+        case 43: observing = "New Capenna"; break;
+        case 44: playingMessage(); return;
     }
     bot.user.setActivity(observing, { type: 'WATCHING'});
     setTimeout(function() {
@@ -197,7 +210,7 @@ function watchingMessage() {
     }, duration)
 }
 
-async function badWordsReporter(message, messageMember, isEdit) {
+/*async function badWordsReporter(message, messageMember, isEdit) {
     if (message.channel.id == modChannel || !message.guild || message.guild.id != guildId[1]) { return; }
     lowmessage = lowmessage.replace(/:gwomogay:/g, "").replace(/https:\/\/deckstats.net\/decks\/143801\/1486600-bad-lightsworns?share_key=0skv3mlfagytghja/g, "").replace(":heart_eyes_gay", "");
     var reporting = false;
@@ -213,6 +226,68 @@ async function badWordsReporter(message, messageMember, isEdit) {
             badWordsLog.setFooter("This is an edit.")
         }
         await bot.channels.cache.get(logChannel[1]).send({ embeds: [badWordsLog] });
+    }
+}*/
+
+function badWordsReporter(message, messageMember, isEdit) {
+    try {
+        if (message.channel.id == modChannel || !message.guild) { return; }
+        let server = guildId.indexOf(message.guild.id);
+        if (server == 1) {
+            deleteList = deleteListMC;
+            reportList = reportListMC;
+            exceptionList = exceptionListMC;
+        }
+        else if (server == 2) {
+            deleteList = deleteListLGS;
+            reportList = reportListLGS;
+            exceptionList = exceptionListLGS;
+        }
+        else {
+            return;
+        }
+        let messageCon = " " + message.content.toLowerCase().replaceAll(":heart_eyes_gay", "").replaceAll("á", "a").replaceAll("â", "a").replaceAll("ä", "a").replaceAll("å", "a").replaceAll("ã", "a").replaceAll("à", "a").replaceAll("è", "e").replaceAll("ê", "e").replaceAll("é", "e").replaceAll("ë", "e").replaceAll("ì", "i").replaceAll("í", "i").replaceAll("ï", "i").replaceAll("î", "i").replaceAll("ñ", "n").replaceAll("ò", "o").replaceAll("õ", "o").replaceAll("ø", "o").replaceAll("ô", "o").replaceAll("ö", "o").replaceAll("ó", "o").replaceAll("ù", "u").replaceAll("ú", "u").replaceAll("û", "u").replaceAll("ü", "u").replaceAll("ÿ", "y").replaceAll("æ", "ae").replaceAll("©", "c").replaceAll("®", "r").replaceAll("œ", "oe").replaceAll("¥", "y").replaceAll("ƒ", "f").replaceAll("ª", "a").replaceAll("ç", "c").replaceAll("¢", "c").replaceAll("†", "t").replaceAll("ﬁ", "fi").replaceAll("ﬂ", "fl") + " ";
+
+        if (!message.author) {return;}
+        if (message.author.bot) {return;}
+        let badWordsLog = "";
+        let badWordFound = "";
+        var reporting = false;
+        for (var i = 1; i < exceptionList.content.split("\n").length; i++) {
+            messageCon = messageCon.replaceAll(exceptionList.content.split("\n")[i], "🛑");
+        }
+        for (var j = 1; j < deleteList.content.split("\n").length; j++) {
+            if (messageCon.includes(deleteList.content.split("\n")[j])) {
+                message.delete();
+                reporting = true;
+                if (badWordFound) {
+                    badWordFound += ", "
+                }
+                badWordFound += deleteList.content.split("\n")[j];
+            }
+        }
+        for (var k = 1; k < reportList.content.split("\n").length; k++) {
+            if (messageCon.includes(reportList.content.split("\n")[k])) {
+                reporting = true;
+                if (badWordFound) {
+                    badWordFound += ", "
+                }
+                badWordFound += reportList.content.split("\n")[k];
+            }
+        }
+        if (reporting) {
+            badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).setColor('RED');
+            if (isEdit) {
+                badWordsLog.setFooter("This is an edit.");
+            }
+            if (badWordFound) {
+                badWordsLog.addField("Term(s) contained:", badWordFound);
+            }
+            bot.channels.cache.get(logChannel[server]).send({ embeds: [badWordsLog] });
+        }
+    }
+    catch(err) {
+        logger.error("Something went wrong reporting message: " + message.url);
     }
 }
 
@@ -393,10 +468,10 @@ async function links(interaction) {
         await interaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("MTG Platforms:").addField("Arena:", "An official platform with rules enforcement that is free-to-play, though allows in-app purchases. Cards are obtained by gameplay or spending in game currencies. Has all Standard sets starting with *Ixalan* and a variety of other cards. Only supports games with two players. Available on Windows, Mac, Android, and iOS. https://magic.wizards.com/en/mtgarena").addField("Magic: the Gathering Online", "Often called MTGO or MODO. Another official platform with rules enforcement. Has almost all cards in Magic. Cards are mostly obtained through purchases via real-world currency. Only available on Windows. https://magic.wizards.com/en/mtgo").addField("Spelltable", "An official website that facilitates webcam play with paper Magic decks. Can directly display life totals, commander damage, and some other info, as well as being able to display a larger version of cards. https://spelltable.wizards.com").addField("XMage", "An unofficial platform with rules enforcement. Has almost every card as well as a few custom cards and allows players to use cards without needing to acquire them. Works on any computer with Java. https://xmage.de/").addField("Cockatrice", "An unofficial platform without rules enforcement. Players can play any card without needing to acquire them, and can support custom cards. Available on any computer. https://cockatrice.github.io").addField("Untap", "An unofficial website without rules enforcement. Players can play any card without needing to acquire them. Can upgrade to premium for extra perks. https://untap.in").addField("Tabletop Simulator", "A Steam application (about $20 USD when not on sale) designed for playing any sort of tabletop game.  There are several mods for Magic, which generally don't have any form of rules enforcement but use Tabletop Simulator to directly simulate a physical table.")] });
         break;
         case 'modern':
-        await interaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("Modern Legal Sets:").addField("Non-Pioneer", "Modern Horizons, Modern Horizons 2\nEighth Edition, Mirrodin, Darksteel, Fifth Dawn\nChampions of Kamigawa, Betrayers of Kamigawa, Saviors of Kamigawa, Ninth Edition\nRavnica: City of Guilds, Dissention, Guildpact, Coldsnap\nTime Spiral, Planar Chaos, Future Sight, Tenth Edition\nLorwyn, Morningtide, Shadowmoor, Eventide\nShards of Alara, Conflux, Alara Reborn, Magic 2010\nZendikar, Worldwake, Rise of the Eldrazi, Magic 2011\nScars of Mirrodin, Mirrodin Besieged, New Phyrexia, Magic 2012\nInnistrad, Dark Ascension, Avacyn Restored, Magic 2013").addField("Pioneer", "\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021\nZendikar Rising, Kaldheim, Strixhaven: School of Mages, Dungeons & Dragons: Adventures in Forgotten Realms\nInnistrad: Midnight Hunt, Innistrad: Crimson Vow")]});
+        await interaction.reply({ embeds: [new Discord.MessageEmbed().setTitle("Modern Legal Sets:").addField("Non-Pioneer", "Modern Horizons, Modern Horizons 2\nEighth Edition, Mirrodin, Darksteel, Fifth Dawn\nChampions of Kamigawa, Betrayers of Kamigawa, Saviors of Kamigawa, Ninth Edition\nRavnica: City of Guilds, Dissention, Guildpact, Coldsnap\nTime Spiral, Planar Chaos, Future Sight, Tenth Edition\nLorwyn, Morningtide, Shadowmoor, Eventide\nShards of Alara, Conflux, Alara Reborn, Magic 2010\nZendikar, Worldwake, Rise of the Eldrazi, Magic 2011\nScars of Mirrodin, Mirrodin Besieged, New Phyrexia, Magic 2012\nInnistrad, Dark Ascension, Avacyn Restored, Magic 2013").addField("Pioneer", "\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021\nZendikar Rising, Kaldheim, Strixhaven: School of Mages, Dungeons & Dragons: Adventures in Forgotten Realms\nInnistrad: Midnight Hunt, Innistrad: Crimson Vow, Kamigawa: Neon Dynasty")]});
         break;
         case 'pioneer':
-        await interaction.reply({ embeds: [new Discord.MessageEmbed().addField("Pioneer", "\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021\nZendikar Rising, Kaldheim, Strixhaven: School of Mages, Dungeons & Dragons: Adventures in Forgotten Realms\nInnistrad: Midnight Hunt, Innistrad: Crimson Vow")]});
+        await interaction.reply({ embeds: [new Discord.MessageEmbed().addField("Pioneer", "\nReturn to Ravnica, Gatecrash, Dragon's Maze, Magic 2014\nTheros, Born of the Gods, Journey Into Nyx, Magic 2015\nKhans of Tarkir, Fate Reforged, Dragons of Tarkir, Magic Origins\nBattle for Zendikar, Oath of the Gatewatch, Shadows Over Innistrad, Eldritch Moon\nKaladesh, Aether Revolt, Amonkhet, Hour of Devastation\nIxalan, Rivals of Ixalan, Dominaria, Magic 2019\nGuilds of Ravnica, Ravnica Allegiance, War of the Spark, Magic 2020\nThrone of Eldraine, Theros: Beyond Death, Ikoria: Lair of Behemoths, Magic 2021\nZendikar Rising, Kaldheim, Strixhaven: School of Mages, Dungeons & Dragons: Adventures in Forgotten Realms\nInnistrad: Midnight Hunt, Innistrad: Crimson Vow, Kamigawa: Neon Dynasty")]});
         break;
         case 'unsets':
         await interaction.reply("Unglued QAS: https://magic.wizards.com/en/articles/archive/feature/unglued-qas-questions-asked-sometimes\nUnhinged FAQTIWDAWCC: https://magic.wizards.com/en/articles/archive/feature/unhinged-faqtiwdawcc\nUnstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06\nUnsanctioned FAQTIKPWAMOMBSIATHTTASTTTETMOTWSTAAA: https://magic.wizards.com/en/articles/archive/feature/unsanctioned-faq-2020-02-25\nMystery Booster release notes: https://magic.wizards.com/en/articles/archive/feature/mystery-booster-release-notes-2019-11-11");
@@ -749,7 +824,7 @@ function magicCardPoster(input, channel) {
     if (cardSet.length > 5 || cardSet.length < 2) {return;}
     if (request.split("🦌🦌")[3].length > 0 && !isNaN(request.split("🦌🦌")[3]) && request.split("🦌🦌")[3].indexOf(" ") == -1) {
         var cardNumber = request.split("🦌🦌")[3];
-        cardName = cardName.toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-");
+        cardName = cardName.toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-").replace(/\+/g, "%2B").replace(/ö/g, "o");
         channel.send("https://scryfall.com/card/" + cardSet.toLowerCase() +"/" + cardNumber + "/" + cardName + "?utm_source=discord");
         fetched = true;
     }
@@ -1161,8 +1236,11 @@ bot.on("messageCreate", async function(message) {
     
     await leakUpdate(message, isMod);
 
-    if (message.channel.id == "788824774389399573" && message.attachments.size == 0) {
-        message.delete();
+    if (message.channel.id == "788824774389399573")
+        if (message.attachments.size == 0 && !message.content.includes("https://") && !message.content.includes("http://")) {
+            message.delete();
+        }
+        else (message.react("✅"))
     }
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
@@ -1217,22 +1295,24 @@ bot.on("guildMemberAdd", function(member) {
 })
 
 bot.on("guildMemberRemove", async function(member) {
-    var d = new Date();
-    if (member.roles.cache.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
-        var unmuteTime = d.getTime() + 604800000;
-        logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
-        bot.channels.cache.get(logChannel[1]).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
+    if (member.guild.id == guildId[1]) {
+        var d = new Date();
+        if (member.roles.cache.has(muteRole) && !logMessage.content.includes(member.id + " ")) {
+            var unmuteTime = d.getTime() + 604800000;
+            logMessage.edit(logMessage.content + "\n" + member.id + " " + unmuteTime);
+            bot.channels.cache.get(logChannel[1]).send(member.displayName + " (id " + member.id + ") left while muted with no fixed duration and has been muted for one week in case they return. If you wish to change the duration, please use `,mute HOURS <@" + member.id + ">`.");
+        }
+        var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Left", d.toString()).setColor('RED');
+        const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
+        const entry2 = await member.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first())
+        if (entry != null && (entry.target.id === member.id) && (entry.createdTimestamp > (Date.now() - 5000))) {
+            await newBlood.setFooter("Banned by " + entry.executor.username, entry.executor.displayAvatarURL());
+        }
+        else if (entry2 != null && (entry2.target.id === member.id) && (entry2.createdTimestamp > (Date.now() - 5000))) {
+            await newBlood.setFooter("Kicked by " + entry2.executor.username, entry2.executor.displayAvatarURL());
+        }
+        await bot.channels.cache.get("693709957014749196").send({ embeds: [newBlood] });
     }
-    var newBlood = new Discord.MessageEmbed().setAuthor(member.displayName + " (" + member.id + ")", member.user.displayAvatarURL()).addField("Left", d.toString()).setColor('RED');
-    const entry = await member.guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first())
-    const entry2 = await member.guild.fetchAuditLogs({type: 'MEMBER_KICK'}).then(audit => audit.entries.first())
-    if (entry != null && (entry.target.id === member.id) && (entry.createdTimestamp > (Date.now() - 5000))) {
-        await newBlood.setFooter("Banned by " + entry.executor.username, entry.executor.displayAvatarURL());
-    }
-    else if (entry2 != null && (entry2.target.id === member.id) && (entry2.createdTimestamp > (Date.now() - 5000))) {
-        await newBlood.setFooter("Kicked by " + entry2.executor.username, entry2.executor.displayAvatarURL());
-    }
-    await bot.channels.cache.get("693709957014749196").send({ embeds: [newBlood] });
 })
 
 bot.on("guildMemberUpdate", function(oldMember, newMember) {
@@ -1250,6 +1330,18 @@ bot.on("messageReactionAdd", async function(messageReaction, user) {
             member.roles.add(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
         }
     }
+    if (messageReaction.message.id == roleMessageIdLGS) {
+        member = await messageReaction.message.guild.members.fetch(user);
+        if (roleReactLGS.includes(messageReaction.emoji.name)) {
+            member.roles.add(roleIdLGS[roleReactLGS.indexOf(messageReaction.emoji.name)]);
+        }
+    }
+    if (messageReaction.message.channel.id == "788824774389399573" && messageReaction.emoji.name == "✅") {
+        member = await messageReaction.message.guild.members.fetch(user);
+        if (member.roles.cache.has(modRole)) {
+            messageReaction.channel.messages.crosspost(messageReaction.message);
+        }
+    }
 })
 
 bot.on("messageReactionRemove", async function(messageReaction, user) {
@@ -1257,6 +1349,12 @@ bot.on("messageReactionRemove", async function(messageReaction, user) {
         if(roleReact.includes(messageReaction.emoji.name)) {
             member = await messageReaction.message.guild.members.fetch(user);
             member.roles.remove(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
+        }
+    }
+    if (messageReaction.message.id == roleMessageIdLGS) {
+        if(roleReactLGS.includes(messageReaction.emoji.name)) {
+            member = await messageReaction.message.guild.members.fetch(user);
+            member.roles.remove(roleIdLGS[roleReactLGS.indexOf(messageReaction.emoji.name)]);
         }
     }
 })
