@@ -1240,7 +1240,9 @@ bot.on("messageCreate", async function(message) {
         if (message.attachments.size == 0 && !message.content.includes("https://") && !message.content.includes("http://")) {
             message.delete();
         }
-        else (message.react("✅"))
+        else {
+            message.react("✅")
+        }
     }
 
     if (isMod && message.content.indexOf(",unmute") == 0 && message.mentions.users.size != 0) {
