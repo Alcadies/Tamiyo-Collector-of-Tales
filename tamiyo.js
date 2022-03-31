@@ -50,6 +50,7 @@ var setCodes = "";
 var spoilerSets = "";
 var reprintList = "";
 var leakList = "";
+var memeList = ["https://c1.scryfall.com/file/scryfall-cards/large/front/f/e/fec6b189-97e7-4627-9785-a9ce2f1ad89f.jpg?1562537398", "https://c1.scryfall.com/file/scryfall-cards/large/front/5/a/5a5841fa-4f30-495a-b840-3ef5a2af8fad.jpg?1562494149", "https://c1.scryfall.com/file/scryfall-cards/large/front/e/b/eb9963e0-a22a-4a64-aa0c-b7c67c5fee96.jpg?1629919504", "https://c1.scryfall.com/file/scryfall-cards/large/front/f/3/f3da28f3-2b23-47ad-975a-6b7b204efecb.jpg?1601874070", "https://c1.scryfall.com/file/scryfall-cards/large/front/7/f/7f7aa8e1-ada6-491a-b96f-43e89dae7834.jpg?1627082881", "https://c1.scryfall.com/file/scryfall-cards/large/front/6/f/6f75946b-1690-43cc-993c-d4e451a1a41c.jpg?1562921261", "https://c1.scryfall.com/file/scryfall-cards/large/front/9/6/96c9c4d1-dd43-4156-b25f-0e707b6c4b23.jpg?1616400037", "https://c1.scryfall.com/file/scryfall-cards/large/front/e/d/edc71122-2951-43eb-8ca8-1cda6d231013.jpg?1562861827", "https://c1.scryfall.com/file/scryfall-cards/large/front/f/1/f11f2e82-4970-4298-a3a7-c42cb1780eb5.jpg?1644526972", "https://c1.scryfall.com/file/scryfall-cards/large/front/d/2/d28056c7-c58d-4986-a45c-c9e55aed23a1.jpg?1555040601"]
 
 bot.on("ready", async function() {
     logger.info("Connected")
@@ -276,7 +277,7 @@ function badWordsReporter(message, messageMember, isEdit) {
             }
         }
         if (reporting) {
-            badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", message.channel + ": " + message.content).setColor('RED');
+            badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", "<#" + message.channel + ">: " + message.content).setColor('RED');
             if (isEdit) {
                 badWordsLog.setFooter("This is an edit.");
             }
@@ -741,7 +742,7 @@ function spoilerCleaner(message) {
             if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title != undefined && message.embeds[0].title.split(" <")[0] == badCards[x])) {
                 message.delete();
                 deleteReporter(message, true);
-                message.channel.send("This cards has been banned in all formats for issues about serious topics. To discuss those topics, please see rule 8 (or for more details, <https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152>).")
+                message.channel.send("This card has been banned in all formats for issues about serious topics. For more details, see <https://discordapp.com/channels/162586705524686848/162587160942346241/720436510368858152>.")
             }
         }
     }
@@ -1160,6 +1161,15 @@ async function leakUpdate(message, isMod) {
     }
 }
 
+function prank(message) {
+    let d = new Date();
+    let rand = Math.floor(Math.random() * 10);
+    let rand2 = Math.floor(Math.random() * memeList.length);
+    if (message.guild.id == guildId[1] && message.channel.id != "205775955434668032" && d.getDate() == 1 && d.getMonth() == 3 && message.author.id == "268547439714238465" && rand == 1) {
+        message.reply("Sorry, that card just isn't good.  Here's a better one: " + memeList[rand2]);
+    }
+}
+
 function selfCleaner(message) {
     message.delete();
 }
@@ -1204,7 +1214,9 @@ bot.on("messageCreate", async function(message) {
         if (isMod) {
             updateWords(message);
         }
-    }
+    }    
+
+    await prank(message);
 
     await spoilerCleaner(message);
     
@@ -1341,7 +1353,8 @@ bot.on("messageReactionAdd", async function(messageReaction, user) {
     if (messageReaction.message.channel.id == "788824774389399573" && messageReaction.emoji.name == "✅") {
         member = await messageReaction.message.guild.members.fetch(user);
         if (member.roles.cache.has(modRole)) {
-            messageReaction.channel.messages.crosspost(messageReaction.message);
+            messageReaction.message.crosspost();
+            messageReaction.remove();
         }
     }
 })
