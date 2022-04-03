@@ -749,34 +749,35 @@ function spoilerCleaner(message) {
 }
 
 function updateWords(message) {
-    if (lowmessage.indexOf(",banword ") == 0) {
-        var newDeleteList = deleteList.content;
+    if (lowmessage.indexOf(",banword ") == 0 && message.guild.id == guildId[1]) {
+        var newDeleteList = deleteListMC.content;
         newDeleteList += "\n" + lowmessage.split(",banword ")[1]
-        deleteList.edit(newDeleteList);
+        deleteListMC.edit(newDeleteList);
         message.channel.send("`" + lowmessage.split(",banword ")[1] + "` added to list of words/phrases to immediately delete.");
     }
-    if (lowmessage.indexOf(",reportword ") == 0) {
-        var newDeleteList = reportList.content;
+    if (lowmessage.indexOf(",reportword ") == 0 && message.guild.id == guildId[1]) {
+        var newDeleteList = reportListMC.content;
         newDeleteList += "\n" + lowmessage.split(",banword ")[1]
-        reportList.edit(newDeleteList);
+        reportListMC.edit(newDeleteList);
         message.channel.send("`" + lowmessage.split(",reportword ")[1] + "` added to list of words/phrases to report.");
     }
-    if (lowmessage.indexOf(",unbanword ") == 0 && deleteList.content.split("\n").indexOf(lowmessage.split(",unbanword ")[1]) > 0) {
-        var newDeleteList = deleteList.content.split("\n")[0];
-        for (var x = 1; x < deleteList.content.split("\n").length; x++) {
-            if (!deleteList.content.split("\n")[x] == lowmessage.split(",unbanword ")[1]) { newDeleteList += "\n" + deleteList.content.split("\n")[x]; }
+    if (lowmessage.indexOf(",unbanword ") == 0 && message.guild.id == guildId[1] && deleteList.content.split("\n").indexOf(lowmessage.split(",unbanword ")[1]) > 0) {
+        var newDeleteList = deleteListMC.content.split("\n")[0];
+        for (var x = 1; x < deleteListMC.content.split("\n").length; x++) {
+            if (!deleteListMC.content.split("\n")[x] == lowmessage.split(",unbanword ")[1]) { newDeleteList += "\n" + deleteListMC.content.split("\n")[x]; }
         }
-        deleteList.edit(newDeleteList);
+        deleteListMC.edit(newDeleteList);
         message.channel.send("`" + lowmessage.split(",unbanword ")[1] + "` removed from list of words/phases to immediately delete.");
     }
-    if (lowmessage.indexOf(",unreportword ") == 0 && deleteList.content.split("\n").indexOf(lowmessage.split(",unreportword ")[1]) > 0) {
-        var newDeleteList = reportList.content.split("\n")[0];
-        for (var x = 1; x < reportList.content.split("\n").length; x++) {
-            if (!reportList.content.split("\n")[x] == lowmessage.split(",unreportword ")[1]) { newDeleteList += "\n" + reportList.content.split("\n")[x]; }
+    if (lowmessage.indexOf(",unreportword ") == 0 && message.guild.id == guildId[1] && deleteList.content.split("\n").indexOf(lowmessage.split(",unreportword ")[1]) > 0) {
+        var newDeleteList = reportListMC.content.split("\n")[0];
+        for (var x = 1; x < reportListMC.content.split("\n").length; x++) {
+            if (!reportListMC.content.split("\n")[x] == lowmessage.split(",unreportword ")[1]) { newDeleteList += "\n" + reportListMC.content.split("\n")[x]; }
         }
-        reportList.edit(newDeleteList);
+        reportListMC.edit(newDeleteList);
         message.channel.send("`" + lowmessage.split(",unreportword ")[1] + "` removed from list of words/phases to report.");
     }
+
 }
 
 async function badWordsReporterLGS(message, messageMember, isEdit) {
