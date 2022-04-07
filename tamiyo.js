@@ -1210,7 +1210,7 @@ bot.on("messageCreate", async function(message) {
 
         //await links(message);
 
-        await badWordsReporterLGS(message, messageMember, false);
+        //await badWordsReporterLGS(message, messageMember, false);
 
         if (isMod) {
             updateWords(message);
