@@ -23,8 +23,8 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildId = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️", "⛔"];
 var roleId = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566", "720433065893036113"];
-var roleReactLGS = ["🧙", "🧙‍♀️", "🧙‍♂️", "💸", "🎲", "🧊", "📦", "🇸", "🧑‍🚀", "🇲", "🇵", "🇱", "🇨", "DandD", "fleshandblood", "mtg", "pokeball", "ssb", "🏠"];
-var roleIdLGS = ["865861704042545162", "865861650120572939", "865861476409409576", "865863180428378122", "865862019550019594", "865862047619350539", "865862116334239745", "865861745746640956", "865861790096424961", "865861837811482684", "865861891268018196", "865861934703443968", "865861969378803713", "958886784580845659", "958886862255181845", "958886446540922900", "958886689449840660", "958889669557375046", "958871797204406324"];
+var roleReactLGS = ["🧙", "🧙‍♀️", "🧙‍♂️", "💸", "🎲", "🧊", "📦", "🇸", "🧑‍🚀", "🇲", "🇵", "🇱", "🇨", "DandD", "fleshandblood", "mtg", "pokeball", "ssb", "🏠", "🔓"];
+var roleIdLGS = ["865861704042545162", "865861650120572939", "865861476409409576", "865863180428378122", "865862019550019594", "865862047619350539", "865862116334239745", "865861745746640956", "865861790096424961", "865861837811482684", "865861891268018196", "865861934703443968", "865861969378803713", "958886784580845659", "958886862255181845", "958886446540922900", "958886689449840660", "958889669557375046", "958871797204406324", "958891658123018270"];
 var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "BHrawl", "cEDH"];
 var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
@@ -35,7 +35,7 @@ var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageId = "788829000860041236";
 var roleChannelId = "788822921694281749";
-var roleMessageIdLGS = ["865864634875379713", "960268264401952788", "958866917676974120"];
+var roleMessageIdLGS = ["865864634875379713", "960268264401952788", "958876127265435688"];
 var roleChannelIdLGS = "864322761270624266";
 var elkRole = "640599175326728203";
 var modChannel = "407401913253101601";
@@ -1367,7 +1367,7 @@ bot.on("messageReactionRemove", async function(messageReaction, user) {
             member.roles.remove(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
         }
     }
-    if (messageReaction.message.id == roleMessageIdLGS) {
+    if (roleMessageIdLGS.includes(messageReaction.message.id)) {
         if(roleReactLGS.includes(messageReaction.emoji.name)) {
             member = await messageReaction.message.guild.members.fetch(user);
             member.roles.remove(roleIdLGS[roleReactLGS.indexOf(messageReaction.emoji.name)]);
