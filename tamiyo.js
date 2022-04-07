@@ -277,7 +277,7 @@ function badWordsReporter(message, messageMember, isEdit) {
             }
         }
         if (reporting) {
-            badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", "<#" + message.channel + ">: " + message.content).setColor('RED');
+            badWordsLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setTitle("Questionable Content:").addField(messageMember.displayName + " (" + message.author.id + ")", "<#" + message.channel + ">: " + message.content).addField("Context:", message.url).setColor('RED');
             if (isEdit) {
                 badWordsLog.setFooter("This is an edit.");
             }
@@ -780,7 +780,7 @@ function updateWords(message) {
 
 }
 
-async function badWordsReporterLGS(message, messageMember, isEdit) {
+/*async function badWordsReporterLGS(message, messageMember, isEdit) {
     var badWordsLog = "";
     var messageToLink = message;
     var reporting = false;
@@ -805,7 +805,7 @@ async function badWordsReporterLGS(message, messageMember, isEdit) {
         if (isEdit) { badWordsLog.setFooter("This was an edit."); }
         await bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send({ embeds: [badWordsLog] });
     }
-}
+}*/
 
 function magicCardFetcher(message) {
     if (lowmessage.indexOf("<<") != -1 && lowmessage.lastIndexOf(">>") != -1 && lowmessage.indexOf("|") != -1) {
