@@ -35,7 +35,7 @@ var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
 var roleMessageId = "788829000860041236";
 var roleChannelId = "788822921694281749";
-var roleMessageIdLGS = "865864634875379713";
+var roleMessageIdLGS = ["865864634875379713", "960268264401952788", "958866917676974120"];
 var roleChannelIdLGS = "864322761270624266";
 var elkRole = "640599175326728203";
 var modChannel = "407401913253101601";
@@ -1345,7 +1345,7 @@ bot.on("messageReactionAdd", async function(messageReaction, user) {
             member.roles.add(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
         }
     }
-    if (messageReaction.message.id == roleMessageIdLGS) {
+    if (roleMessageIdLGS.includes(messageReaction.message.id)) {
         member = await messageReaction.message.guild.members.fetch(user);
         if (roleReactLGS.includes(messageReaction.emoji.name)) {
             member.roles.add(roleIdLGS[roleReactLGS.indexOf(messageReaction.emoji.name)]);
