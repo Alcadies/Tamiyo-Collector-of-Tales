@@ -1336,26 +1336,38 @@ bot.on("guildMemberUpdate", function(oldMember, newMember) {
 })
 
 bot.on("messageReactionAdd", async function(messageReaction, user) {
-    if (messageReaction.message.id == roleMessageId) {
-        member = await messageReaction.message.guild.members.fetch(user);
-        if((messageReaction.emoji.name == "⛔" || messageReaction.emoji.name == "💧") && member.roles.cache.has("796526525498523648")) {
-            return;
+    try {
+        if (messageReaction.message.id == roleMessageId) {
+            member = await messageReaction.message.guild.members.fetch(user);
+            if((messageReaction.emoji.name == "⛔" || messageReaction.emoji.name == "💧") && member.roles.cache.has("796526525498523648")) {
+                return;
+            }
+            if(roleReact.includes(messageReaction.emoji.name)) {
+                member.roles.add(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
+            }
         }
-        if(roleReact.includes(messageReaction.emoji.name)) {
-            member.roles.add(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
+        if (roleMessageIdLGS.includes(messageReaction.message.id)) {
+            member = await messageReaction.message.guild.members.fetch(user);
+            if (roleReactLGS.includes(messageReaction.emoji.name)) {
+                member.roles.add(roleIdLGS[roleReactLGS.indexOf(messageReaction.emoji.name)]);
+            }
+        }
+        if (messageReaction.message.channel.id == "788824774389399573" && messageReaction.emoji.name == "✅") {
+            member = await messageReaction.message.guild.members.fetch(user);
+            if (member.roles.cache.has(modRole)) {
+                if (messageReaction.message.crosspostable) {
+                    messageReaction.message.crosspost();
+                }
+                messageReaction.remove();
+            }
         }
     }
-    if (roleMessageIdLGS.includes(messageReaction.message.id)) {
-        member = await messageReaction.message.guild.members.fetch(user);
-        if (roleReactLGS.includes(messageReaction.emoji.name)) {
-            member.roles.add(roleIdLGS[roleReactLGS.indexOf(messageReaction.emoji.name)]);
+    catch(err) {
+        if (messageReaction && messageReaction.message && messageReaction.message.url) {
+            logger.error("Something went wrong with a reaction on message " + messageReaction.message.url);
         }
-    }
-    if (messageReaction.message.channel.id == "788824774389399573" && messageReaction.emoji.name == "✅") {
-        member = await messageReaction.message.guild.members.fetch(user);
-        if (member.roles.cache.has(modRole)) {
-            messageReaction.message.crosspost();
-            messageReaction.remove();
+        else {
+            logger.error("Something went wrong with a message reaction");
         }
     }
 })
