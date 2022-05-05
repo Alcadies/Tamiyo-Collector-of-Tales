@@ -38,7 +38,7 @@ var roleChannelId = "788822921694281749";
 var roleMessageIdLGS = ["865864634875379713", "960268264401952788", "958876127265435688"];
 var roleChannelIdLGS = "864322761270624266";
 var elkRole = "640599175326728203";
-var modChannel = "407401913253101601";
+var modChannel = ["280511995734917120", "407401913253101601", "729755366371491953"];
 var logMessage = "";
 var deleteListMC = "";
 var reportListMC = "";
@@ -232,7 +232,7 @@ function watchingMessage() {
 
 function badWordsReporter(message, messageMember, isEdit) {
     try {
-        if (message.channel.id == modChannel || !message.guild) { return; }
+        if (modChannel.includes(channel.id) || !message.guild) { return; }
         let server = guildId.indexOf(message.guild.id);
         if (server == 1) {
             deleteList = deleteListMC;
@@ -289,6 +289,181 @@ function badWordsReporter(message, messageMember, isEdit) {
     }
     catch(err) {
         logger.error("Something went wrong reporting message: " + message.url);
+    }
+}
+
+/*async function mute(message, isMod) {
+    if (lowmessage.indexOf(",mute") == 0) {
+        if (isMod) {
+            if (message.mentions.users.size != 0) {
+                var muteHours = lowmessage.split(" ")[1];
+                var shift = 0;
+                if (muteHours.indexOf("<@") == 0) {
+                    muteHours = lowmessage.split(" ")[message.mentions.users.size + 1];
+                    shift = 1;
+                }
+                message.mentions.users.forEach(async function(value, key) {
+                    var muteMember = await message.guild.members.fetch(value)
+                    if (!isNaN(muteHours)) {
+                        setTimeout(function () {
+                            unmute(muteMember.id);
+                        }, muteHours * 3600000)
+                        if (logMessage.content.includes(key)) {
+                            var logs = logMessage.content;
+                            var newLog = logs.split("\n")[0];
+                            for (var x = 1; x < logs.split("\n").length; x++) {
+                                if (!logs.split("\n")[x].includes(key)) { newLog += "\n" + logs.split("\n")[x]; }
+                            }
+                            logMessage.edit(newLog);
+                        }
+                        d = new Date();
+                        unmuteTime = muteHours * 3600000 + d.getTime();
+                        logMessage.edit(logMessage.content + "\n" + key + " " + unmuteTime);
+                        await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted for " + muteHours + " hours.");
+                    }
+                    else {
+                        await message.channel.send("Member " + muteMember.displayName + " (id " + key + ") muted indefinitely. To set a duration, please use `,mute HOURS @MEMBER`.");
+                    }
+                    await muteMember.roles.add(message.guild.roles.cache.get(muteRole));
+                    var muteMessage = "";
+                    if (!isNaN(muteHours)) { muteMessage = await "You have been muted for " + muteHours + " hours"; }
+                    else { muteMessage = await "You've been muted indefinitely"; }
+                    if (message.content.includes("Reason: ")) { muteMessage += await " with reason \"" + message.content.split("Reason: ")[1] + "\""; }
+                    else if (message.content.includes("reason: ")) { muteMessage += await " with reason \"" + message.content.split("reason: ")[1] + "\""; }
+                    else if (message.content.includes("REASON: ")) { muteMessage += await " with reason \"" + message.content.split("REASON: ")[1] + "\""; }
+                    else if (message.content.split(">")[message.mentions.users.size + shift].length > 1) { muteMessage += await " with reason \"" + message.content.split(">")[message.mentions.users.size + shift] + "\""; }
+                    else { muteMessage += await "."; }
+                    await value.send(muteMessage);
+                })
+            }
+            else { message.channel.send("Please include a mention for the person you would like to mute. If they do not have access to this channel, that can be done with <@ID>."); }
+        }
+        else { message.channel.send("You must be a mod or admin to use this function."); }
+    }
+}*/
+
+async function muteCommand(interaction) {
+    try {
+        let muteTime = 8.64e15;
+        if (interaction.options.getNumber('time')) {
+            let n = interaction.options.getNumber('time');
+            let x = 3600000;
+            if (!interaction.options.getString('unit')) {
+                switch(interaction.options.getString('unit')) {
+                    case 'seconds':
+                    x = 1000;
+                    break;
+                    case 'minutes':
+                    x = 60000;
+                    break;
+                    case 'hours':
+                    x = 3600000;
+                    break;
+                    case 'days':
+                    x = 86400000;
+                    break;
+                    case 'weeks':
+                    x = 604800000;
+                    break;
+                }
+            }
+            let muteTime = Math.min((Date.now() + (n * x)), muteTime);
+        }
+        let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
+        if (interaction.options.getString('reason')) {
+            await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
+            interaction.reply({ content: "Member <@" + muteMember.id + "> muted until " + new Date(muteTime) " for " + interaction.options.getString('reason') "."});
+        }
+        else {
+            await muteMember.disableCommunicationUntil(muteTime);
+            interaction.reply({ content: "Member <@" + muteMember.id + "> muted until " + new Date(muteTime) + "."});
+        }
+    }
+    catch(err) {
+        logger.error("Something went wrong with muteCommand.");
+    }
+}
+
+async function unmuteCommand(interaction) {
+    try {
+        let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
+        let unmuted = false;
+        if (muteMember.roles.has(muteRole)) {
+            muteMember.roles.remove(muteRole);
+            unmuted = true;
+        }
+        if (muteMember.communicationDisabledUntilTimestamp) {
+            if(interaction.options.getString('reason')) {
+                muteMember.disableCommunicationUntil(null, interaction.options.getString('reason'));
+                unmuted = true;
+            }
+            else {
+                muteMember.disableCommunicationUntil(null);
+                unmuted = true;
+            }
+        }
+        if (!unmuted) {
+            interaction.reply({ content: "That member does not appear to be muted right now.", ephemeral: true });
+            return;
+        }
+        if (interaction.options.getString('reason')) {
+                await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
+                interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted for " + interaction.options.getString('reason') "."});
+            }
+            else {
+                await muteMember.disableCommunicationUntil(muteTime);
+                interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted."});
+            }
+        }
+    }
+    catch(err) {
+        logger.error("Something went wrong with unmuteCommand");
+    }
+}
+
+async function banCommand(interaction) {
+    try {
+        let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
+        if (!muteMember.bannable) {
+            interaction.reply({ content: "I am unable to ban this member.", ephemeral: true });
+            return;
+        }
+        let day = 0;
+        if (interaction.options.getNumber('delete-messages')) {
+            day = interaction.options.getNumber('delete-messages');
+        }
+        if (interaction.options.getString('reason')) {
+            muteMember.ban({ days: day, reason: interaction.options.getString('reason')});
+            interaction.reply({ content: "Member <@" + muteMember.id + "> banned for " + interaction.options.getString('reason') "."});
+        }
+        else {
+            muteMember.ban({ days: day })
+            interaction.reply({ content: "Member <@" + muteMember.id + "> banned."});
+        }
+    }
+    catch(err) {
+        logger.error("Something went wrong with banCommand.");
+    }
+}
+
+async function kickCommand(interaction) {
+    try {
+        let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
+        if (!muteMember.kickable) {
+            interaction.reply({ content: "I am unable to kick this member.", ephemeral: true });
+            return;
+        }
+        if (interaction.options.getString('reason')) {
+            muteMember.ban(interaction.options.getString('reason'));
+            interaction.reply({ content: "Member <@" + muteMember.id + "> kicked for " + interaction.options.getString('reason') "."});
+        }
+        else {
+            muteMember.ban()
+            interaction.reply({ content: "Member <@" + muteMember.id + "> kicked."});
+        }
+    }
+    catch(err) {
+        logger.error("Something went wrong with kickCommand.");
     }
 }
 
@@ -518,20 +693,28 @@ async function dmReporter(message) {
 }
 
 async function deleteReporter(message, forced) {
+    let channelToNotify = null;
     if (!message.guild) {return;}
     if (!message.guild.available) {return;}
-    if (message.guild.id != guildId[1]) {return;}
+    if (message.guild.id == guildId[1]) {
+        channelToNotify = logChannel[1];
+    }
+    else if (message.guild.id == guildId[2]) {
+        channelToNotify = logChannel[2];
+    }
+    else {return;}
+    if (!channelToNotify) {return;}
     if (message.system) {return;}
+    if (!message.author) {return;}
     if (message.author.bot && !forced) {
-        if (message.author.id == bot.user.id && logChannel[1] == message.channel.id) {
+        if (message.author.id == bot.user.id && channelToNotify == message.channel.id) {
             message.channel.send("One of my logs was deleted from here.");
         }
         return;
     }
-    if (message.content.length < 5 && message.attachments.size == 0) {return;}
-    if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032") {return;}
-    var channelToNotify = logChannel[1];
-    if (message.channel.id == logChannel[1] && message.author.id == "657605267709493265") {
+    if (message.content.length < 5 && message.attachments.size == 0 && message.guild.id == guildId [1]) {return;}
+    if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032" && message.guild.id == guildId[1]) {return;}
+    if (message.channel.id == channelToNotify && message.author.id == "657605267709493265") {
         await message.channel.send("One of my logs was deleted from here.");
         return;
     }
@@ -668,7 +851,7 @@ function help(channel, isMod) {
         }
         var helpMessage = "See `,help lfg` for Looking for Game explanation.\nI will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`\nIf either <@268547439714238465> or <@240537940378386442> is offline, I will point you to the other one with some basic syntax for similar functions.\nI will provide a full image of a card with exact Scryfall command but `<<>>`, like so: <<Avacyn, the Purifier|SOI>>.  Notably, this **can** get the back of a double faced card.";
         var helpEmbed = new Discord.MessageEmbed().addField("Links and Explanations:", "I will provide a link to Scryfall search syntax with `,syntax`\nI will provide links to the Un-set FAQs with `,unglued`, `,unhinged`, `,unstable`, or `,unsanctioned` and Mystery Booster with `,mystery`.\nI will provide a link to the Mechanical Color Pie and relevant changes since with `,colorpie`.\nI can tell you the sets legal in Pioneer with `,pioneer` or in Modern with `,modern`.\nI will give or remove the leak role with `,leak` and the serious discussion role with `,serious`.\nI will give a brief description of both programs with `,xmage` or `,cockatrice`.\nI will educate you on the differences between a `,counterfeit` and a `,proxy` with either command.\nI will provide the chart for Chains of Mephistopheles with `,chains`");
-        if ((isMod && !channel.guild) || channel.id == modChannel) {
+        if ((isMod && !channel.guild) || modChannel.includes(channel.id)) {
             helpEmbed.setTitle("Mod Help").addField("Moderator Commands:", "Mute: `,mute 24 <@631014834057641994> Reason: Imprisoning Emrakul` would mute me for 24 hours and DM me `You've been muted for 24 hours with reason \"Imprisoning Emrakul\"`.\nBan, kick, or unmute: Just send `,ban @MENTION`, `,kick @MEMBER`, or `,unmute @MENTION`\n`,addspoiler LEA` `,removespoiler LEA`: Mark or unmark set code LEA as spoilers to be automatically removed outside of appropriate channels.").addField("Other Moderator Functions:", "Current bad words list to report: `" + badWords + "`. If you wish to add or remove anything from this list, please @ Ash K. and it will be done.\nDelete message logging: Deletions will be logged *unless* one of the following is true and it contains no attachments: The message was from a bot, the message contained a typical bot call (`!card`, `[[`, `]]`, etc.), or the message was less than five characters long.  If you have any suggestions on improvements on catching only relevant deletions, feel free to suggest them.\nAny current spoilers from other bots are automatically deleted outside spoiler or leak channel, and the removed cards outside serious discussions.");
         }
         else {
@@ -777,7 +960,76 @@ function updateWords(message) {
         reportListMC.edit(newDeleteList);
         message.channel.send("`" + lowmessage.split(",unreportword ")[1] + "` removed from list of words/phases to report.");
     }
+}
 
+async function updateWordsCommand(interaction) {
+    try {
+        if (!interaction.memberPermissions.has("MANAGE_SERVER")) {return;}
+        var theLog;
+        let theWord = ""
+        if (interaction.options.getBoolean('leading-space')) {
+            theWord += " ";
+        }
+        theWord += interaction.options.getString('word');
+        if (interaction.options.getBoolean('trailing-space')) {
+            theWord += " ";
+        }
+        if (interaction.guildId == guildId[1]) {
+            switch (interaction.options.getString('type')) {
+                case "delete":
+                theLog = deleteListMC;
+                break;
+                case "report":
+                theLog = reportListMC;
+                break;
+                case "exceptions":
+                theLog = exceptionListMC;
+                break;
+            }
+        }
+        else if (interaction.guildId == guildId [2]) {
+            switch (interaction.options.getString('type')) {
+                case "delete":
+                theLog = deleteListLGS;
+                break;
+                case "report":
+                theLog = reportListLGS;
+                break;
+                case "exceptions":
+                theLog = exceptionListLGS;
+                break;
+            }
+        }
+        else {
+            interaction.reply({ content: "This doesn't appear to be a supported server for that command.  If you believe this to be in error, please contact <@135999597947387904>.", ephemeral: true });
+            return;
+        }
+        if (interaction.options.getString('action') == "add") {
+            await theLog.edit(theLog.content + "\n" + theWord.toLowerCase());
+            interaction.reply({ content: "`" + theWord + "` successfully added to the " + interaction.options.getString('type') + " list.", ephemeral: true });
+        }
+        else {
+            if (theLog.content.includes("\n" + theWord.toLowerCase())) {
+                let newLog = theLog.content.split("\n")[0];
+                for (x = 1; x < theLog.content.split("\n").length; x++) {
+                    if (theLog.content.split("\n")[x] != theWord.toLowerCase()) {
+                        newLog += "\n" + theLog.content.split("\n")[x];
+                    }
+                }
+                await theLog.edit(newLog);
+                interaction.reply({ content: "`" + theWord + "` successfully removed from the " + interaction.options.getString('type') + " list.", ephemeral: true });
+            }
+            else {
+                interaction.reply({ content: "`" + theWord + "` not found on the " + interaction.options.getString('type') + " list.  Please confirm you typed it exactly as it appears, including all special characters (though not case sensitive).", ephemeral: true });
+            }
+        }
+        deleteList = await bot.channels.cache.get("922350419005558834").messages.fetch("934010882965512232");
+        reportList = await bot.channels.cache.get("922350419005558834").messages.fetch("934011065317085225");
+        exceptionList = await bot.channels.cache.get("922350419005558834").messages.fetch("934011123412381706");
+    }
+    catch(err) {
+        logger.error("Something went wrong with updateWordsCommand.");
+    }
 }
 
 /*async function badWordsReporterLGS(message, messageMember, isEdit) {
@@ -1184,6 +1436,21 @@ bot.on('interactionCreate', async interaction => {
         case 'info':
         await links(interaction);
         break;
+        case 'update-words':
+        await updateWordsCommand(interaction);
+        break;
+        case 'mute':
+        await muteCommand(interaction);
+        break;
+        case 'ban':
+        await banCommand(interaction);
+        break;
+        case 'unmute':
+        await unmuteCommand(interaction);
+        break;
+        case 'kick':
+        await kickCommand(interaction);
+        break;
     }
 })
 
@@ -1210,10 +1477,26 @@ bot.on("messageCreate", async function(message) {
 
         //await links(message);
 
-        //await badWordsReporterLGS(message, messageMember, false);
+        await badWordsReporter(message, messageMember, false);
 
         if (isMod) {
             updateWords(message);
+        }
+
+        if (!message.channel.permissionOverwrites || !message.channel.permissionOverwrites.cache.has(roleId[4]) || message.channel.permissionOverwrites.cache.get(roleId[4]).allow.has("READ_MESSAGES")) {
+            for (var x = 0; x < badCards.length; x++) {
+                var scryfallURL = "/" + badCards[x].toLowerCase().replace(/û/g, "%C3%BB").replace(/,/g, "").replace(/\./g, "").replace(/\'/g, "").replace(/`/g, "").replace(/®/g, "").replace(/:registered:/, "").replace(/"/g, "").replace(/\?/g, "%3F").replace(/!/g, "").replace(/ /g, "-") + "?";
+                if (lowmessage.includes(scryfallURL) || (message.embeds[0] != undefined && message.embeds[0].title != undefined && message.embeds[0].title.split(" <")[0] == badCards[x])) {
+                    if (message.channel.id == "739760080932569088") {
+                        bot.channels.get(logChannel[2]).send({ embeds: [new Disocrd.MessageEmbed().addField(badCards[x] + " was discussed in <#739760080932569088>", "Context: " + message.url)] });
+                    }
+                    else {
+                        message.delete();
+                        deleteReporter(message, true);
+                        message.channel.send("This card has been banned in all formats for issues about serious topics.")
+                    }
+                }
+            }
         }
     }    
 
@@ -1287,11 +1570,68 @@ bot.on("messageCreate", async function(message) {
     }
 })
 
-bot.on("messageUpdate", async function(oldMessage, newMessage) {
+/*bot.on("messageUpdate", async function(oldMessage, newMessage) {
     if (!newMessage.content) {return;}
     lowmessage = newMessage.content.toLowerCase();
     var messageMember = await newMessage.guild.members.fetch(newMessage.author);
     await badWordsReporter(newMessage, messageMember, true);
+})*/
+
+bot.on("messageUpdate", async function(oldMessage, newMessage) {
+    try {
+        if (newMessage.partial || oldMessage.partial) {
+            try {
+                newMessage = await newMessage.fetch();
+            } catch (error) {
+                logger.error('Something went wrong when fetching the message: ', error)
+                return;
+            }
+            if (!newMessage.channel.guild || !newMessage.channel.guild.available || (newMessage.channel.guild.id != guildId[1] && newMessage.channel.guild.id != guildId[2]) {return;}
+            messageMember = await newMessage.channel.guild.members.fetch(newMessage.author.id);
+            badWordsReporter(newMessage, messageMember, true);
+            return;
+        }
+        let diff = ss.compareTwoStrings(oldMessage.content, newMessage.content);
+        if (!newMessage.channel.guild) {return;}
+        if (!newMessage.channel.guild.available) {return;}
+
+        let messageMember = await newMessage.channel.guild.members.fetch(newMessage.author);
+        if (newMessage.channel.guild.id == guildId[1] || newMessage.channel.guild.id == guildId[2]) {
+            badWordsReporter(newMessage, messageMember, true);
+        }
+        if (newMessage.channel.guild.id != guildId[2]) {return;}
+        let channelToNotify = logChannel[2];
+        if (!newMessage.author) {return;}
+        if (oldMessage.content == newMessage.content) {return;}
+        if (newMessage.author.bot) {
+            /*if (!oldMessage.partial && newMessage.author.id == bot.user.id) {
+                bot.channels.cache.get().send({ embeds: [new Discord.MessageEmbed().setThumbnail(bot.user.displayAvatarURL()).setTitle("Edited message from " + bot.user.displayName + " (" + oldMessage.author.id + ")").addField("Channel:", "<#" + oldMessage.channel.id + ">").addField("Original Message:", oldMessage.content).addField("New Message:", newMessage.content).setColor('BLUE')] });
+            }*/
+            return;
+        }
+        let deleteLog = ""
+        /*if (oldMessage.partial) {
+            deleteLog = new Discord.MessageEmbed().setThumbnail(messageMember.user.displayAvatarURL()).setTitle("Uncached edited message from " + messageMember.displayName + " (" + newMessage.author.id + ")").addField("Channel:", "<#" + newMessage.channel + ">").setColor('BLUE').setURL(newMessage.url);
+            if (newMessage.content.length < 1024) { deleteLog.addField("New Message:", newMessage.content) }
+            else { deleteLog.addField("New Message:", newMessage.content.substring(0, 1000)).addField("New Message cont.:", newMessage.content.substring(1000))}
+        }
+        else*/ if (oldMessage.content && newMessage.content) {
+            deleteLog = new Discord.MessageEmbed().setThumbnail(messageMember.user.displayAvatarURL()).setTitle("Edited message from " + messageMember.displayName + " (" + oldMessage.author.id + ")").addField("Channel:", "<#" + oldMessage.channel.id + ">").setColor('BLUE').setURL(newMessage.url);
+            if (oldMessage.content.length < 1024) { deleteLog.addField("Original Message:", oldMessage.content) }
+            else { deleteLog.addField("Original Message:", oldMessage.content.substring(0, 1000)).addField("Original Message cont.:", oldMessage.content.substring(1000))}
+            if (newMessage.content.length < 1024) { deleteLog.addField("New Message:", newMessage.content) }
+            else { deleteLog.addField("New Message:", newMessage.content.substring(0, 1000)).addField("New Message cont.:", newMessage.content.substring(1000))}
+        }
+        else if (newMessage.content) {
+            deleteLog = new Discord.MessageEmbed().setThumbnail(messageMember.user.displayAvatarURL()).setTitle("Edited textless message from " + messageMember.displayName + " (" + newMessage.author.id + ")").addField("Channel:", "<#" + newMessage.channel + ">").setColor('BLUE').setURL(newMessage.url);
+            if (newMessage.content.length < 1024) { deleteLog.addField("New Message:", newMessage.content) }
+            else { deleteLog.addField("New Message:", newMessage.content.substring(0, 1000)).addField("New Message cont.:", newMessage.content.substring(1000))}
+        }
+        await bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
+    }
+    catch(err) {
+        logger.error("Something went wrong logging an edited message");
+    }
 })
 
 bot.on("guildMemberAdd", function(member) {
