@@ -407,13 +407,12 @@ async function unmuteCommand(interaction) {
             return;
         }
         if (interaction.options.getString('reason')) {
-                await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
-                interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted for " + interaction.options.getString('reason') + "."});
-            }
-            else {
-                await muteMember.disableCommunicationUntil(muteTime);
-                interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted."});
-            }
+            await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
+            interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted for " + interaction.options.getString('reason') + "."});
+        }
+        else {
+            await muteMember.disableCommunicationUntil(muteTime);
+            interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted."});
         }
     }
     catch(err) {
