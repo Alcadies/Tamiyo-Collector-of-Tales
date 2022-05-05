@@ -232,7 +232,7 @@ function watchingMessage() {
 
 function badWordsReporter(message, messageMember, isEdit) {
     try {
-        if (modChannel.includes(channel.id) || !message.guild) { return; }
+        if (modChannel.includes(channel.id) || !message.guild || message.author.bot) { return; }
         let server = guildId.indexOf(message.guild.id);
         if (server == 1) {
             deleteList = deleteListMC;
