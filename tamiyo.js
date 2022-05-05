@@ -372,7 +372,7 @@ async function muteCommand(interaction) {
         let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
         if (interaction.options.getString('reason')) {
             await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
-            interaction.reply({ content: "Member <@" + muteMember.id + "> muted until " + new Date(muteTime) " for " + interaction.options.getString('reason') "."});
+            interaction.reply({ content: "Member <@" + muteMember.id + "> muted until " + new Date(muteTime) + " for " + interaction.options.getString('reason') "."});
         }
         else {
             await muteMember.disableCommunicationUntil(muteTime);
