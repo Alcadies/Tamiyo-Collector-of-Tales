@@ -372,7 +372,7 @@ async function muteCommand(interaction) {
         let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
         if (interaction.options.getString('reason')) {
             await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
-            interaction.reply({ content: "Member <@" + muteMember.id + "> muted until " + new Date(muteTime) + " for " + interaction.options.getString('reason') "."});
+            interaction.reply({ content: "Member <@" + muteMember.id + "> muted until " + new Date(muteTime) + " for " + interaction.options.getString('reason') + "."});
         }
         else {
             await muteMember.disableCommunicationUntil(muteTime);
@@ -408,7 +408,7 @@ async function unmuteCommand(interaction) {
         }
         if (interaction.options.getString('reason')) {
                 await muteMember.disableCommunicationUntil(muteTime, interaction.options.getString('reason'));
-                interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted for " + interaction.options.getString('reason') "."});
+                interaction.reply({ content: "Member <@" + muteMember.id + "> unmuted for " + interaction.options.getString('reason') + "."});
             }
             else {
                 await muteMember.disableCommunicationUntil(muteTime);
@@ -434,7 +434,7 @@ async function banCommand(interaction) {
         }
         if (interaction.options.getString('reason')) {
             muteMember.ban({ days: day, reason: interaction.options.getString('reason')});
-            interaction.reply({ content: "Member <@" + muteMember.id + "> banned for " + interaction.options.getString('reason') "."});
+            interaction.reply({ content: "Member <@" + muteMember.id + "> banned for " + interaction.options.getString('reason') + "."});
         }
         else {
             muteMember.ban({ days: day })
@@ -455,7 +455,7 @@ async function kickCommand(interaction) {
         }
         if (interaction.options.getString('reason')) {
             muteMember.ban(interaction.options.getString('reason'));
-            interaction.reply({ content: "Member <@" + muteMember.id + "> kicked for " + interaction.options.getString('reason') "."});
+            interaction.reply({ content: "Member <@" + muteMember.id + "> kicked for " + interaction.options.getString('reason') + "."});
         }
         else {
             muteMember.ban()
