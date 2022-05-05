@@ -1585,7 +1585,7 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
                 logger.error('Something went wrong when fetching the message: ', error)
                 return;
             }
-            if (!newMessage.channel.guild || !newMessage.channel.guild.available || (newMessage.channel.guild.id != guildId[1] && newMessage.channel.guild.id != guildId[2]) {return;}
+            if (!newMessage.channel.guild || !newMessage.channel.guild.available || (newMessage.channel.guild.id != guildId[1] && newMessage.channel.guild.id != guildId[2])) {return;}
             messageMember = await newMessage.channel.guild.members.fetch(newMessage.author.id);
             badWordsReporter(newMessage, messageMember, true);
             return;
