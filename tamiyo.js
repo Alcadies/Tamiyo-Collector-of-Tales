@@ -232,7 +232,7 @@ function watchingMessage() {
 
 function badWordsReporter(message, messageMember, isEdit) {
     try {
-        if (modChannel.includes(message.channel.id) || !message.guild || message.author.bot) { return; }
+        if (modChannel.includes(message.channel.id) || !message.guild) { return; }
         let server = guildId.indexOf(message.guild.id);
         if (server == 1) {
             deleteList = deleteListMC;
@@ -963,7 +963,7 @@ function updateWords(message) {
 
 async function updateWordsCommand(interaction) {
     try {
-        if (!interaction.memberPermissions.has("MANAGE_SERVER")) {return;}
+        if (!interaction.member.permissions.has("MANAGE_SERVER")) {return;}
         var theLog;
         let theWord = ""
         if (interaction.options.getBoolean('leading-space')) {
