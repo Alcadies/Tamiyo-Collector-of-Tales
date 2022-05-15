@@ -247,7 +247,8 @@ function badWordsReporter(message, messageMember, isEdit) {
         else {
             return;
         }
-        let messageCon = " " + message.content.toLowerCase().replaceAll(":heart_eyes_gay", "").replaceAll("á", "a").replaceAll("â", "a").replaceAll("ä", "a").replaceAll("å", "a").replaceAll("ã", "a").replaceAll("à", "a").replaceAll("è", "e").replaceAll("ê", "e").replaceAll("é", "e").replaceAll("ë", "e").replaceAll("ì", "i").replaceAll("í", "i").replaceAll("ï", "i").replaceAll("î", "i").replaceAll("ñ", "n").replaceAll("ò", "o").replaceAll("õ", "o").replaceAll("ø", "o").replaceAll("ô", "o").replaceAll("ö", "o").replaceAll("ó", "o").replaceAll("ù", "u").replaceAll("ú", "u").replaceAll("û", "u").replaceAll("ü", "u").replaceAll("ÿ", "y").replaceAll("æ", "ae").replaceAll("©", "c").replaceAll("®", "r").replaceAll("œ", "oe").replaceAll("¥", "y").replaceAll("ƒ", "f").replaceAll("ª", "a").replaceAll("ç", "c").replaceAll("¢", "c").replaceAll("†", "t").replaceAll("ﬁ", "fi").replaceAll("ﬂ", "fl") + " ";
+        let messageCon = " " + message.content.toLowerCase().replaceAll("@", "a").replaceAll("$", "s").replaceAll("0", "o").replaceAll("4", "a").replaceAll("3", "e").replaceAll("2", "z").replaceAll("5", "s").replaceAll("á", "a").replaceAll("â", "a").replaceAll("ä", "a").replaceAll("å", "a").replaceAll("ã", "a").replaceAll("à", "a").replaceAll("è", "e").replaceAll("ê", "e").replaceAll("é", "e").replaceAll("ë", "e").replaceAll("ì", "i").replaceAll("í", "i").replaceAll("ï", "i").replaceAll("î", "i").replaceAll("ñ", "n").replaceAll("ò", "o").replaceAll("õ", "o").replaceAll("ø", "o").replaceAll("ô", "o").replaceAll("ö", "o").replaceAll("ó", "o").replaceAll("ù", "u").replaceAll("ú", "u").replaceAll("û", "u").replaceAll("ü", "u").replaceAll("ÿ", "y").replaceAll("æ", "ae").replaceAll("©", "c").replaceAll("®", "r").replaceAll("œ", "oe").replaceAll("¥", "y").replaceAll("ƒ", "f").replaceAll("ª", "a").replaceAll("ç", "c").replaceAll("¢", "c").replaceAll("†", "t").replaceAll("ﬁ", "fi").replaceAll("ﬂ", "fl") + " ";
+        let baseMessageCon = " " + message.content.toLowerCase() + " ";
 
         if (!message.author) {return;}
         if (message.author.bot) {return;}
@@ -256,9 +257,10 @@ function badWordsReporter(message, messageMember, isEdit) {
         var reporting = false;
         for (var i = 1; i < exceptionList.content.split("\n").length; i++) {
             messageCon = messageCon.replaceAll(exceptionList.content.split("\n")[i], "🛑");
+            baseMessageCon = messageCon.replaceAll(exceptionList.content.split("\n")[i], "🛑");
         }
         for (var j = 1; j < deleteList.content.split("\n").length; j++) {
-            if (messageCon.includes(deleteList.content.split("\n")[j])) {
+            if (messageCon.includes(deleteList.content.split("\n")[j]) || baseMessageCon.includes(deleteList.content.split("\n")[j])) {
                 message.delete();
                 reporting = true;
                 if (badWordFound) {
@@ -268,7 +270,7 @@ function badWordsReporter(message, messageMember, isEdit) {
             }
         }
         for (var k = 1; k < reportList.content.split("\n").length; k++) {
-            if (messageCon.includes(reportList.content.split("\n")[k])) {
+            if (messageCon.includes(reportList.content.split("\n")[k]) || baseMessageCon.includes(reportList.content.split("\n")[k])) {
                 reporting = true;
                 if (badWordFound) {
                     badWordFound += ", "
@@ -1508,7 +1510,7 @@ bot.on("messageCreate", async function(message) {
     if (message.author.bot) {return;}
 
     var isMod = false;
-    var messageMember = await bot.guilds.cache.get(guildId[1]).members.fetch(message.author);
+    var messageMember = await bot.guilds.cache.get(guildId[message.guild]).members.fetch(message.author);
     if (messageMember.roles.cache.has(modRole)) { isMod = true; }
 
     //await links(message);
@@ -1547,7 +1549,7 @@ bot.on("messageCreate", async function(message) {
     }
 
     if (!message.guild) {
-        await dmReporter(message);
+        //await dmReporter(message);
 
         return;
     }
