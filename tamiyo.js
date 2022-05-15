@@ -669,12 +669,17 @@ async function links(interaction) {
 }
 
 function raidBan(message, messageMember) {
-    if (messageMember.roles.size == 1 && message.mentions.users.size > 20) {
-        message.guild.members.ban(messageMember.user, {
-            days: 1,
-            reason: "Mention spam"
-        });
-        bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
+    try {
+        if (messageMember.roles.size == 1 && message.mentions.users.size > 20) {
+            message.guild.members.ban(messageMember.user, {
+                days: 1,
+                reason: "Mention spam"
+            });
+            bot.channels.cache.get(logChannel[guildId.indexOf(message.guild.id)]).send(messageMember.displayName + " (id " + messageMember.id + ") banned for spamming mentions.  Message: ```" + message.cleanContent + "```");
+        }
+    }
+    catch(err) {
+        logger.error("Something went wrong auto-ban checking message: " + message.url);
     }
     /*const count = message.channel.messages.cache.filter(m => !m.system && m.author.id === message.author.id && m.createdTimestamp > Date.now() - 2000).size;
     if(count > 5 && !messageMember.user.bot) {
