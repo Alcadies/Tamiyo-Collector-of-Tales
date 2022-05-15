@@ -1457,6 +1457,7 @@ bot.on('interactionCreate', async interaction => {
 
 bot.on("messageCreate", async function(message) {
     if (message.system) {return;}
+    if (!message.author) {return;}
     lowmessage = message.content.toLowerCase();
 
     if (message.author.id == "135999597947387904" && message.content.indexOf(",eval ") == 0 && message.channel.id != "531433553225842700") {
