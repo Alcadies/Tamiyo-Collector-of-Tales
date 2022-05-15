@@ -1510,8 +1510,10 @@ bot.on("messageCreate", async function(message) {
     if (message.author.bot) {return;}
 
     var isMod = false;
-    var messageMember = await bot.guilds.cache.get(guildId[message.guild]).members.fetch(message.author);
-    if (messageMember.roles.cache.has(modRole)) { isMod = true; }
+    if (bot.guilds.cache.get(guildId[1]).members.has(message.author)) {
+        var messageMember = await bot.guilds.cache.get(guildId[1]).members.fetch(message.author);
+        if (messageMember.roles.cache.has(modRole)) { isMod = true; }
+    }
 
     //await links(message);
 
