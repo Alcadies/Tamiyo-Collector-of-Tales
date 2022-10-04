@@ -653,6 +653,9 @@ async function links(interaction) {
         case 'unsets':
         await interaction.reply("Unglued QAS: https://magic.wizards.com/en/articles/archive/feature/unglued-qas-questions-asked-sometimes\nUnhinged FAQTIWDAWCC: https://magic.wizards.com/en/articles/archive/feature/unhinged-faqtiwdawcc\nUnstable FAQAWASLFAQPAFTIDAWABIAJTBT: https://magic.wizards.com/en/articles/archive/news/unstable-faqawaslfaqpaftidawabiajtbt-2017-12-06\nUnsanctioned FAQTIKPWAMOMBSIATHTTASTTTETMOTWSTAAA: https://magic.wizards.com/en/articles/archive/feature/unsanctioned-faq-2020-02-25\nMystery Booster release notes: https://magic.wizards.com/en/articles/archive/feature/mystery-booster-release-notes-2019-11-11");
         break;
+        case 'magician':
+        await interaction.reply("This server is for the card game Magic: the Gathering.  If that's not the type of magic you were looking for, head over to The Peoples Palace of Prestidigitation here: https://discord.gg/NfZc9zU");
+        break;
     }
     /*if (lowmessage.indexOf(",mystery") == 0 || lowmessage.indexOf(",mb1") == 0 || lowmessage.indexOf(",cmb1") == 0) { message.channel.send("Mystery Booster release notes: https://magic.wizards.com/en/articles/archive/feature/mystery-booster-release-notes-2019-11-11")}
     if (lowmessage.indexOf(",unsanctioned") == 0) { message.channel.send("Unsanctioned FAQTIKPWAMOMBSIATHTTASTTTETMOTWSTAAA: https://magic.wizards.com/en/articles/archive/feature/unsanctioned-faq-2020-02-25"); }
