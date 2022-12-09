@@ -703,93 +703,98 @@ async function dmReporter(message) {
 }
 
 async function deleteReporter(message, forced) {
-    let channelToNotify = null;
-    if (!message.guild) {return;}
-    if (!message.guild.available) {return;}
-    if (message.guild.id == guildId[1]) {
-        channelToNotify = logChannel[1];
-    }
-    else if (message.guild.id == guildId[2]) {
-        channelToNotify = logChannel[2];
-    }
-    else {return;}
-    if (!channelToNotify) {return;}
-    if (message.system) {return;}
-    if (!message.author) {return;}
-    if (message.author.bot && !forced) {
-        if (message.author.id == bot.user.id && channelToNotify == message.channel.id) {
-            message.channel.send("One of my logs was deleted from here.");
+    try {
+        let channelToNotify = null;
+        if (!message.guild) {return;}
+        if (!message.guild.available) {return;}
+        if (message.guild.id == guildId[1]) {
+            channelToNotify = logChannel[1];
         }
-        return;
+        else if (message.guild.id == guildId[2]) {
+            channelToNotify = logChannel[2];
+        }
+        else {return;}
+        if (!channelToNotify) {return;}
+        if (message.system) {return;}
+        if (!message.author) {return;}
+        if (message.author.bot && !forced) {
+            if (message.author.id == bot.user.id && channelToNotify == message.channel.id) {
+                message.channel.send("One of my logs was deleted from here.");
+            }
+            return;
+        }
+        if (message.content.length < 5 && message.attachments.size == 0 && message.guild.id == guildId [1]) {return;}
+        if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032" && message.guild.id == guildId[1]) {return;}
+        if (message.channel.id == channelToNotify && message.author.id == "657605267709493265") {
+            await message.channel.send("One of my logs was deleted from here.");
+            return;
+        }
+        const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first())
+        let user = ""
+        if (entry.extra.channel.id === message.channel.id
+          && (entry.target.id === message.author.id)
+          && (entry.createdTimestamp > (Date.now() - 5000))
+          && (entry.extra.count >= 1)) {
+            user = entry.executor;
+        } else {
+            user = message.author;
+        }
+        var deleteLog = ""
+        if (message.cleanContent != "") {
+            deleteLog += "The following";
+        } else {
+            deleteLog += "A textless";
+        }
+        deleteLog += " message by ";
+        deleteLog += message.author.username;
+        deleteLog += " (id ";
+        deleteLog += message.author.id;
+        deleteLog += ")";
+        var attachmessage = "";
+        var attaches = [...message.attachments.values()];
+        var attachnames = "";
+        for (i = 0; i < attaches.length; i++) {
+            if (i == attaches.length -1 && i != 0) {attachnames += "and ";}
+            attachnames += attaches[i].proxyURL
+            if (i != attaches.length -1 && attaches.length != 2) {attachnames += ", ";}
+            if (i != attaches.length -1 && attaches.length == 2) {attachnames += " ";}
+        }
+        if (attaches.length > 1) {attachmessage = " with attachments " + attachnames;}
+        if (attaches.length == 1) {attachmessage = " with an attachment " + attachnames;}
+        deleteLog += attachmessage;
+        deleteLog += " was deleted from <#";
+        deleteLog += message.channel.id;
+        deleteLog += "> by ";
+        deleteLog += user.username;
+        if (message.cleanContent != "") {
+            deleteLog += ": ```";
+            deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
+            deleteLog += "```";
+        }
+        messageMember = message.author.username;
+        if (message.guild.members.cache.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
+        var deleteMember = await message.guild.members.fetch(user);
+        if (messageMember.id == deleteMember.id) {
+            deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL());
+        }
+        else {
+            deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL());
+        }
+        if (message.content.length < 1024) { deleteLog.addField("Deletion", "<#" + message.channel.id + ">: " + message.content); }
+        else { deleteLog.addField("Deletion", "<#" + message.channel.id + ">: " + message.content.substring(0, 1000)).addField("Deletion cont.", message.content.substring(1000))}
+        if (attaches.length == 0) {
+            bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
+        }
+        else if (attaches.length == 1) {
+            deleteLog.setImage(attaches[0].proxyURL);
+            bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
+        }
+        else {
+            bot.channels.cache.get(channelToNotify).send({ content: "The following " + attachmessage, embeds: [deleteLog]});
+        }
     }
-    if (message.content.length < 5 && message.attachments.size == 0 && message.guild.id == guildId [1]) {return;}
-    if ((message.content.includes("[[") || message.content.includes("]]") || message.content.toLowerCase().includes("!card") || message.content.toLowerCase().includes("!cr") || message.content.toLowerCase().includes("!mtr") || message.content.toLowerCase().includes("!ipg") || message.content.toLowerCase().includes("!price") || message.content.toLowerCase().includes("!legal") || message.content.toLowerCase().includes("!rul") || message.content.toLowerCase().includes("!jar") || message.content.toLowerCase().includes("!help") || message.content.toLowerCase().includes("!define")) && message.channel.id != "205775955434668032" && message.guild.id == guildId[1]) {return;}
-    if (message.channel.id == channelToNotify && message.author.id == "657605267709493265") {
-        await message.channel.send("One of my logs was deleted from here.");
-        return;
-    }
-    const entry = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first())
-    let user = ""
-    if (entry.extra.channel.id === message.channel.id
-      && (entry.target.id === message.author.id)
-      && (entry.createdTimestamp > (Date.now() - 5000))
-      && (entry.extra.count >= 1)) {
-        user = entry.executor;
-    } else {
-        user = message.author;
-    }
-    var deleteLog = ""
-    if (message.cleanContent != "") {
-        deleteLog += "The following";
-    } else {
-        deleteLog += "A textless";
-    }
-    deleteLog += " message by ";
-    deleteLog += message.author.username;
-    deleteLog += " (id ";
-    deleteLog += message.author.id;
-    deleteLog += ")";
-    var attachmessage = "";
-    var attaches = [...message.attachments.values()];
-    var attachnames = "";
-    for (i = 0; i < attaches.length; i++) {
-        if (i == attaches.length -1 && i != 0) {attachnames += "and ";}
-        attachnames += attaches[i].proxyURL
-        if (i != attaches.length -1 && attaches.length != 2) {attachnames += ", ";}
-        if (i != attaches.length -1 && attaches.length == 2) {attachnames += " ";}
-    }
-    if (attaches.length > 1) {attachmessage = " with attachments " + attachnames;}
-    if (attaches.length == 1) {attachmessage = " with an attachment " + attachnames;}
-    deleteLog += attachmessage;
-    deleteLog += " was deleted from <#";
-    deleteLog += message.channel.id;
-    deleteLog += "> by ";
-    deleteLog += user.username;
-    if (message.cleanContent != "") {
-        deleteLog += ": ```";
-        deleteLog += message.cleanContent.replace(/```/g, "​`​`​`​");
-        deleteLog += "```";
-    }
-    messageMember = message.author.username;
-    if (message.guild.members.cache.has(message.author.id)) { messageMember = await message.guild.members.fetch(message.author); }
-    var deleteMember = await message.guild.members.fetch(user);
-    if (messageMember.id == deleteMember.id) {
-        deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL());
-    }
-    else {
-        deleteLog = new Discord.MessageEmbed().setAuthor(messageMember.displayName + " (" + messageMember.id + ")", messageMember.user.displayAvatarURL()).setFooter("Deleted by " + deleteMember.displayName + " (" + deleteMember.id + ")", deleteMember.user.displayAvatarURL());
-    }
-    if (message.content.length < 1024) { deleteLog.addField("Deletion", "<#" + message.channel.id + ">: " + message.content); }
-    else { deleteLog.addField("Deletion", "<#" + message.channel.id + ">: " + message.content.substring(0, 1000)).addField("Deletion cont.", message.content.substring(1000))}
-    if (attaches.length == 0) {
-        bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
-    }
-    else if (attaches.length == 1) {
-        deleteLog.setImage(attaches[0].proxyURL);
-        bot.channels.cache.get(channelToNotify).send({ embeds: [deleteLog] });
-    }
-    else {
-        bot.channels.cache.get(channelToNotify).send({ content: "The following " + attachmessage, embeds: [deleteLog]});
+    catch(err) {
+        logger.error("Something went wrong with delete reporting.")
     }
 }
 
