@@ -24,8 +24,8 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildId = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️", "⛔"];
 var roleId = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566", "720433065893036113"];
-var roleReactLGS = ["🧙", "🧙‍♀️", "🧙‍♂️", "💸", "🎲", "🧊", "📦", "🇸", "🧑‍🚀", "🇲", "🇵", "🇱", "🇨", "DandD", "fleshandblood", "mtg", "pokeball", "ssb", "🏠", "🔓"];
-var roleIdLGS = ["865861704042545162", "865861650120572939", "865861476409409576", "865863180428378122", "865862019550019594", "865862047619350539", "865862116334239745", "865861745746640956", "865861790096424961", "865861837811482684", "865861891268018196", "865861934703443968", "865861969378803713", "958886784580845659", "958886862255181845", "958886446540922900", "958886689449840660", "958889669557375046", "958871797204406324", "958891658123018270"];
+var roleReactLGS = ["🧙", "🧙‍♀️", "🧙‍♂️", "💸", "🎲", "🧊", "📦", "🇸", "🧑‍🚀", "🇲", "🇵", "🇱", "🇨", "DandD", "fleshandblood", "mtg", "pokeball", "ssb", "🏠", "🔓", "🎮"];
+var roleIdLGS = ["865861704042545162", "865861650120572939", "865861476409409576", "865863180428378122", "865862019550019594", "865862047619350539", "865862116334239745", "865861745746640956", "865861790096424961", "865861837811482684", "865861891268018196", "865861934703443968", "865861969378803713", "958886784580845659", "958886862255181845", "958886446540922900", "958886689449840660", "958889669557375046", "958871797204406324", "958891658123018270", "1070102485026492446"];
 var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "BHrawl", "cEDH"];
 var lfgPlayerCount = [2, 2, 2, 2, 2, 2, 4, 2, 2, 2, 2, 4]
 var lfgPlatform = ["Arena", "MTGO", "XMage", "Cockatrice", "Spelltable", "Untap", "Tabletop"];
@@ -928,7 +928,7 @@ function spoilerCleaner(message) {
         if (message.content.includes("/" + cardName + "?")) { return; }
     }
     for (var x = 1; x < spoilerSets.content.split("\n").length; x++) {
-        if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " "))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR ")))*/ && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754" && message.channel.id != "788824774389399573" ) {
+        if ((lowmessage.includes("/" + spoilerSets.content.split("\n")[x].toLowerCase() + "/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(" + spoilerSets.content.split("\n")[x].toUpperCase() + " "))) /* || lowmessage.includes("/znr/") || (message.embeds[0] != undefined && message.embeds[0].description != undefined && message.embeds[0].description.includes("(ZNR ")))*/ && message.channel.id != "641920724856078336" && message.channel.id != "298465947319140353" && message.channel.id != "720436488247967754" && message.channel.id != "788824774389399573" && message.channel.id != "1060767086525288589") {
             message.delete();
             deleteReporter(message, true);
             message.channel.send("Please keep all spoilers to <#641920724856078336>, or if the discussion also involves leaked cards, <#298465947319140353>.")
@@ -1550,7 +1550,7 @@ bot.on("messageCreate", async function(message) {
     
     await leakUpdate(message, isMod);
 
-    if (message.channel.id == "788824774389399573") {
+    if (message.channel.id == "788824774389399573" || message.channel.id == "1060767086525288589") {
         if (message.attachments.size == 0 && !message.content.includes("https://") && !message.content.includes("http://")) {
             message.delete();
         }
@@ -1617,7 +1617,9 @@ bot.on("messageUpdate", async function(oldMessage, newMessage) {
         if (newMessage.channel.guild.id == guildId[1] || newMessage.channel.guild.id == guildId[2]) {
             badWordsReporter(newMessage, messageMember, true);
         }
-        if (newMessage.channel.guild.id != guildId[2]) {return;}
+        //if (newMessage.channel.guild.id != guildId[2]) {
+            return;
+        //}
         let channelToNotify = logChannel[2];
         if (!newMessage.author) {return;}
         if (oldMessage.content == newMessage.content) {return;}
