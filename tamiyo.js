@@ -641,11 +641,13 @@ async function roleCommand(interaction) {
     if (self && (roleId.includes(role.id) || roleReactLGS.includes(role.id))) { permission = true; }
     if (self && colorRoleId.includes(role.id)) {
         permission = true;
-        for(i = 0; i < colorRoleId.length; i++) {
-            member.roles.remove(colorRoleId[i]);
+        if (adding) {
+            for(i = 0; i < colorRoleId.length; i++) {
+                member.roles.remove(colorRoleId[i]);
+            }
         }
     }
-    if (member.permissions.has("MANAGE_ROLES") && member.roles.highest.comparePositionTo(role) > 0) { permission = true; }
+    if (interaction.member.permissions.has("MANAGE_ROLES") && member.roles.highest.comparePositionTo(role) > 0) { permission = true; }
     if (permission) {
         if (interaction.guild.members.cache.get(bot.user.id).roles.highest.comparePositionTo(role) <= 0) {
             interaction.reply("I'm afraid I can't help you with that.");
