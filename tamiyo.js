@@ -24,6 +24,7 @@ var muteRole = "280463986531631104" /*"586432252901195777"*/;
 var guildId = ["531433553225842698", "162586705524686848", "729748959991562330", "778058673783046155"]; //Testing, M&C, LGS, M&CBeta
 var roleReact = ["💧", "🧙", "🧙‍♀️", "🧙‍♂️", "⛔"];
 var roleId = ["638981519116861442", "788827820830490634", "788827799837474896", "788827774541889566", "720433065893036113"];
+var colorRoleId = ["1123911992374218762", "1096809103856242789", "1096809868855361599", "1123911625007714387", "1123912169520635995", "1096809268025507943", "1096809219870703626", "1096810054885330944", "1096809538423902290", "1096809603846656060", "1096809944499638334", "1123911737050140673", "1096809802434367580", "1096809388251025419", "1123911795430658049", "1096809471507955814", "1123911923847676055", "1096805652443177040", "1096805396947140620", "1123912097387003904", "1123913354302464010", "1123912049102180402", "1123912716789231717", "1096810108501098537", "1123911871230120057", "1123912213166555166", "1096809670095679559"];
 var roleReactLGS = ["🧙", "🧙‍♀️", "🧙‍♂️", "💸", "🎲", "🧊", "📦", "🇸", "🧑‍🚀", "🇲", "🇵", "🇱", "🇨", "DandD", "fleshandblood", "mtg", "pokeball", "ssb", "🏠", "🔓", "🎮"];
 var roleIdLGS = ["865861704042545162", "865861650120572939", "865861476409409576", "865863180428378122", "865862019550019594", "865862047619350539", "865862116334239745", "865861745746640956", "865861790096424961", "865861837811482684", "865861891268018196", "865861934703443968", "865861969378803713", "958886784580845659", "958886862255181845", "958886446540922900", "958886689449840660", "958889669557375046", "958871797204406324", "958891658123018270", "1070102485026492446"];
 var lfgFormat = ["Standard", "Pioneer", "Modern", "Legacy", "Vintage", "Pauper", "EDH", "Canlander", "Historic", "Brawl", "BHrawl", "cEDH"];
@@ -34,7 +35,7 @@ var lfgSuper = "";
 var lfg2channel = "788823431428309052";
 var leakRole = "638981519116861442";
 var seriousRole = "720433065893036113";
-var roleMessageId = "788829000860041236";
+var roleMessageId = ["788829000860041236"];
 var roleChannelId = "788822921694281749";
 var roleMessageIdLGS = ["865864634875379713", "960268264401952788", "958876127265435688"];
 var roleChannelIdLGS = "864322761270624266";
@@ -391,7 +392,7 @@ async function unmuteCommand(interaction) {
     try {
         let muteMember = await interaction.guild.members.fetch(interaction.options.getUser('member'));
         let unmuted = false;
-        if (muteMember.roles.has(muteRole)) {
+        if (muteMember.roles.cache.has(muteRole)) {
             muteMember.roles.remove(muteRole);
             unmuted = true;
         }
@@ -627,6 +628,52 @@ function role(message, messageMember) {
     }*/
 }
 
+async function roleCommand(interaction) {
+    if (!interaction.guild) {
+        interaction.reply("You can only use this command in a server.");
+        return;
+    }
+    var member = await interaction.guild.members.fetch(interaction.options.getUser('member') ?? interaction.user)
+    var self = member.id == interaction.user.id
+    var adding = interaction.options.getString('action') != "remove"
+    var role = interaction.options.getRole('role')
+    var permission = false
+    if (self && (roleReact.includes(role.id) || roleReactLGS.includes(role.id))) { permission = true; }
+    if (self && colorRoleId.includes(role.id)) {
+        permission = true;
+        for(i = 0; i < colorRoleId.length; i++) {
+            member.roles.remove(colorRoleId[i]);
+        }
+    }
+    if (member.permissions.has("MANAGE_ROLES") && member.roles.highest.comparePositionTo(role) > 0) { permission = true; }
+    if (permission) {
+        if (interaction.guild.members.cache.get(bot.user.id).roles.highest.comparePositionTo(role) <= 0) {
+            interaction.reply("I'm afraid I can't help you with that.");
+            return;
+        }
+        if(adding) {
+            if(member.roles.cache.has(role.id)) {
+                interaction.reply(`${self ? "You" : member.displayName} already ${self ? "have" : "has"} that role.`);
+                return;
+            }
+            else { member.roles.add(role.id); }
+        }
+        else {
+            if(member.roles.cache.has(role.id)) {
+                member.roles.remove(role.id);
+            }
+            else {
+                interaction.reply(`${self ? "You don't" : member.displayName + " doesn't"} have that role.`);
+                return;
+            }
+        }
+        interaction.reply(`Role ${role.name} ${adding ? "added to" : "removed from"} ${self ? "you" : member.displayName}.`);
+    }
+    else {
+        interaction.reply("You don't have permission to do that.");
+    }
+}
+
 async function links(interaction) {
     const data = interaction.options.getString('topic');
     switch (data) {
@@ -674,7 +721,7 @@ async function links(interaction) {
 
 function raidBan(message, messageMember) {
     try {
-        if (messageMember.roles.size == 1 && message.mentions.users.size > 20) {
+        if (messageMember.roles.cache.size == 1 && message.mentions.users.size > 20) {
             message.guild.members.ban(messageMember.user, {
                 days: 1,
                 reason: "Mention spam"
@@ -1466,6 +1513,9 @@ bot.on('interactionCreate', async interaction => {
         case 'kick':
         await kickCommand(interaction);
         break;
+        case 'role':
+        await roleCommand(interaction);
+        break;
     }
 })
 
@@ -1697,13 +1747,21 @@ bot.on("guildMemberUpdate", function(oldMember, newMember) {
 
 bot.on("messageReactionAdd", async function(messageReaction, user) {
     try {
-        if (messageReaction.message.id == roleMessageId) {
+        if (roleMessageId.includes(messageReaction.message.id)) {
             member = await messageReaction.message.guild.members.fetch(user);
             if((messageReaction.emoji.name == "⛔" || messageReaction.emoji.name == "💧") && member.roles.cache.has("796526525498523648")) {
                 return;
             }
             if(roleReact.includes(messageReaction.emoji.name)) {
                 member.roles.add(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
+            }
+            if(colorRole.includes(messageReaction.emoji.name)) {
+                member.roles.add(colorRoleId[colorRole.indexOf(messageReaction.emoji.name)]);
+                for(i = 0; i < colorRoleId.length; i++) {
+                    if(member.roles.cache.has(colorRoleId[i]) && colorRole[i] != messageReaction.emoji.name) {
+                        member.roles.remove(colorRoleId[i])
+                    }
+                }
             }
         }
         if (roleMessageIdLGS.includes(messageReaction.message.id)) {
@@ -1733,10 +1791,13 @@ bot.on("messageReactionAdd", async function(messageReaction, user) {
 })
 
 bot.on("messageReactionRemove", async function(messageReaction, user) {
-    if (messageReaction.message.id == roleMessageId) {
+    if (roleMessageId.includes(messageReaction.message.id)) {
+        member = await messageReaction.message.guild.members.fetch(user);
         if(roleReact.includes(messageReaction.emoji.name)) {
-            member = await messageReaction.message.guild.members.fetch(user);
             member.roles.remove(roleId[roleReact.indexOf(messageReaction.emoji.name)]);
+        }
+        if(colorRole.includes(messageReaction.emoji.name)) {
+            member.roles.remove(roleId[colorRole.indexOf(messageReaction.emoji.name)]);
         }
     }
     if (roleMessageIdLGS.includes(messageReaction.message.id)) {
