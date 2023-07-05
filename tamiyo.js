@@ -638,7 +638,7 @@ async function roleCommand(interaction) {
     var adding = interaction.options.getString('action') != "remove"
     var role = interaction.options.getRole('role')
     var permission = false
-    if (self && (roleReact.includes(role.id) || roleReactLGS.includes(role.id))) { permission = true; }
+    if (self && (roleId.includes(role.id) || roleReactLGS.includes(role.id))) { permission = true; }
     if (self && colorRoleId.includes(role.id)) {
         permission = true;
         for(i = 0; i < colorRoleId.length; i++) {
